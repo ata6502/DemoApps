@@ -10,9 +10,9 @@ using namespace Windows::UI::Input;
 
 const float IndependentInput::MIN_INPUT_RADIUS = 1.8f;
 const float IndependentInput::MAX_INPUT_RADIUS = 8.0f;
-const float IndependentInput::DEFAULT_INPUT_RADIUS = 2.2f;
+const float IndependentInput::DEFAULT_INPUT_RADIUS = 2.1f;
 const float IndependentInput::DEFAULT_INPUT_YAW = 1.5f * XM_PI;
-const float IndependentInput::DEFAULT_INPUT_PITCH = 0.37f * XM_PI;
+const float IndependentInput::DEFAULT_INPUT_PITCH = 0.3f * XM_PI;
 
 IndependentInput::IndependentInput() :
     m_radius(DEFAULT_INPUT_RADIUS),
@@ -21,7 +21,8 @@ IndependentInput::IndependentInput() :
     m_mouseInUse(false), 
     m_leftButtonPressed(false), 
     m_rightButtonPressed(false),
-    m_mouseLastPosition(Point(0.f,0.f))
+    m_mouseLastPosition(Point(0.f,0.f)),
+    m_activePointerId(0)
 {
 } 
 
