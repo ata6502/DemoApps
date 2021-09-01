@@ -55,9 +55,6 @@ void IndependentInput::OnPointerPressed([[maybe_unused]] winrt::Windows::Foundat
         (args.CurrentPoint().Properties().PointerUpdateKind() == PointerUpdateKind::LeftButtonPressed ||
          args.CurrentPoint().Properties().PointerUpdateKind() == PointerUpdateKind::RightButtonPressed))
     {
-        // TODO: Do we need critical section here?
-        //Concurrency::critical_section::scoped_lock lock(m_criticalSection);
-
         // Store active pointer ID: only one contact can be manipulating at a time.
         m_activePointerId = args.CurrentPoint().PointerId();
         m_mouseLastPosition = args.CurrentPoint().Position();
@@ -73,9 +70,6 @@ void IndependentInput::OnPointerMoved([[maybe_unused]] winrt::Windows::Foundatio
 {
     if (m_mouseInUse && args.CurrentPoint().PointerId() == m_activePointerId)
     {
-        // TODO: Do we need critical section here?
-        //Concurrency::critical_section::scoped_lock lock(m_criticalSection);
-
         Point currPosition = args.CurrentPoint().Position();
 
         if (m_leftButtonPressed)
