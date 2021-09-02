@@ -29,7 +29,7 @@ IndependentInput::IndependentInput() :
 void IndependentInput::Initialize(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& panel)
 {
     // Set up the independent input source to run in a background thread and hook up to a few pointer events.
-    auto workItemHandler = ([this, panel](IAsyncAction const& action)
+    auto workItemHandler = ([this, panel]([[maybe_unused]] IAsyncAction const& action)
     {
         m_gestureRecognizer = GestureRecognizer();
         m_gestureRecognizer.GestureSettings(GestureSettings::ManipulationScale);
