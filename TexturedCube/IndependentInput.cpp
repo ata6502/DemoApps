@@ -8,9 +8,9 @@ using namespace Windows::System::Threading;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Input;
 
-const float IndependentInput::MIN_INPUT_RADIUS = 1.8f;
+const float IndependentInput::MIN_INPUT_RADIUS = 1.7f;
 const float IndependentInput::MAX_INPUT_RADIUS = 8.0f;
-const float IndependentInput::DEFAULT_INPUT_RADIUS = 2.1f;
+const float IndependentInput::DEFAULT_INPUT_RADIUS = 2.2f;
 const float IndependentInput::DEFAULT_INPUT_YAW = 1.5f * XM_PI;
 const float IndependentInput::DEFAULT_INPUT_PITCH = 0.3f * XM_PI;
 
@@ -31,23 +31,35 @@ void IndependentInput::Initialize(winrt::Windows::UI::Xaml::Controls::SwapChainP
     // Set up the independent input source to run in a background thread and hook up to a few pointer events.
     auto workItemHandler = ([this, panel](IAsyncAction const& action)
     {
+        m_gestureRecognizer = GestureRecognizer();
+        m_gestureRecognizer.GestureSettings(GestureSettings::ManipulationScale);
+        m_gestureRecognizer.ManipulationUpdated({ this, &IndependentInput::OnManipulationUpdated });
+
         // The CoreIndependentInputSource mathod raises pointer events for the specified device types on whichever thread 
         // it's created on. Using the CreateCoreIndependentInputSource method, apps can process input and render to a SwapChainPanel 
         // on one or more background threads. This enables high performance input and rendering independent of the XAML UI thread.
 
-        auto coreInput = panel.CreateCoreIndependentInputSource(Windows::UI::Core::CoreInputDeviceTypes::Mouse);
+        m_coreInput = panel.CreateCoreIndependentInputSource(
+            Windows::UI::Core::CoreInputDeviceTypes::Mouse |
+            Windows::UI::Core::CoreInputDeviceTypes::Touch |
+            Windows::UI::Core::CoreInputDeviceTypes::Pen);
 
         // Register for pointer events, which will be raised on the background thread.
-        coreInput.PointerPressed({ this, &IndependentInput::OnPointerPressed });
-        coreInput.PointerMoved({ this, &IndependentInput::OnPointerMoved });
-        coreInput.PointerReleased({ this, &IndependentInput::OnPointerReleased });
+        m_coreInput.PointerPressed({ this, &IndependentInput::OnPointerPressed });
+        m_coreInput.PointerMoved({ this, &IndependentInput::OnPointerMoved });
+        m_coreInput.PointerReleased({ this, &IndependentInput::OnPointerReleased });
 
         // Begin processing input messages as they're delivered.
-        coreInput.Dispatcher().ProcessEvents(Windows::UI::Core::CoreProcessEventsOption::ProcessUntilQuit);
+        m_coreInput.Dispatcher().ProcessEvents(Windows::UI::Core::CoreProcessEventsOption::ProcessUntilQuit);
     });
 
     // Run task on a dedicated high priority background thread.
     m_inputLoopWorker = ThreadPool::RunAsync(workItemHandler, WorkItemPriority::High, WorkItemOptions::TimeSliced);
+}
+
+void IndependentInput::StopProcessEvents()
+{
+    m_coreInput.Dispatcher().StopProcessEvents();
 }
 
 void IndependentInput::OnPointerPressed([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Core::PointerEventArgs const& args)
@@ -56,6 +68,8 @@ void IndependentInput::OnPointerPressed([[maybe_unused]] winrt::Windows::Foundat
         (args.CurrentPoint().Properties().PointerUpdateKind() == PointerUpdateKind::LeftButtonPressed ||
          args.CurrentPoint().Properties().PointerUpdateKind() == PointerUpdateKind::RightButtonPressed))
     {
+        Concurrency::critical_section::scoped_lock lock(m_criticalSection);
+
         // Store active pointer ID: only one contact can be manipulating at a time.
         m_activePointerId = args.CurrentPoint().PointerId();
         m_mouseLastPosition = args.CurrentPoint().Position();
@@ -71,6 +85,8 @@ void IndependentInput::OnPointerMoved([[maybe_unused]] winrt::Windows::Foundatio
 {
     if (m_mouseInUse && args.CurrentPoint().PointerId() == m_activePointerId)
     {
+        Concurrency::critical_section::scoped_lock lock(m_criticalSection);
+
         Point currPosition = args.CurrentPoint().Position();
 
         if (m_leftButtonPressed)
@@ -105,4 +121,18 @@ void IndependentInput::OnPointerReleased([[maybe_unused]] winrt::Windows::Founda
     m_mouseInUse = false;
     m_leftButtonPressed = false;
     m_rightButtonPressed = false;
+}
+
+void IndependentInput::OnManipulationUpdated([[maybe_unused]] winrt::Windows::UI::Input::GestureRecognizer const& recognizer, winrt::Windows::UI::Input::ManipulationUpdatedEventArgs const& args)
+{
+    float scale = args.Delta().Scale;
+
+    // Invert the scale. We need to do that as the radius has to change inversely proportional to the input scale.
+    float delta = abs(1.0f - scale);
+    scale = (scale > 1.0f ? 1.0f - delta : 1.0f + delta);
+
+    m_radius *= scale;
+
+    // Restrict the radius.
+    m_radius = std::clamp(m_radius, MIN_INPUT_RADIUS, MAX_INPUT_RADIUS);
 }

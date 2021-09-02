@@ -6,6 +6,7 @@ public:
     IndependentInput();
 
     void Initialize(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& panel);
+    void StopProcessEvents();
 
     // Convert spherical coordinates to Cartesian coordinates.
     DirectX::XMVECTOR GetPosition() const
@@ -26,14 +27,22 @@ private:
     static const float DEFAULT_INPUT_YAW;
     static const float DEFAULT_INPUT_PITCH;
 
-    // Independent input handling functions.
+    // Independent input handlers.
     void OnPointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Core::PointerEventArgs const& args);
     void OnPointerMoved(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Core::PointerEventArgs const& args);
     void OnPointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Core::PointerEventArgs const& args);
 
+    // Gesture recognizer handlers.
+    void OnManipulationUpdated(winrt::Windows::UI::Input::GestureRecognizer const& recognizer, winrt::Windows::UI::Input::ManipulationUpdatedEventArgs const& args);
+
     // Track independent input on a background worker thread.
     winrt::Windows::Foundation::IAsyncAction m_inputLoopWorker;
-    uint32_t                            m_activePointerId;
+    winrt::Windows::UI::Core::CoreIndependentInputSource m_coreInput{ nullptr };
+    uint32_t m_activePointerId;
+    Concurrency::critical_section m_criticalSection;
+
+    // TODO: C++/CX makes the GestureRecognizer agile. Do we also need to make it agile in C++/WinRT ?
+    winrt::Windows::UI::Input::GestureRecognizer m_gestureRecognizer{ nullptr };
 
     float                               m_radius;
     float                               m_yaw; // "horizontal" angle

@@ -26,10 +26,12 @@ DemoMain::DemoMain() :
 
 DemoMain::~DemoMain()
 {
-    StopRenderLoop();
-
     // Deregister device notification.
     m_deviceResources->RegisterDeviceNotify(nullptr);
+
+    // Stop rendering and processing events on destruction.
+    StopRenderLoop();
+    m_input->StopProcessEvents();
 }
 
 winrt::fire_and_forget DemoMain::InitializeInBackground()
