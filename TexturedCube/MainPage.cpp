@@ -24,7 +24,7 @@ namespace winrt::TexturedCube::implementation
         Windows::UI::Xaml::Application::Current().Suspending({ this, &MainPage::OnSuspending });
         Windows::UI::Xaml::Application::Current().Resuming({ this, &MainPage::OnResuming });
 
-        m_main = winrt::make_self<DemoMain>();
+        m_main = std::make_unique<DemoMain>();
         m_main->SetSwapChainPanel(DXSwapChainPanel());
         m_main->StartRenderLoop();
     }

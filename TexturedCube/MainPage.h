@@ -22,7 +22,7 @@ namespace winrt::TexturedCube::implementation
         void OnSuspending(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::ApplicationModel::SuspendingEventArgs const&);
         void OnResuming(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&);
 
-        winrt::com_ptr<DemoMain> m_main;
+        std::unique_ptr<DemoMain> m_main;
     };
 }
 

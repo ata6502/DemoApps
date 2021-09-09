@@ -22,6 +22,9 @@
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="OneLightRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -40,6 +43,9 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="OneLightRenderer.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +86,9 @@
     </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{d7032a72-29be-4016-ab6e-4c29692b80df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers">
+      <UniqueIdentifier>{f530e6ed-5def-4cfb-8848-3e68ed491772}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
