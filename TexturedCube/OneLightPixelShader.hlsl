@@ -1,4 +1,4 @@
-#include "ShaderInclude.hlsli"
+#include "OneLightShaderInclude.hlsli"
 
 struct PixelShaderInput
 {

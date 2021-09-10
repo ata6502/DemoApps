@@ -37,7 +37,7 @@
     <ClInclude Include="Utilities.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderStructures.h">
+    <ClInclude Include="OneLightShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="DemoMain.h" />
@@ -94,15 +94,15 @@
   <ItemGroup>
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
-    <None Include="ShaderInclude.hlsli">
+    <None Include="OneLightShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
+    <FxCompile Include="OneLightPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
+    <FxCompile Include="OneLightVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

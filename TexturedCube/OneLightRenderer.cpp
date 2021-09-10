@@ -19,8 +19,8 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
     auto lifetime = get_strong();
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"VertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"PixelShader.cso");
+    auto vertexShaderBytecode = co_await ReadDataAsync(L"OneLightVertexShader.cso");
+    auto pixelShaderBytecode = co_await ReadDataAsync(L"OneLightPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -71,10 +71,10 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
         { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(-n, -n,  n) },
         { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(-n,  n, -n) },
         { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(-n,  n,  n) },
-        { XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(n, -n, -n) },
-        { XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT3(n, -n,  n) },
-        { XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT3(n,  n, -n) },
-        { XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(n,  n,  n) }
+        { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3( n, -n, -n) },
+        { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3( n, -n,  n) },
+        { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3( n,  n, -n) },
+        { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3( n,  n,  n) }
     };
 
     // [8] Create vertex buffer and load data.

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "ShaderStructures.h"
+#include "OneLightShaderStructures.h"
 
 class OneLightRenderer : public winrt::implements<OneLightRenderer, winrt::Windows::Foundation::IInspectable>
 {
