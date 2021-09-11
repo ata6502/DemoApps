@@ -3,13 +3,16 @@
 #include "MainPage.g.cpp"
 
 using namespace winrt;
+using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Media::Animation; // Storyboard
 using namespace Concurrency;
 
 namespace winrt::TexturedCube::implementation
 {
-    MainPage::MainPage()
+    MainPage::MainPage() :
+        m_controlPanelVisible(false)
     {
         InitializeComponent();
 
@@ -83,5 +86,19 @@ namespace winrt::TexturedCube::implementation
     {
         // Load application state and resume any background activity.
         m_main->Resume();
+    }
+
+    void MainPage::ContentControl_Tapped([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Input::TappedRoutedEventArgs const& args)
+    {
+        ToggleControlPanel();
+    }
+
+    void MainPage::ToggleControlPanel()
+    {
+        m_controlPanelVisible = !m_controlPanelVisible;
+
+        auto resourceKey = winrt::box_value(m_controlPanelVisible ? L"ShowControlPanelStoryboard" : L"HideControlPanelStoryboard");
+        auto storyboard = winrt::unbox_value<Storyboard>(this->Resources().Lookup(resourceKey));
+        storyboard.Begin();
     }
 }

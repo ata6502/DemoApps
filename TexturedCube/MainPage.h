@@ -9,6 +9,8 @@ namespace winrt::TexturedCube::implementation
     {
         MainPage();
 
+        void ContentControl_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::TappedRoutedEventArgs const& args);
+
     private:
         // Window event handlers.
         void OnVisibilityChanged(winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::VisibilityChangedEventArgs const& args);
@@ -22,7 +24,11 @@ namespace winrt::TexturedCube::implementation
         void OnSuspending(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::ApplicationModel::SuspendingEventArgs const&);
         void OnResuming(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&);
 
+        // Helper methods.
+        void ToggleControlPanel();
+
         std::unique_ptr<DemoMain> m_main;
+        bool m_controlPanelVisible;
     };
 }
 
