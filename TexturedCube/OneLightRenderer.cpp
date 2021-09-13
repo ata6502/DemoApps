@@ -77,19 +77,29 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
         { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3( n,  n,  n) }
     };
 
-    // [8] Create vertex buffer and load data.
+    // [8] Create the description of an immutable vertex buffer.
+    D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
+    vertexBufferDesc.ByteWidth = sizeof(cubeVertices);      // the size of the buffer in bytes
+    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;         // the contents of the buffer will not change after creation
+    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;  // this buffer is a vertex buffer
+    vertexBufferDesc.CPUAccessFlags = 0;                    // CPU does not require read or write access to the buffer after the buffer has been created
+    vertexBufferDesc.MiscFlags = 0;
+    vertexBufferDesc.StructureByteStride = 0;               // used with structured buffers; 0 for the vertex buffers
+
+    // [9] Create data to initialize the vertex buffer.
     D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
     vertexBufferData.pSysMem = cubeVertices;
     vertexBufferData.SysMemPitch = 0;
     vertexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(cubeVertices), D3D11_BIND_VERTEX_BUFFER);
+
+    // [10] Create vertex buffer and load data.
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &vertexBufferDesc,
             &vertexBufferData,
             m_vertexBuffer.put()));
 
-    // [9] Create cube indices in the left-handed coordinate system.
+    // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
     {
         0,1,2, // -x
@@ -111,10 +121,10 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
         1,5,7,
     };
 
-    // [10] Keep the number of indices.
+    // [12] Keep the number of indices.
     m_indexCount = ARRAYSIZE(cubeIndices);
 
-    // [11] Create index buffer and load indices to the buffer.
+    // [13] Create index buffer and load indices to the buffer.
     D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
     indexBufferData.pSysMem = cubeIndices;
     indexBufferData.SysMemPitch = 0;
@@ -126,7 +136,7 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
             &indexBufferData,
             m_indexBuffer.put()));
 
-    // [12] Create the light and copy it to the constant buffer.
+    // [14] Create the light and copy it to the constant buffer.
     DirectionalLight light;
     light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
@@ -134,7 +144,7 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
     light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
     m_constantBufferData.Light = light;
 
-    // [13] Create the material and copy it to the constant buffer.
+    // [15] Create the material and copy it to the constant buffer.
     MaterialDesc material;
     material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
