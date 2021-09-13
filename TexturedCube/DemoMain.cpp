@@ -7,7 +7,10 @@ using namespace Windows::System::Threading;
 using namespace Concurrency;
 using namespace DirectX;
 
-DemoMain::DemoMain()
+DemoMain::DemoMain() :
+    m_rotation(0.0f),
+    m_rotationSpeed(XM_PIDIV2),
+    m_rotationEnabled(false)
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -133,6 +136,15 @@ void DemoMain::Update()
 
     m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up));
     m_renderer->SetEyePosition(eye);
+
+    if (m_rotationEnabled)
+    {
+        m_rotation = (m_rotation + m_timer.GetElapsedSeconds());
+        if (m_rotation > XM_2PI)
+            m_rotation = fmod(m_rotation, XM_2PI);
+
+        m_renderer->SetModelMatrix(XMMatrixRotationY(m_rotation));
+    }
 }
 
 /// <summary>

@@ -104,7 +104,7 @@ namespace winrt::TexturedCube::implementation
 
     void MainPage::RotationToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
-
+        m_main->ToggleRotation();
     }
 }
 

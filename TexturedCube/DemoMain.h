@@ -25,6 +25,8 @@ public:
     void Suspend();
     void Resume();
 
+    void ToggleRotation() { m_rotationEnabled = !m_rotationEnabled; }
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();
@@ -42,5 +44,10 @@ private:
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;
     winrt::com_ptr<OneLightRenderer>         m_renderer;
+
+    // Cube rotation.
+    float                                    m_rotation;
+    float                                    m_rotationSpeed;
+    bool                                     m_rotationEnabled;
 };
 
