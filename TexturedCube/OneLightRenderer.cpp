@@ -77,7 +77,7 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
         { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3( n,  n,  n) }
     };
 
-    // [8] Create the description of an immutable vertex buffer.
+    // [8] Create the description for an immutable vertex buffer.
     D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
     vertexBufferDesc.ByteWidth = sizeof(cubeVertices);      // the size of the buffer in bytes
     vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;         // the contents of the buffer will not change after creation
@@ -92,7 +92,7 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
     vertexBufferData.SysMemPitch = 0;
     vertexBufferData.SysMemSlicePitch = 0;
 
-    // [10] Create vertex buffer and load data.
+    // [10] Create the vertex buffer and load data.
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &vertexBufferDesc,

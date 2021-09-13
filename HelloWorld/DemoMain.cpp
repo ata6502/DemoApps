@@ -72,8 +72,9 @@ winrt::fire_and_forget DemoMain::InitializeInBackground()
             nullptr,
             m_pixelShader.put()));
 
-    // [6] Create the constant buffer.
-    CD3D11_BUFFER_DESC constantBufferDesc(sizeof(ModelViewProjectionConstantBuffer), D3D11_BIND_CONSTANT_BUFFER);
+    // [6] Create a 16-byte aligned constant buffer.
+    uint32_t byteWidth = (sizeof(ModelViewProjectionConstantBuffer) + 15) / 16 * 16;
+    CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &constantBufferDesc,
