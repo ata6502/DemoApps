@@ -101,4 +101,10 @@ namespace winrt::TexturedCube::implementation
         auto storyboard = winrt::unbox_value<Storyboard>(this->Resources().Lookup(resourceKey));
         storyboard.Begin();
     }
+
+    void MainPage::RotationToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+
+    }
 }
+

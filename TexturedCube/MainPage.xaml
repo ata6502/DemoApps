@@ -50,6 +50,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
+            <!-- the "hamburger" menu button -->
             <ContentControl Grid.Row="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
@@ -68,7 +69,19 @@
                 <ScrollViewer.RenderTransform>
                     <TranslateTransform X="-220" />
                 </ScrollViewer.RenderTransform>
-                
+
+                <StackPanel Orientation="Horizontal"
+                            Margin="8,8,8,0"
+                            VerticalAlignment="Top">
+                    <TextBlock Text="Cube rotation:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,4" />
+                    <ToggleSwitch OnContent="On"
+                                  OffContent="Off"
+                                  IsOn="False" 
+                                  Toggled="RotationToggle_Toggled" />
+                </StackPanel>
+
             </ScrollViewer>
         </Grid>
     </SwapChainPanel>
