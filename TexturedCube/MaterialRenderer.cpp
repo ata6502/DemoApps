@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "OneLightRenderer.h"
+#include "MaterialRenderer.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-OneLightRenderer::OneLightRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_constantBufferData(),
     m_indexCount(0),
@@ -16,13 +16,13 @@ OneLightRenderer::OneLightRenderer(std::shared_ptr<DX::DeviceResources> const& d
     SetModelMatrix(XMMatrixIdentity());
 }
 
-winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
+winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 {
     auto lifetime = get_strong();
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"OneLightVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"OneLightPixelShader.cso");
+    auto vertexShaderBytecode = co_await ReadDataAsync(L"MaterialVertexShader.cso");
+    auto pixelShaderBytecode = co_await ReadDataAsync(L"MaterialPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -41,7 +41,7 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateInputLayout(
+        m_deviceResources->GetD3DDevice()->CreateInputLayout( 
             vertexDesc,
             ARRAYSIZE(vertexDesc),
             vertexShaderBytecode.data(),
@@ -157,7 +157,7 @@ winrt::fire_and_forget OneLightRenderer::InitializeInBackground()
     m_initialized = true;
 }
 
-void OneLightRenderer::Render()
+void MaterialRenderer::Render()
 {
     if (m_initialized)
     {
@@ -194,7 +194,7 @@ void OneLightRenderer::Render()
     }
 }
 
-void OneLightRenderer::ReleaseResources()
+void MaterialRenderer::ReleaseResources()
 {
     m_initialized = false;
     m_vertexShader = nullptr;
@@ -205,25 +205,25 @@ void OneLightRenderer::ReleaseResources()
     m_indexBuffer = nullptr;
 }
 
-void OneLightRenderer::SetProjectionMatrix(DirectX::FXMMATRIX projMatrix)
+void MaterialRenderer::SetProjectionMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_constantBufferData.Projection,
         XMMatrixTranspose(projMatrix));
 }
 
-void OneLightRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
+void MaterialRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
 {
     XMStoreFloat4x4(&m_constantBufferData.Model,
         XMMatrixTranspose(modelMatrix));
 }
 
-void OneLightRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix)
+void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix)
 {
     XMStoreFloat4x4(&m_constantBufferData.View,
         XMMatrixTranspose(viewMatrix));
 }
 
-void OneLightRenderer::SetEyePosition(DirectX::FXMVECTOR eyePosition)
+void MaterialRenderer::SetEyePosition(DirectX::FXMVECTOR eyePosition)
 {
     XMStoreFloat3(&m_constantBufferData.EyePosition, eyePosition);
 }

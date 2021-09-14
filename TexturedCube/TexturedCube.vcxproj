@@ -88,7 +88,7 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="IndependentInput.h" />
-    <ClInclude Include="OneLightRenderer.h" />
+    <ClInclude Include="MaterialRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -96,7 +96,7 @@
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="OneLightShaderStructures.h" />
+    <ClInclude Include="MaterialShaderStructures.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
@@ -126,7 +126,7 @@
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
-    <ClCompile Include="OneLightRenderer.cpp" />
+    <ClCompile Include="MaterialRenderer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -149,14 +149,14 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
-    <None Include="OneLightShaderInclude.hlsli" />
+    <None Include="MaterialShaderInclude.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="OneLightPixelShader.hlsl">
+    <FxCompile Include="MaterialPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="OneLightVertexShader.hlsl">
+    <FxCompile Include="MaterialVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
     </FxCompile>

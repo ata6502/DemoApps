@@ -22,7 +22,7 @@
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="OneLightRenderer.cpp">
+    <ClCompile Include="MaterialRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -37,14 +37,14 @@
     <ClInclude Include="Utilities.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="OneLightShaderStructures.h">
+    <ClInclude Include="MaterialShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="OneLightRenderer.h">
+    <ClInclude Include="MaterialRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -94,15 +94,15 @@
   <ItemGroup>
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
-    <None Include="OneLightShaderInclude.hlsli">
+    <None Include="MaterialShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="OneLightPixelShader.hlsl">
+    <FxCompile Include="MaterialPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="OneLightVertexShader.hlsl">
+    <FxCompile Include="MaterialVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "OneLightShaderStructures.h"
+#include "MaterialShaderStructures.h"
 
-class OneLightRenderer : public winrt::implements<OneLightRenderer, winrt::Windows::Foundation::IInspectable>
+class MaterialRenderer : public winrt::implements<MaterialRenderer, winrt::Windows::Foundation::IInspectable>
 {
 public:
-    OneLightRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     winrt::fire_and_forget InitializeInBackground();
     void Render();

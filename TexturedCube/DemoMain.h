@@ -2,7 +2,7 @@
 
 #include "DeviceResources.h"
 #include "IndependentInput.h"
-#include "OneLightRenderer.h"
+#include "MaterialRenderer.h"
 #include "Timer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -43,7 +43,7 @@ private:
     Concurrency::critical_section            m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;
-    winrt::com_ptr<OneLightRenderer>         m_renderer;
+    winrt::com_ptr<MaterialRenderer>         m_renderer;
 
     // Cube rotation.
     float                                    m_rotation;

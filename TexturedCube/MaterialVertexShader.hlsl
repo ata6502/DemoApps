@@ -1,4 +1,4 @@
-#include "OneLightShaderInclude.hlsli"
+#include "MaterialShaderInclude.hlsli"
 
 // Per-vertex data used as input to the vertex shader.
 struct VertexShaderInput
