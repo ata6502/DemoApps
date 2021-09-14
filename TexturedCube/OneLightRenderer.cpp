@@ -12,6 +12,8 @@ OneLightRenderer::OneLightRenderer(std::shared_ptr<DX::DeviceResources> const& d
 {
     // Initialize device resources asynchronously.
     InitializeInBackground();
+
+    SetModelMatrix(XMMatrixIdentity());
 }
 
 winrt::fire_and_forget OneLightRenderer::InitializeInBackground()

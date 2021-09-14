@@ -45,7 +45,6 @@ void DemoMain::CreateWindowSizeDependentResources()
         100.0f);
 
     m_renderer->SetProjectionMatrix(projMatrix);
-    m_renderer->SetModelMatrix(XMMatrixIdentity());
 }
 
 void DemoMain::StartRenderLoop()
