@@ -63,15 +63,18 @@
                           Grid.Row="1"
                           Width="220"
                           Margin="0,0,0,0"
-                          Background="#E5EAFF"
-                          HorizontalAlignment="Left">
+                          Background="Gainsboro"
+                          Opacity="0.8"
+                          HorizontalAlignment="Left"
+                          BorderBrush="Black"
+                          BorderThickness="0 1 1 0">
 
                 <ScrollViewer.RenderTransform>
                     <TranslateTransform X="-220" />
                 </ScrollViewer.RenderTransform>
 
                 <StackPanel Orientation="Horizontal"
-                            Margin="8,8,8,0"
+                            Margin="12,8,8,0"
                             VerticalAlignment="Top">
                     <TextBlock Text="Cube rotation:"
                                VerticalAlignment="Center"
