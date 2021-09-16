@@ -1,13 +1,12 @@
 #include "pch.h"
-#include "MaterialRenderer.h"
+#include "ColorRenderer.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
-    m_mvpConstantBufferData(),
-    m_lmeConstantBufferData(),
+    m_constantBufferData(),
     m_indexCount(0),
     m_initialized(false)
 {
@@ -17,13 +16,13 @@ MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& d
     SetModelMatrix(XMMatrixIdentity());
 }
 
-winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
+winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 {
     auto lifetime = get_strong();
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"MaterialVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"MaterialPixelShader.cso");
+    auto vertexShaderBytecode = co_await ReadDataAsync(L"ColorVertexShader.cso");
+    auto pixelShaderBytecode = co_await ReadDataAsync(L"ColorPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -37,7 +36,7 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -57,35 +56,26 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
             nullptr,
             m_pixelShader.put()));
 
-    // [6] Create two 16-byte aligned constant buffers.
+    // [6] Create a 16-byte aligned constant buffer.
     uint32_t byteWidth = (sizeof(ModelViewProjectionConstantBuffer) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC mvpConstantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
+    CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &mvpConstantBufferDesc,
+            &constantBufferDesc,
             nullptr,
-            m_mvpConstantBuffer.put()));
+            m_constantBuffer.put()));
 
-    byteWidth = (sizeof(LightMaterialEyeConstantBuffer) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC lmeConstantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &lmeConstantBufferDesc,
-            nullptr,
-            m_lmeConstantBuffer.put()));
-
-    // [7] Create cube vertices. Each vertex has a position and a normal vector.
-    float n = 1.0f / sqrtf(3.0f); // all components of coordinates of the normals have the value n
-    static const VertexPositionNormal cubeVertices[] =
+    // [7] Create cube vertices. Each vertex has a position and a color.
+    static const VertexPositionColor cubeVertices[] =
     {
-        { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-n, -n, -n) },
-        { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(-n, -n,  n) },
-        { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(-n,  n, -n) },
-        { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(-n,  n,  n) },
-        { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3( n, -n, -n) },
-        { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3( n, -n,  n) },
-        { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3( n,  n, -n) },
-        { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3( n,  n,  n) }
+        {XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f)},
+        {XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
+        {XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f)},
+        {XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 1.0f, 1.0f)},
+        {XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
+        {XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(1.0f, 0.0f, 1.0f)},
+        {XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
+        {XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f)}
     };
 
     // [8] Create the description for an immutable vertex buffer.
@@ -147,37 +137,21 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
             &indexBufferData,
             m_indexBuffer.put()));
 
-    // [14] Create the light and copy it to the constant buffer.
-    DirectionalLight light;
-    light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-    light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-    light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
-    m_lmeConstantBufferData.Light = light;
-
-    // [15] Create the material and copy it to the constant buffer.
-    MaterialDesc material;
-    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
-    m_lmeConstantBufferData.Material = material;
-
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
 }
 
-void MaterialRenderer::Render()
+void ColorRenderer::Render()
 {
     if (m_initialized)
     {
         auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Prepare the constant buffers to send it to the graphics device.
-        context->UpdateSubresource(m_mvpConstantBuffer.get(), 0, nullptr, &m_mvpConstantBufferData, 0, 0);
-        context->UpdateSubresource(m_lmeConstantBuffer.get(), 0, nullptr, &m_lmeConstantBufferData, 0, 0);
+        // Prepare the constant buffer to send it to the graphics device.
+        context->UpdateSubresource(m_constantBuffer.get(), 0, nullptr, &m_constantBufferData, 0, 0);
 
-        // Each vertex is one instance of the VertexPositionNormal struct.
-        UINT stride = sizeof(VertexPositionNormal);
+        // Each vertex is one instance of the VertexPositionColor struct.
+        UINT stride = sizeof(VertexPositionColor);
         UINT offset = 0;
         ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
         context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
@@ -191,12 +165,9 @@ void MaterialRenderer::Render()
         // Attach our vertex shader.
         context->VSSetShader(m_vertexShader.get(), nullptr, 0);
 
-        // Send the constant buffers to the graphics device.
-        ID3D11Buffer* pMvpConstantBuffer{ m_mvpConstantBuffer.get() };
-        context->VSSetConstantBuffers(0, 1, &pMvpConstantBuffer);
-
-        ID3D11Buffer* pLmeConstantBuffer{ m_lmeConstantBuffer.get() };
-        context->PSSetConstantBuffers(0, 1, &pLmeConstantBuffer);
+        // Send the constant buffer to the graphics device.
+        ID3D11Buffer* pConstantBuffer{ m_constantBuffer.get() };
+        context->VSSetConstantBuffers(0, 1, &pConstantBuffer);
 
         // Attach our pixel shader.
         context->PSSetShader(m_pixelShader.get(), nullptr, 0);
@@ -206,37 +177,37 @@ void MaterialRenderer::Render()
     }
 }
 
-void MaterialRenderer::ReleaseResources()
+void ColorRenderer::ReleaseResources()
 {
     m_initialized = false;
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
-    m_mvpConstantBuffer = nullptr;
-    m_lmeConstantBuffer = nullptr;
+    m_constantBuffer = nullptr;
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
 }
 
-void MaterialRenderer::SetProjectionMatrix(DirectX::FXMMATRIX projMatrix)
+void ColorRenderer::SetProjectionMatrix(DirectX::FXMMATRIX projMatrix)
 {
-    XMStoreFloat4x4(&m_mvpConstantBufferData.Projection,
+    XMStoreFloat4x4(&m_constantBufferData.Projection,
         XMMatrixTranspose(projMatrix));
 }
 
-void MaterialRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
+void ColorRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
 {
-    XMStoreFloat4x4(&m_mvpConstantBufferData.Model,
+    XMStoreFloat4x4(&m_constantBufferData.Model,
         XMMatrixTranspose(modelMatrix));
 }
 
-void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix)
+void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix)
 {
-    XMStoreFloat4x4(&m_mvpConstantBufferData.View,
+    XMStoreFloat4x4(&m_constantBufferData.View,
         XMMatrixTranspose(viewMatrix));
 }
 
-void MaterialRenderer::SetEyePosition(DirectX::FXMVECTOR eyePosition)
+void ColorRenderer::SetEyePosition(DirectX::FXMVECTOR eyePosition)
 {
-    XMStoreFloat3(&m_lmeConstantBufferData.EyePosition, eyePosition);
+    // There is no need to set the eye position for the ColorRenderer
+    // because it does not use lighting.
 }

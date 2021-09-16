@@ -1,12 +1,12 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "MaterialShaderStructures.h"
+#include "ColorShaderStructures.h"
 
-class MaterialRenderer : public winrt::implements<MaterialRenderer, winrt::Windows::Foundation::IInspectable>
+class ColorRenderer : public winrt::implements<ColorRenderer, winrt::Windows::Foundation::IInspectable>
 {
 public:
-    MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     winrt::fire_and_forget InitializeInBackground();
     void Render();
@@ -26,11 +26,9 @@ private:
     winrt::com_ptr<ID3D11Buffer>             m_indexBuffer;
     winrt::com_ptr<ID3D11VertexShader>       m_vertexShader;
     winrt::com_ptr<ID3D11PixelShader>        m_pixelShader;
-    winrt::com_ptr<ID3D11Buffer>             m_mvpConstantBuffer;
-    winrt::com_ptr<ID3D11Buffer>             m_lmeConstantBuffer;
+    winrt::com_ptr<ID3D11Buffer>             m_constantBuffer;
 
-    ModelViewProjectionConstantBuffer        m_mvpConstantBufferData;
-    LightMaterialEyeConstantBuffer           m_lmeConstantBufferData;
+    ModelViewProjectionConstantBuffer        m_constantBufferData;
     uint32_t                                 m_indexCount;
     bool                                     m_initialized;
 };

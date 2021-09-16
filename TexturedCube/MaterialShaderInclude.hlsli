@@ -14,14 +14,21 @@ struct MaterialDesc
     float4 Specular; // w = SpecularPower
 };
 
-// A constant buffer that stores the three basic column-major matrices for composing geometry.
+// Both cbuffers are assigned the same register because they are associated with 
+// different shaders.
+
+// Associated with the vertex shader.
 cbuffer ModelViewProjectionConstantBuffer : register(b0)
 {
     matrix Model;
     matrix View;
     matrix Projection;
+};
+
+// Associated with the pixel shader.
+cbuffer LightMaterialEyeConstantBuffer : register(b0)
+{
     DirectionalLight Light;
     MaterialDesc Material;
     float3 EyePosition;
 };
-

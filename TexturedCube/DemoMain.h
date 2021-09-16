@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ColorRenderer.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "MaterialRenderer.h"
@@ -43,7 +44,7 @@ private:
     Concurrency::critical_section            m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;
-    winrt::com_ptr<MaterialRenderer>         m_renderer;
+    winrt::com_ptr<MaterialRenderer>            m_renderer;
 
     // Cube rotation.
     float                                    m_rotation;

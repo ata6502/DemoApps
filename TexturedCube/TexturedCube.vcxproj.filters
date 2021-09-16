@@ -23,7 +23,10 @@
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="MaterialRenderer.cpp">
-      <Filter>Renderers</Filter>
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorRenderer.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -45,7 +48,16 @@
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="MaterialRenderer.h">
-      <Filter>Renderers</Filter>
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShaderStructures.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedShaderStructures.h">
+      <Filter>Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -87,7 +99,7 @@
     <Filter Include="Input">
       <UniqueIdentifier>{d7032a72-29be-4016-ab6e-4c29692b80df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Renderers">
+    <Filter Include="Rendering">
       <UniqueIdentifier>{f530e6ed-5def-4cfb-8848-3e68ed491772}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -103,6 +115,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="MaterialVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ColorPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ColorVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

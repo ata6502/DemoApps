@@ -85,6 +85,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ColorRenderer.h" />
+    <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="IndependentInput.h" />
@@ -97,6 +99,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="MaterialShaderStructures.h" />
+    <ClInclude Include="SharedShaderStructures.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
@@ -123,6 +126,7 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ColorRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
@@ -152,6 +156,12 @@
     <None Include="MaterialShaderInclude.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="ColorPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="ColorVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="MaterialPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

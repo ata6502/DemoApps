@@ -18,7 +18,7 @@
                              SpeedRatio="3"
                              From="-220"
                              To="0"
-                             Duration="0:0:2">
+                             Duration="0:0:1.6">
                 <DoubleAnimation.EasingFunction>
                     <ExponentialEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
@@ -35,7 +35,7 @@
                              SpeedRatio="3"
                              From="0"
                              To="-220"
-                             Duration="0:0:1.0">
+                             Duration="0:0:0.8">
                 <DoubleAnimation.EasingFunction>
                     <ExponentialEase EasingMode="EaseIn" />
                 </DoubleAnimation.EasingFunction>
@@ -63,7 +63,7 @@
                           Grid.Row="1"
                           Width="220"
                           Margin="0,0,0,0"
-                          Background="Gainsboro"
+                          Background="GhostWhite"
                           Opacity="0.8"
                           HorizontalAlignment="Left"
                           BorderBrush="Black"

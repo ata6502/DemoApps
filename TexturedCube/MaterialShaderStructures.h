@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "SharedShaderStructures.h"
+
 struct DirectionalLight
 {
     DirectX::XMFLOAT4 Ambient;
@@ -16,12 +18,8 @@ struct MaterialDesc
     DirectX::XMFLOAT4 Specular; // w = SpecularPower
 };
 
-// Constant buffer used to send MVP matrices to the vertex shader.
-struct ModelViewProjectionConstantBuffer
+struct LightMaterialEyeConstantBuffer
 {
-    DirectX::XMFLOAT4X4 Model;
-    DirectX::XMFLOAT4X4 View;
-    DirectX::XMFLOAT4X4 Projection;
     DirectionalLight Light;
     MaterialDesc Material;
     DirectX::XMFLOAT3 EyePosition;
