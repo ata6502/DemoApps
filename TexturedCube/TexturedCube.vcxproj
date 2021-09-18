@@ -99,7 +99,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="MaterialShaderStructures.h" />
-    <ClInclude Include="SharedShaderStructures.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
@@ -151,6 +150,7 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ColorShaderInclude.hlsli" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <None Include="MaterialShaderInclude.hlsli" />

@@ -1,10 +1,9 @@
-﻿#pragma once
+#pragma once
 
-// Used to send per-vertex data to the vertex shader.
-struct VertexPositionColor
+struct ConstantBufferNeverChanges
 {
-	DirectX::XMFLOAT3 Position;
-	DirectX::XMFLOAT3 Color;
+    DirectionalLight Light;
+    MaterialDesc Material;
 };
 
 struct ConstantBufferOnResize
@@ -15,9 +14,11 @@ struct ConstantBufferOnResize
 struct ConstantBufferPerFrame
 {
     DirectX::XMFLOAT4X4 View;
+    DirectX::XMFLOAT3 EyePosition;
 };
 
 struct ConstantBufferPerObject
 {
     DirectX::XMFLOAT4X4 Model;
 };
+

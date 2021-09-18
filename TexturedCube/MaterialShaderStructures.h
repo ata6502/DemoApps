@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "SharedShaderStructures.h"
-
 struct DirectionalLight
 {
     DirectX::XMFLOAT4 Ambient;
@@ -18,16 +16,31 @@ struct MaterialDesc
     DirectX::XMFLOAT4 Specular; // w = SpecularPower
 };
 
-struct LightMaterialEyeConstantBuffer
-{
-    DirectionalLight Light;
-    MaterialDesc Material;
-    DirectX::XMFLOAT3 EyePosition;
-};
-
 // Used to send per-vertex data to the vertex shader.
 struct VertexPositionNormal
 {
 	DirectX::XMFLOAT3 Position;
 	DirectX::XMFLOAT3 Normal;
+};
+
+struct ConstantBufferNeverChanges
+{
+    DirectionalLight Light;
+    MaterialDesc Material;
+};
+
+struct ConstantBufferOnResize
+{
+    DirectX::XMFLOAT4X4 Projection;
+};
+
+struct ConstantBufferPerFrame
+{
+    DirectX::XMFLOAT4X4 View;
+    DirectX::XMFLOAT3 EyePosition;
+};
+
+struct ConstantBufferPerObject
+{
+    DirectX::XMFLOAT4X4 Model;
 };

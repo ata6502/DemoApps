@@ -14,21 +14,24 @@ struct MaterialDesc
     float4 Specular; // w = SpecularPower
 };
 
-// Both cbuffers are assigned the same register because they are associated with 
-// different shaders.
-
-// Associated with the vertex shader.
-cbuffer ModelViewProjectionConstantBuffer : register(b0)
-{
-    matrix Model;
-    matrix View;
-    matrix Projection;
-};
-
-// Associated with the pixel shader.
-cbuffer LightMaterialEyeConstantBuffer : register(b0)
+cbuffer ConstantBufferNeverChanges : register(b0)
 {
     DirectionalLight Light;
     MaterialDesc Material;
+};
+
+cbuffer ConstantBufferOnResize : register(b1)
+{
+    matrix Projection;
+};
+
+cbuffer ConstantBufferPerFrame : register(b2)
+{
+    matrix View;
     float3 EyePosition;
+};
+
+cbuffer ConstantBufferPerObject : register(b3)
+{
+    matrix Model;
 };

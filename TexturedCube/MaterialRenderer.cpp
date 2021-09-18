@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "MaterialRenderer.h"
 #include "Utilities.h"
 
@@ -6,20 +7,18 @@ using namespace DirectX;
 
 MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
-    m_mvpConstantBufferData(),
-    m_lmeConstantBufferData(),
     m_indexCount(0),
-    m_initialized(false)
+    m_initialized(false),
+    m_constantBufferOnResizeData()
 {
     // Initialize device resources asynchronously.
     InitializeInBackground();
-
-    SetModelMatrix(XMMatrixIdentity());
 }
 
 winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 {
     auto lifetime = get_strong();
+    auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
     auto vertexShaderBytecode = co_await ReadDataAsync(L"MaterialVertexShader.cso");
@@ -27,7 +26,7 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 
     // [2] Create vertex shader.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateVertexShader(
+        device->CreateVertexShader(
             vertexShaderBytecode.data(),
             vertexShaderBytecode.Length(),
             nullptr,
@@ -42,7 +41,7 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateInputLayout( 
+        device->CreateInputLayout(
             vertexDesc,
             ARRAYSIZE(vertexDesc),
             vertexShaderBytecode.data(),
@@ -51,28 +50,38 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 
     // [5] Create the pixel shader.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreatePixelShader(
+        device->CreatePixelShader(
             pixelShaderBytecode.data(),
             pixelShaderBytecode.Length(),
             nullptr,
             m_pixelShader.put()));
 
-    // [6] Create two 16-byte aligned constant buffers.
-    uint32_t byteWidth = (sizeof(ModelViewProjectionConstantBuffer) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC mvpConstantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &mvpConstantBufferDesc,
-            nullptr,
-            m_mvpConstantBuffer.put()));
+    // [6] Create constant buffers.
+    D3D11_BUFFER_DESC bd;
+    ZeroMemory(&bd, sizeof(bd));
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = 0;
 
-    byteWidth = (sizeof(LightMaterialEyeConstantBuffer) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC lmeConstantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
+    bd.ByteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
+    m_constantBufferNeverChanges = nullptr;
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &lmeConstantBufferDesc,
-            nullptr,
-            m_lmeConstantBuffer.put()));
+        device->CreateBuffer(&bd, nullptr, m_constantBufferNeverChanges.put()));
+
+    bd.ByteWidth = (sizeof(ConstantBufferOnResize) + 15) / 16 * 16;
+    m_constantBufferOnResize = nullptr;
+    winrt::check_hresult(
+        device->CreateBuffer(&bd, nullptr, m_constantBufferOnResize.put()));
+
+    bd.ByteWidth = (sizeof(ConstantBufferPerFrame) + 15) / 16 * 16;
+    m_constantBufferPerFrame = nullptr;
+    winrt::check_hresult(
+        device->CreateBuffer(&bd, nullptr, m_constantBufferPerFrame.put()));
+
+    bd.ByteWidth = (sizeof(ConstantBufferPerObject) + 15) / 16 * 16;
+    m_constantBufferPerObject = nullptr;
+    winrt::check_hresult(
+        device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
     // [7] Create cube vertices. Each vertex has a position and a normal vector.
     float n = 1.0f / sqrtf(3.0f); // all components of coordinates of the normals have the value n
@@ -142,25 +151,31 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
     indexBufferData.SysMemSlicePitch = 0;
     CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
+        device->CreateBuffer(
             &indexBufferDesc,
             &indexBufferData,
             m_indexBuffer.put()));
 
-    // [14] Create the light and copy it to the constant buffer.
+    // [14] Create a data structure for data that never changes.
+    ConstantBufferNeverChanges constantBufferNeverChangesData;
+
+    // [15] Create the light.
     DirectionalLight light;
     light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
     light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
-    m_lmeConstantBufferData.Light = light;
+    constantBufferNeverChangesData.Light = light;
 
-    // [15] Create the material and copy it to the constant buffer.
+    // [15] Create the material.
     MaterialDesc material;
     material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
-    m_lmeConstantBufferData.Material = material;
+    constantBufferNeverChangesData.Material = material;
+
+    // [16] Copy data that never changes to the appropriate constant buffer.
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
@@ -172,9 +187,8 @@ void MaterialRenderer::Render()
     {
         auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Prepare the constant buffers to send it to the graphics device.
-        context->UpdateSubresource(m_mvpConstantBuffer.get(), 0, nullptr, &m_mvpConstantBufferData, 0, 0);
-        context->UpdateSubresource(m_lmeConstantBuffer.get(), 0, nullptr, &m_lmeConstantBufferData, 0, 0);
+        // Set constant buffer data.
+        context->UpdateSubresource(m_constantBufferOnResize.get(), 0, nullptr, &m_constantBufferOnResizeData, 0, 0);
 
         // Each vertex is one instance of the VertexPositionNormal struct.
         UINT stride = sizeof(VertexPositionNormal);
@@ -188,18 +202,22 @@ void MaterialRenderer::Render()
         context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         context->IASetInputLayout(m_inputLayout.get());
 
-        // Attach our vertex shader.
+        // Attach shaders.
         context->VSSetShader(m_vertexShader.get(), nullptr, 0);
+        context->PSSetShader(m_pixelShader.get(), nullptr, 0);
+
+        // Get pointers to constant buffers.
+        ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
+        ID3D11Buffer* cbOnResizePtr{ m_constantBufferOnResize.get() };
+        ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
+        ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
 
         // Send the constant buffers to the graphics device.
-        ID3D11Buffer* pMvpConstantBuffer{ m_mvpConstantBuffer.get() };
-        context->VSSetConstantBuffers(0, 1, &pMvpConstantBuffer);
-
-        ID3D11Buffer* pLmeConstantBuffer{ m_lmeConstantBuffer.get() };
-        context->PSSetConstantBuffers(0, 1, &pLmeConstantBuffer);
-
-        // Attach our pixel shader.
-        context->PSSetShader(m_pixelShader.get(), nullptr, 0);
+        context->VSSetConstantBuffers(1, 1, &cbOnResizePtr);
+        context->VSSetConstantBuffers(2, 1, &cbPerFramePtr);
+        context->VSSetConstantBuffers(3, 1, &cbPerObjectPtr);
+        context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
+        context->PSSetConstantBuffers(2, 1, &cbPerFramePtr);
 
         // Draw the cube.
         context->DrawIndexed(m_indexCount, 0, 0);
@@ -212,31 +230,38 @@ void MaterialRenderer::ReleaseResources()
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
-    m_mvpConstantBuffer = nullptr;
-    m_lmeConstantBuffer = nullptr;
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
+    m_constantBufferNeverChanges = nullptr;
+    m_constantBufferOnResize = nullptr;
+    m_constantBufferPerFrame = nullptr;
+    m_constantBufferPerObject = nullptr;
 }
 
-void MaterialRenderer::SetProjectionMatrix(DirectX::FXMMATRIX projMatrix)
+bool MaterialRenderer::IsInitialized() const
 {
-    XMStoreFloat4x4(&m_mvpConstantBufferData.Projection,
-        XMMatrixTranspose(projMatrix));
+    return m_initialized;
+}
+
+void MaterialRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+{
+    XMStoreFloat4x4(&m_constantBufferOnResizeData.Projection, XMMatrixTranspose(projMatrix));
+}
+
+void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition)
+{
+    if (!m_initialized)
+        return;
+
+    ConstantBufferPerFrame constantBufferPerFrameData;
+    XMStoreFloat4x4(&constantBufferPerFrameData.View, XMMatrixTranspose(viewMatrix));
+    XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
 void MaterialRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
 {
-    XMStoreFloat4x4(&m_mvpConstantBufferData.Model,
-        XMMatrixTranspose(modelMatrix));
-}
-
-void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix)
-{
-    XMStoreFloat4x4(&m_mvpConstantBufferData.View,
-        XMMatrixTranspose(viewMatrix));
-}
-
-void MaterialRenderer::SetEyePosition(DirectX::FXMVECTOR eyePosition)
-{
-    XMStoreFloat3(&m_lmeConstantBufferData.EyePosition, eyePosition);
+    ConstantBufferPerObject constantBufferPerObjectData;
+    XMStoreFloat4x4(&constantBufferPerObjectData.Model, XMMatrixTranspose(modelMatrix));
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }

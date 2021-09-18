@@ -44,7 +44,7 @@ void DemoMain::CreateWindowSizeDependentResources()
         0.01f,
         100.0f);
 
-    m_renderer->SetProjectionMatrix(projMatrix);
+    m_renderer->SetProjMatrix(projMatrix);
 }
 
 void DemoMain::StartRenderLoop()
@@ -133,16 +133,13 @@ void DemoMain::Update()
     static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
     static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up));
-    m_renderer->SetEyePosition(eye);
+    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye);
 
     if (m_rotationEnabled)
     {
         m_rotation = (m_rotation + m_timer.GetElapsedSeconds());
         if (m_rotation > XM_2PI)
             m_rotation = fmod(m_rotation, XM_2PI);
-
-        m_renderer->SetModelMatrix(XMMatrixRotationY(m_rotation));
     }
 }
 
@@ -151,8 +148,8 @@ void DemoMain::Update()
 /// </summary>
 void DemoMain::Render()
 {
-    // Don't render anything before the first Update.
-    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon())
+    // Don't render anything before the first Update and until the renderer is initialized.
+    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon() || !m_renderer->IsInitialized())
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };
@@ -164,6 +161,8 @@ void DemoMain::Render()
     // Clear the back buffer and depth stencil view.
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
+
+    m_renderer->SetModelMatrix(XMMatrixRotationY(m_rotation));
 
     m_renderer->Render();
 }

@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "ColorRenderer.h"
 #include "Utilities.h"
 
@@ -6,9 +7,11 @@ using namespace DirectX;
 
 ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
-    m_constantBufferData(),
     m_indexCount(0),
-    m_initialized(false)
+    m_initialized(false),
+    m_constantBufferOnResizeData(),
+    m_constantBufferPerFrameData(),
+    m_constantBufferPerObjectData()
 {
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -19,6 +22,7 @@ ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
 winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 {
     auto lifetime = get_strong();
+    auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
     auto vertexShaderBytecode = co_await ReadDataAsync(L"ColorVertexShader.cso");
@@ -26,7 +30,7 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 
     // [2] Create vertex shader.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateVertexShader(
+        device->CreateVertexShader(
             vertexShaderBytecode.data(),
             vertexShaderBytecode.Length(),
             nullptr,
@@ -41,7 +45,7 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateInputLayout( 
+        device->CreateInputLayout(
             vertexDesc,
             ARRAYSIZE(vertexDesc),
             vertexShaderBytecode.data(),
@@ -50,20 +54,33 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 
     // [5] Create the pixel shader.
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreatePixelShader(
+        device->CreatePixelShader(
             pixelShaderBytecode.data(),
             pixelShaderBytecode.Length(),
             nullptr,
             m_pixelShader.put()));
 
-    // [6] Create a 16-byte aligned constant buffer.
-    uint32_t byteWidth = (sizeof(ModelViewProjectionConstantBuffer) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
+    // [6] Create constant buffers.
+    D3D11_BUFFER_DESC bd;
+    ZeroMemory(&bd, sizeof(bd));
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    bd.CPUAccessFlags = 0;
+
+    bd.ByteWidth = (sizeof(ConstantBufferOnResize) + 15) / 16 * 16;
+    m_constantBufferOnResize = nullptr;
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &constantBufferDesc,
-            nullptr,
-            m_constantBuffer.put()));
+        device->CreateBuffer(&bd, nullptr, m_constantBufferOnResize.put()));
+
+    bd.ByteWidth = (sizeof(ConstantBufferPerFrame) + 15) / 16 * 16;
+    m_constantBufferPerFrame = nullptr;
+    winrt::check_hresult(
+        device->CreateBuffer(&bd, nullptr, m_constantBufferPerFrame.put()));
+
+    bd.ByteWidth = (sizeof(ConstantBufferPerObject) + 15) / 16 * 16;
+    m_constantBufferPerObject = nullptr;
+    winrt::check_hresult(
+        device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
     // [7] Create cube vertices. Each vertex has a position and a color.
     static const VertexPositionColor cubeVertices[] =
@@ -132,7 +149,7 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
     indexBufferData.SysMemSlicePitch = 0;
     CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
     winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
+        device->CreateBuffer(
             &indexBufferDesc,
             &indexBufferData,
             m_indexBuffer.put()));
@@ -147,8 +164,10 @@ void ColorRenderer::Render()
     {
         auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Prepare the constant buffer to send it to the graphics device.
-        context->UpdateSubresource(m_constantBuffer.get(), 0, nullptr, &m_constantBufferData, 0, 0);
+        // Set constant buffer data.
+        context->UpdateSubresource(m_constantBufferOnResize.get(), 0, nullptr, &m_constantBufferOnResizeData, 0, 0);
+        context->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
+        context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &m_constantBufferPerObjectData, 0, 0);
 
         // Each vertex is one instance of the VertexPositionColor struct.
         UINT stride = sizeof(VertexPositionColor);
@@ -162,15 +181,19 @@ void ColorRenderer::Render()
         context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         context->IASetInputLayout(m_inputLayout.get());
 
-        // Attach our vertex shader.
+        // Attach shaders.
         context->VSSetShader(m_vertexShader.get(), nullptr, 0);
-
-        // Send the constant buffer to the graphics device.
-        ID3D11Buffer* pConstantBuffer{ m_constantBuffer.get() };
-        context->VSSetConstantBuffers(0, 1, &pConstantBuffer);
-
-        // Attach our pixel shader.
         context->PSSetShader(m_pixelShader.get(), nullptr, 0);
+
+        // Get pointers to constant buffers.
+        ID3D11Buffer* cbOnResizePtr{ m_constantBufferOnResize.get() };
+        ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
+        ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
+
+        // Send the constant buffers to the graphics device.
+        context->VSSetConstantBuffers(0, 1, &cbOnResizePtr);
+        context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
+        context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
 
         // Draw the cube.
         context->DrawIndexed(m_indexCount, 0, 0);
@@ -183,31 +206,25 @@ void ColorRenderer::ReleaseResources()
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
-    m_constantBuffer = nullptr;
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
+    m_constantBufferOnResize = nullptr;
+    m_constantBufferPerFrame = nullptr;
+    m_constantBufferPerObject = nullptr;
 }
 
-void ColorRenderer::SetProjectionMatrix(DirectX::FXMMATRIX projMatrix)
+void ColorRenderer::OnResize(DirectX::FXMMATRIX projMatrix)
 {
-    XMStoreFloat4x4(&m_constantBufferData.Projection,
-        XMMatrixTranspose(projMatrix));
+    XMStoreFloat4x4(&m_constantBufferOnResizeData.Projection, XMMatrixTranspose(projMatrix));
+}
+
+void ColorRenderer::OnUpdate(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition)
+{
+    // The eye position is not used in the ColorRenderer shaders.
+    XMStoreFloat4x4(&m_constantBufferPerFrameData.View, XMMatrixTranspose(viewMatrix));
 }
 
 void ColorRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
 {
-    XMStoreFloat4x4(&m_constantBufferData.Model,
-        XMMatrixTranspose(modelMatrix));
-}
-
-void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix)
-{
-    XMStoreFloat4x4(&m_constantBufferData.View,
-        XMMatrixTranspose(viewMatrix));
-}
-
-void ColorRenderer::SetEyePosition(DirectX::FXMVECTOR eyePosition)
-{
-    // There is no need to set the eye position for the ColorRenderer
-    // because it does not use lighting.
+    XMStoreFloat4x4(&m_constantBufferPerObjectData.Model, XMMatrixTranspose(modelMatrix));
 }

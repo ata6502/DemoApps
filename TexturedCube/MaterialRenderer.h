@@ -12,26 +12,32 @@ public:
     void Render();
     void ReleaseResources();
 
-    void SetProjectionMatrix(DirectX::FXMMATRIX projMatrix);
+    bool IsInitialized() const;
+    void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
+    void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition);
     void SetModelMatrix(DirectX::FXMMATRIX modelMatrix);
-    void SetViewMatrix(DirectX::FXMMATRIX viewMatrix);
-    void SetEyePosition(DirectX::FXMVECTOR eyePosition);
 
 private:
-    std::shared_ptr<DX::DeviceResources>     m_deviceResources;
+    std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
     // Direct3D resources for cube geometry.
-    winrt::com_ptr<ID3D11InputLayout>        m_inputLayout;
-    winrt::com_ptr<ID3D11Buffer>             m_vertexBuffer;
-    winrt::com_ptr<ID3D11Buffer>             m_indexBuffer;
-    winrt::com_ptr<ID3D11VertexShader>       m_vertexShader;
-    winrt::com_ptr<ID3D11PixelShader>        m_pixelShader;
-    winrt::com_ptr<ID3D11Buffer>             m_mvpConstantBuffer;
-    winrt::com_ptr<ID3D11Buffer>             m_lmeConstantBuffer;
+    winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
+    winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer;
+    winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
+    winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
+    winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
 
-    ModelViewProjectionConstantBuffer        m_mvpConstantBufferData;
-    LightMaterialEyeConstantBuffer           m_lmeConstantBufferData;
-    uint32_t                                 m_indexCount;
-    bool                                     m_initialized;
+    // Constant buffers.
+    winrt::com_ptr<ID3D11Buffer>            m_constantBufferNeverChanges;
+    winrt::com_ptr<ID3D11Buffer>            m_constantBufferOnResize;
+    winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
+    winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
+
+    // Constant buffer data.
+    ConstantBufferOnResize                  m_constantBufferOnResizeData;
+
+    uint32_t                                m_indexCount;
+    bool                                    m_initialized;
+    DirectX::XMFLOAT4X4                     m_projMatrix;
 };
 

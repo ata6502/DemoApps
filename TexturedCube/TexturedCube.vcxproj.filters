@@ -56,9 +56,6 @@
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="SharedShaderStructures.h">
-      <Filter>Shaders</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -107,6 +104,9 @@
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
     <None Include="MaterialShaderInclude.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ColorShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
