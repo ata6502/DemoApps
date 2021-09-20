@@ -16,7 +16,7 @@ DemoMain::DemoMain() :
     m_deviceResources->RegisterDeviceNotify(this);
     
     m_input = std::make_unique<IndependentInput>();
-    m_renderer = winrt::make_self<MaterialRenderer>(m_deviceResources);
+    m_renderer = winrt::make_self<ColorRenderer>(m_deviceResources);
 
     m_timer.Reset();
 }
@@ -133,7 +133,7 @@ void DemoMain::Update()
     static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
     static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye);
+    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye, m_timer.GetTotalSeconds());
 
     if (m_rotationEnabled)
     {
@@ -149,7 +149,7 @@ void DemoMain::Update()
 void DemoMain::Render()
 {
     // Don't render anything before the first Update and until the renderer is initialized.
-    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon() || !m_renderer->IsInitialized())
+    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon() || !m_renderer->IsInitialized()) 
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };

@@ -208,7 +208,7 @@ void ColorRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition)
+void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, float totalSeconds)
 {
     // The eye position is not used in the ColorRenderer shaders.
 
@@ -218,6 +218,7 @@ void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
+    XMStoreFloat4(&constantBufferPerFrameData.Time, XMVectorSet(totalSeconds, 0, 0, 0)); // we use only the x-member in the shader
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 

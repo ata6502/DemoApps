@@ -1,20 +1,5 @@
 #include "MaterialShaderInclude.hlsli"
 
-// Per-vertex data used as input to the vertex shader.
-struct VertexShaderInput
-{
-    float3 posL : POSITION; // renamed 'pos' to 'posL' to underline that this arg is in local coordinates
-    float3 normal : NORMAL;
-};
-
-// Per-pixel color data passed through the pixel shader.
-struct PixelShaderInput
-{
-    float4 posH : SV_POSITION;  // renamed 'pos' to 'posH' to underline that this arg is in homogenous coordinates
-    float3 posW : POSITION; // a position in world space
-    float3 normal : NORMAL;
-};
-
 PixelShaderInput main(VertexShaderInput input)
 {
     PixelShaderInput output;

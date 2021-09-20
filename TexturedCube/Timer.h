@@ -91,15 +91,13 @@ public:
     {
         if (m_active)
         {
-            // The distance m_currentTime - m_baseTime includes paused time,
-            // which we do not want to count. To correct this, we can subtract
-            // the paused time from m_currentTime:
+            // The distance m_currentTime - m_baseTime includes paused time, which we do not want to count. 
+            // To correct this, we can subtract the paused time from m_currentTime.
             return static_cast<float>(((m_currentTime.QuadPart - m_pausedTime.QuadPart) - m_baseTime.QuadPart) * m_secondsPerCount);
         }
         else
         {
-            // The clock is currently not running so don't count the time since
-            // the clock was stopped
+            // The clock is currently not running so don't count the time since the clock was stopped
             return static_cast<float>(((m_stopTime.QuadPart - m_pausedTime.QuadPart) - m_baseTime.QuadPart) * m_secondsPerCount);
         }
     }

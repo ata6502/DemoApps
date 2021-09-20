@@ -1,12 +1,5 @@
 #include "MaterialShaderInclude.hlsli"
 
-struct PixelShaderInput
-{
-    float4 pos : SV_POSITION;
-    float3 posW : POSITION; // a position in world space
-    float3 normal : NORMAL;
-};
-
 float4 main(PixelShaderInput input) : SV_TARGET
 {
     float3 L = -Light.Direction; // the light vector

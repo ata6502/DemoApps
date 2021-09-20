@@ -13,7 +13,7 @@ public:
 
     bool IsInitialized() const;
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
-    void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition);
+    void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
 private:

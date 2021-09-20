@@ -10,6 +10,7 @@ struct VertexPositionColor
 struct ConstantBufferPerFrame
 {
     DirectX::XMFLOAT4X4 ViewProj;
+    DirectX::XMFLOAT4 Time;
 };
 
 struct ConstantBufferPerObject

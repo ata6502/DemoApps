@@ -1,9 +1,4 @@
-// Per-pixel color data passed through the pixel shader.
-struct PixelShaderInput
-{
-    float4 Position : SV_POSITION;
-    float3 Color : COLOR0;
-};
+#include "ColorShaderInclude.hlsli"
 
 // A pass-through function for the (interpolated) color data.
 float4 main(PixelShaderInput input) : SV_TARGET
