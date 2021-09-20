@@ -15,7 +15,7 @@ public:
     bool IsInitialized() const;
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition);
-    void SetModelMatrix(DirectX::FXMMATRIX modelMatrix);
+    void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
@@ -29,12 +29,8 @@ private:
 
     // Constant buffers.
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferNeverChanges;
-    winrt::com_ptr<ID3D11Buffer>            m_constantBufferOnResize;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
-
-    // Constant buffer data.
-    ConstantBufferOnResize                  m_constantBufferOnResizeData;
 
     uint32_t                                m_indexCount;
     bool                                    m_initialized;

@@ -8,9 +8,10 @@ using namespace DirectX;
 MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_indexCount(0),
-    m_initialized(false),
-    m_constantBufferOnResizeData()
+    m_initialized(false)
 {
+    XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
+
     // Initialize device resources asynchronously.
     InitializeInBackground();
 }
@@ -67,11 +68,6 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
     m_constantBufferNeverChanges = nullptr;
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferNeverChanges.put()));
-
-    bd.ByteWidth = (sizeof(ConstantBufferOnResize) + 15) / 16 * 16;
-    m_constantBufferOnResize = nullptr;
-    winrt::check_hresult(
-        device->CreateBuffer(&bd, nullptr, m_constantBufferOnResize.put()));
 
     bd.ByteWidth = (sizeof(ConstantBufferPerFrame) + 15) / 16 * 16;
     m_constantBufferPerFrame = nullptr;
@@ -187,9 +183,6 @@ void MaterialRenderer::Render()
     {
         auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Set constant buffer data.
-        context->UpdateSubresource(m_constantBufferOnResize.get(), 0, nullptr, &m_constantBufferOnResizeData, 0, 0);
-
         // Each vertex is one instance of the VertexPositionNormal struct.
         UINT stride = sizeof(VertexPositionNormal);
         UINT offset = 0;
@@ -208,16 +201,14 @@ void MaterialRenderer::Render()
 
         // Get pointers to constant buffers.
         ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
-        ID3D11Buffer* cbOnResizePtr{ m_constantBufferOnResize.get() };
         ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
         ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
 
         // Send the constant buffers to the graphics device.
-        context->VSSetConstantBuffers(1, 1, &cbOnResizePtr);
-        context->VSSetConstantBuffers(2, 1, &cbPerFramePtr);
-        context->VSSetConstantBuffers(3, 1, &cbPerObjectPtr);
+        context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
+        context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
         context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
-        context->PSSetConstantBuffers(2, 1, &cbPerFramePtr);
+        context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
 
         // Draw the cube.
         context->DrawIndexed(m_indexCount, 0, 0);
@@ -233,7 +224,6 @@ void MaterialRenderer::ReleaseResources()
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
     m_constantBufferNeverChanges = nullptr;
-    m_constantBufferOnResize = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
 }
@@ -245,7 +235,7 @@ bool MaterialRenderer::IsInitialized() const
 
 void MaterialRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
-    XMStoreFloat4x4(&m_constantBufferOnResizeData.Projection, XMMatrixTranspose(projMatrix));
+    XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
 void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition)
@@ -254,14 +244,18 @@ void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXM
         return;
 
     ConstantBufferPerFrame constantBufferPerFrameData;
-    XMStoreFloat4x4(&constantBufferPerFrameData.View, XMMatrixTranspose(viewMatrix));
+    XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
+        XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void MaterialRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
+void MaterialRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 {
+    if (!m_initialized)
+        return;
+
     ConstantBufferPerObject constantBufferPerObjectData;
-    XMStoreFloat4x4(&constantBufferPerObjectData.Model, XMMatrixTranspose(modelMatrix));
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }

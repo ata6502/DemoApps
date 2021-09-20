@@ -20,18 +20,13 @@ cbuffer ConstantBufferNeverChanges : register(b0)
     MaterialDesc Material;
 };
 
-cbuffer ConstantBufferOnResize : register(b1)
+cbuffer ConstantBufferPerFrame : register(b1)
 {
-    matrix Projection;
-};
-
-cbuffer ConstantBufferPerFrame : register(b2)
-{
-    matrix View;
+    matrix ViewProj;
     float3 EyePosition;
 };
 
-cbuffer ConstantBufferPerObject : register(b3)
+cbuffer ConstantBufferPerObject : register(b2)
 {
-    matrix Model;
+    matrix World;
 };
