@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "ColorRenderer.h"
+#include "ColorRenderer.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "MaterialRenderer.h"

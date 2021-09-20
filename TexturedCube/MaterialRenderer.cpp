@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "MaterialRenderer.h"
+#include "MaterialShaderStructures.h"
 #include "Utilities.h"
 
 using namespace DirectX;

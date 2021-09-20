@@ -1,14 +1,9 @@
-cbuffer ConstantBufferOnResize : register(b0)
+cbuffer ConstantBufferPerFrame : register(b0)
 {
-    matrix Projection;
+    matrix ViewProj;
 };
 
-cbuffer ConstantBufferPerFrame : register(b1)
+cbuffer ConstantBufferPerObject : register(b1)
 {
-    matrix View;
-};
-
-cbuffer ConstantBufferPerObject : register(b2)
-{
-    matrix Model;
+    matrix World;
 };

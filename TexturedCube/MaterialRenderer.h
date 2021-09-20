@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "MaterialShaderStructures.h"
 
 class MaterialRenderer : public winrt::implements<MaterialRenderer, winrt::Windows::Foundation::IInspectable>
 {

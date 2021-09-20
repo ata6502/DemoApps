@@ -7,17 +7,12 @@ struct VertexPositionColor
 	DirectX::XMFLOAT3 Color;
 };
 
-struct ConstantBufferOnResize
-{
-    DirectX::XMFLOAT4X4 Projection;
-};
-
 struct ConstantBufferPerFrame
 {
-    DirectX::XMFLOAT4X4 View;
+    DirectX::XMFLOAT4X4 ViewProj;
 };
 
 struct ConstantBufferPerObject
 {
-    DirectX::XMFLOAT4X4 Model;
+    DirectX::XMFLOAT4X4 World;
 };

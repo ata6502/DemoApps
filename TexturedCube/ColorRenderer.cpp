@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "ColorRenderer.h"
+#include "ColorShaderStructures.h"
 #include "Utilities.h"
 
 using namespace DirectX;
@@ -8,15 +9,12 @@ using namespace DirectX;
 ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_indexCount(0),
-    m_initialized(false),
-    m_constantBufferOnResizeData(),
-    m_constantBufferPerFrameData(),
-    m_constantBufferPerObjectData()
+    m_initialized(false)
 {
+    XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
+
     // Initialize device resources asynchronously.
     InitializeInBackground();
-
-    SetModelMatrix(XMMatrixIdentity());
 }
 
 winrt::fire_and_forget ColorRenderer::InitializeInBackground()
@@ -66,11 +64,6 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
     bd.Usage = D3D11_USAGE_DEFAULT;
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bd.CPUAccessFlags = 0;
-
-    bd.ByteWidth = (sizeof(ConstantBufferOnResize) + 15) / 16 * 16;
-    m_constantBufferOnResize = nullptr;
-    winrt::check_hresult(
-        device->CreateBuffer(&bd, nullptr, m_constantBufferOnResize.put()));
 
     bd.ByteWidth = (sizeof(ConstantBufferPerFrame) + 15) / 16 * 16;
     m_constantBufferPerFrame = nullptr;
@@ -164,11 +157,6 @@ void ColorRenderer::Render()
     {
         auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Set constant buffer data.
-        context->UpdateSubresource(m_constantBufferOnResize.get(), 0, nullptr, &m_constantBufferOnResizeData, 0, 0);
-        context->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
-        context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &m_constantBufferPerObjectData, 0, 0);
-
         // Each vertex is one instance of the VertexPositionColor struct.
         UINT stride = sizeof(VertexPositionColor);
         UINT offset = 0;
@@ -186,14 +174,12 @@ void ColorRenderer::Render()
         context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 
         // Get pointers to constant buffers.
-        ID3D11Buffer* cbOnResizePtr{ m_constantBufferOnResize.get() };
         ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
         ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
 
         // Send the constant buffers to the graphics device.
-        context->VSSetConstantBuffers(0, 1, &cbOnResizePtr);
-        context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
-        context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
+        context->VSSetConstantBuffers(0, 1, &cbPerFramePtr);
+        context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
 
         // Draw the cube.
         context->DrawIndexed(m_indexCount, 0, 0);
@@ -208,23 +194,39 @@ void ColorRenderer::ReleaseResources()
     m_pixelShader = nullptr;
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
-    m_constantBufferOnResize = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
 }
 
-void ColorRenderer::OnResize(DirectX::FXMMATRIX projMatrix)
+bool ColorRenderer::IsInitialized() const
 {
-    XMStoreFloat4x4(&m_constantBufferOnResizeData.Projection, XMMatrixTranspose(projMatrix));
+    return m_initialized;
 }
 
-void ColorRenderer::OnUpdate(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition)
+void ColorRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+{
+    XMStoreFloat4x4(&m_projMatrix, projMatrix);
+}
+
+void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition)
 {
     // The eye position is not used in the ColorRenderer shaders.
-    XMStoreFloat4x4(&m_constantBufferPerFrameData.View, XMMatrixTranspose(viewMatrix));
+
+    if (!m_initialized)
+        return;
+
+    ConstantBufferPerFrame constantBufferPerFrameData;
+    XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
+        XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void ColorRenderer::SetModelMatrix(DirectX::FXMMATRIX modelMatrix)
+void ColorRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 {
-    XMStoreFloat4x4(&m_constantBufferPerObjectData.Model, XMMatrixTranspose(modelMatrix));
+    if (!m_initialized)
+        return;
+
+    ConstantBufferPerObject constantBufferPerObjectData;
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }

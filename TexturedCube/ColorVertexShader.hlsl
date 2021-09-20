@@ -21,10 +21,7 @@ PixelShaderInput main(VertexShaderInput input)
     float4 pos = float4(input.Position, 1.0f);
 
     // Transform the vertex position into projected space.
-    pos = mul(pos, Model);
-    pos = mul(pos, View);
-    pos = mul(pos, Projection);
-    output.Position = pos;
+    output.Position = mul(pos, mul(World, ViewProj));
 
     // Pass the color through without modification.
     output.Color = input.Color;
