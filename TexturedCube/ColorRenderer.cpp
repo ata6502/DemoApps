@@ -35,10 +35,12 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
             m_vertexShader.put()));
 
     // [3] Create vertex description.
+    // Hook up the position element to the input slot 0 and the color element to the input slot 1.
+    // Note that the AlignedByteOffset parameter is 0 for both elements.
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -75,42 +77,80 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [7] Create cube vertices. Each vertex has a position and a color.
-    static const VertexPositionColor cubeVertices[] =
+    // Use two vertex buffers (and two input slots) to feed the pipeline with vertices, 
+    // one that stores the position element and the other that stores the color element.
+ 
+    // [7] Create cube vertex positions. 
+    static const VertexPosition cubeVertexPositions[] =
     {
-        {XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f)},
-        {XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
-        {XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0.0f, 1.0f, 0.0f)},
-        {XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0.0f, 1.0f, 1.0f)},
-        {XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-        {XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(1.0f, 0.0f, 1.0f)},
-        {XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
-        {XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(1.0f, 1.0f, 1.0f)}
+        {XMFLOAT3(-0.5f, -0.5f, -0.5f)},
+        {XMFLOAT3(-0.5f, -0.5f,  0.5f)},
+        {XMFLOAT3(-0.5f,  0.5f, -0.5f)},
+        {XMFLOAT3(-0.5f,  0.5f,  0.5f)},
+        {XMFLOAT3( 0.5f, -0.5f, -0.5f)},
+        {XMFLOAT3( 0.5f, -0.5f,  0.5f)},
+        {XMFLOAT3( 0.5f,  0.5f, -0.5f)},
+        {XMFLOAT3( 0.5f,  0.5f,  0.5f)}
     };
 
-    // [8] Create the description for an immutable vertex buffer.
+    // [8] Create the vertex buffer description.
     D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
-    vertexBufferDesc.ByteWidth = sizeof(cubeVertices);      // the size of the buffer in bytes
-    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;         // the contents of the buffer will not change after creation
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;  // this buffer is a vertex buffer
-    vertexBufferDesc.CPUAccessFlags = 0;                    // CPU does not require read or write access to the buffer after the buffer has been created
+    vertexBufferDesc.ByteWidth = sizeof(cubeVertexPositions);   // the size of the buffer in bytes
+    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;             // the contents of the buffer will not change after creation
+    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vertexBufferDesc.CPUAccessFlags = 0;                        // CPU does not require read or write access to the buffer after the buffer has been created
     vertexBufferDesc.MiscFlags = 0;
-    vertexBufferDesc.StructureByteStride = 0;               // used with structured buffers; 0 for the vertex buffers
+    vertexBufferDesc.StructureByteStride = 0;                   // used with structured buffers; 0 for the vertex buffers
 
     // [9] Create data to initialize the vertex buffer.
     D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-    vertexBufferData.pSysMem = cubeVertices;
+    vertexBufferData.pSysMem = cubeVertexPositions;
     vertexBufferData.SysMemPitch = 0;
     vertexBufferData.SysMemSlicePitch = 0;
 
     // [10] Create the vertex buffer and load data.
     winrt::check_hresult(
+        device->CreateBuffer(
+            &vertexBufferDesc,
+            &vertexBufferData,
+            m_vertexBufferPosition.put()));
+
+    // [11] Create cube vertex colors.
+    static const VertexColor cubeVertexColors[] =
+    {
+        {XMFLOAT3(0.0f, 0.0f, 0.0f)},
+        {XMFLOAT3(0.0f, 0.0f, 1.0f)},
+        {XMFLOAT3(0.0f, 1.0f, 0.0f)},
+        {XMFLOAT3(0.0f, 1.0f, 1.0f)},
+        {XMFLOAT3(1.0f, 0.0f, 0.0f)},
+        {XMFLOAT3(1.0f, 0.0f, 1.0f)},
+        {XMFLOAT3(1.0f, 1.0f, 0.0f)},
+        {XMFLOAT3(1.0f, 1.0f, 1.0f)}
+    };
+
+    // [12] Create the vertex buffer description.
+    vertexBufferDesc = { 0 };
+    vertexBufferDesc.ByteWidth = sizeof(cubeVertexColors);      // the size of the buffer in bytes
+    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;             // the contents of the buffer will not change after creation
+    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    vertexBufferDesc.CPUAccessFlags = 0;                        // CPU does not require read or write access to the buffer after the buffer has been created
+    vertexBufferDesc.MiscFlags = 0;
+    vertexBufferDesc.StructureByteStride = 0;                   // used with structured buffers; 0 for the vertex buffers
+
+    // [13] Create data to initialize the vertex buffer.
+    vertexBufferData = { 0 };
+    vertexBufferData.pSysMem = cubeVertexColors;
+    vertexBufferData.SysMemPitch = 0;
+    vertexBufferData.SysMemSlicePitch = 0;
+
+    // [14] Create the vertex buffer and load data.
+    winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &vertexBufferDesc,
             &vertexBufferData,
-            m_vertexBuffer.put()));
+            m_vertexBufferColor.put()));
 
-    // [11] Create cube indices in the left-handed coordinate system.
+    // [15] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
     {
         0,1,2, // -x
@@ -132,10 +172,10 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
         1,5,7,
     };
 
-    // [12] Keep the number of indices.
+    // [16] Keep the number of indices.
     m_indexCount = ARRAYSIZE(cubeIndices);
 
-    // [13] Create index buffer and load indices to the buffer.
+    // [17] Create index buffer and load indices to the buffer.
     D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
     indexBufferData.pSysMem = cubeIndices;
     indexBufferData.SysMemPitch = 0;
@@ -164,11 +204,17 @@ void ColorRenderer::Render()
     {
         auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Each vertex is one instance of the VertexPositionColor struct.
-        UINT stride = sizeof(VertexPositionColor);
-        UINT offset = 0;
-        ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
-        context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+        // Set both vertex buffers.
+        ID3D11Buffer* vertexBuffers[] = { m_vertexBufferPosition.get(), m_vertexBufferColor.get() };
+        UINT strides[] = { sizeof(VertexPosition), sizeof(VertexColor) };
+        UINT offsets[] = { 0, 0 };
+        context->IASetVertexBuffers(
+            0,             // the input slot in which to start binding vertex buffers
+            2,             // the number of vertex buffers we are binding to the input slots
+            vertexBuffers, // a pointer to the first element of an array of vertex buffers
+            strides,       // a pointer to the first element of an array of strides (one for each vertex buffer); a stride is the size, in bytes, of an element in the corresponding vertex buffer
+            offsets        // a pointer to the first element of an array of offsets (one for each vertex buffer); this is an offset, in bytes, from the start of the vertex buffer to the position in the vertex buffer from which the input assembler should start reading the vertex data
+        );
 
         // Each index is one 16-bit unsigned integer (short).
         context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R16_UINT, 0);
@@ -199,7 +245,8 @@ void ColorRenderer::ReleaseResources()
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
-    m_vertexBuffer = nullptr;
+    m_vertexBufferPosition = nullptr;
+    m_vertexBufferColor = nullptr;
     m_indexBuffer = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;

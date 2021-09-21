@@ -19,9 +19,10 @@ public:
 private:
     std::shared_ptr<DX::DeviceResources>     m_deviceResources;
 
-    // Direct3D resources for cube geometry.
+    // Direct3D resources for cube geometry. 
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
-    winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer;
+    winrt::com_ptr<ID3D11Buffer>            m_vertexBufferPosition; // a vertex buffer to keep positions
+    winrt::com_ptr<ID3D11Buffer>            m_vertexBufferColor; // a vertex buffer to keep colors
     winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;

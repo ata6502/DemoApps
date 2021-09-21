@@ -1,10 +1,13 @@
 ﻿#pragma once
 
-// Used to send per-vertex data to the vertex shader.
-struct VertexPositionColor
+struct VertexPosition
 {
 	DirectX::XMFLOAT3 Position;
-	DirectX::XMFLOAT3 Color;
+};
+
+struct VertexColor
+{
+    DirectX::XMFLOAT3 Color;
 };
 
 struct ConstantBufferPerFrame
