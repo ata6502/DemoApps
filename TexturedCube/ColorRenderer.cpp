@@ -151,6 +151,13 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
     m_initialized = true;
 }
 
+/// <summary>
+/// Device context dependent initialization.
+/// </summary>
+void ColorRenderer::FinalizeInitialization()
+{
+}
+
 void ColorRenderer::Render()
 {
     if (m_initialized)
@@ -196,11 +203,6 @@ void ColorRenderer::ReleaseResources()
     m_indexBuffer = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
-}
-
-bool ColorRenderer::IsInitialized() const
-{
-    return m_initialized;
 }
 
 void ColorRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)

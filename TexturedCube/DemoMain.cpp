@@ -16,7 +16,7 @@ DemoMain::DemoMain() :
     m_deviceResources->RegisterDeviceNotify(this);
     
     m_input = std::make_unique<IndependentInput>();
-    m_renderer = winrt::make_self<ColorRenderer>(m_deviceResources);
+    m_renderer = winrt::make_self<MaterialRenderer>(m_deviceResources);
 
     m_timer.Reset();
 }
@@ -58,6 +58,8 @@ void DemoMain::StartRenderLoop()
     // Create a task that will be run on a background thread.
     auto workItemHandler = ([this](IAsyncAction const& action)
     {
+        m_renderer->FinalizeInitialization();
+
         // Calculate the updated frame and render once per vertical blanking interval.
         while (action.Status() == AsyncStatus::Started)
         {
@@ -149,7 +151,7 @@ void DemoMain::Update()
 void DemoMain::Render()
 {
     // Don't render anything before the first Update and until the renderer is initialized.
-    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon() || !m_renderer->IsInitialized()) 
+    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon())
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };

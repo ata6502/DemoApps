@@ -9,7 +9,10 @@ using namespace DirectX;
 MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_indexCount(0),
-    m_initialized(false)
+    m_initialized(false),
+    m_constantBufferPerFrame(nullptr),
+    m_constantBufferPerObject(nullptr),
+    m_constantBufferNeverChanges(nullptr)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -20,6 +23,7 @@ MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& d
 winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 {
     auto lifetime = get_strong();
+
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
@@ -65,18 +69,11 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bd.CPUAccessFlags = 0;
 
-    bd.ByteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
-    m_constantBufferNeverChanges = nullptr;
-    winrt::check_hresult(
-        device->CreateBuffer(&bd, nullptr, m_constantBufferNeverChanges.put()));
-
     bd.ByteWidth = (sizeof(ConstantBufferPerFrame) + 15) / 16 * 16;
-    m_constantBufferPerFrame = nullptr;
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerFrame.put()));
 
     bd.ByteWidth = (sizeof(ConstantBufferPerObject) + 15) / 16 * 16;
-    m_constantBufferPerObject = nullptr;
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
@@ -153,10 +150,28 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
             &indexBufferData,
             m_indexBuffer.put()));
 
-    // [14] Create a data structure for data that never changes.
+    // Inform other parts of the application that the initialization has completed.
+    m_initialized = true;
+}
+
+/// <summary>
+/// Device context dependent initialization.
+/// </summary>
+void MaterialRenderer::FinalizeInitialization()
+{
+    auto device{ m_deviceResources->GetD3DDevice() };
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    // Create a constant buffer for data that never changes.
+    auto byteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
+    CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
+    winrt::check_hresult(
+        device->CreateBuffer(&constantBufferDesc, nullptr, m_constantBufferNeverChanges.put()));
+
+    // Create a data structure for data that never changes.
     ConstantBufferNeverChanges constantBufferNeverChangesData;
 
-    // [15] Create the light.
+    // Create the light.
     DirectionalLight light;
     light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
@@ -164,18 +179,15 @@ winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
     light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
     constantBufferNeverChangesData.Light = light;
 
-    // [15] Create the material.
+    // Create the material.
     MaterialDesc material;
     material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
     constantBufferNeverChangesData.Material = material;
 
-    // [16] Copy data that never changes to the appropriate constant buffer.
-    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
-
-    // Inform other parts of the application that the initialization has completed.
-    m_initialized = true;
+    // Copy data that never changes to the appropriate constant buffer.
+    context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
 }
 
 void MaterialRenderer::Render()
@@ -229,17 +241,12 @@ void MaterialRenderer::ReleaseResources()
     m_constantBufferPerObject = nullptr;
 }
 
-bool MaterialRenderer::IsInitialized() const
-{
-    return m_initialized;
-}
-
 void MaterialRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition)
+void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     if (!m_initialized)
         return;
