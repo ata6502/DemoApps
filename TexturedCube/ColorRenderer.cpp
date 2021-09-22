@@ -79,6 +79,7 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 
     // Use two vertex buffers (and two input slots) to feed the pipeline with vertices, 
     // one that stores the position element and the other that stores the color element.
+    // This is not necessary and it's here just as an exercise ([Luna] 6.15.2)
  
     // [7] Create cube vertex positions. 
     static const VertexPosition cubeVertexPositions[] =
@@ -93,29 +94,10 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
         {XMFLOAT3( 0.5f,  0.5f,  0.5f)}
     };
 
-    // [8] Create the vertex buffer description.
-    D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
-    vertexBufferDesc.ByteWidth = sizeof(cubeVertexPositions);   // the size of the buffer in bytes
-    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;             // the contents of the buffer will not change after creation
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vertexBufferDesc.CPUAccessFlags = 0;                        // CPU does not require read or write access to the buffer after the buffer has been created
-    vertexBufferDesc.MiscFlags = 0;
-    vertexBufferDesc.StructureByteStride = 0;                   // used with structured buffers; 0 for the vertex buffers
+    // [8] Create a vertex buffer for cube vertices.
+    m_vertexBufferPosition.attach(CreateImmutableVertexBuffer(device, sizeof(cubeVertexPositions), &cubeVertexPositions));
 
-    // [9] Create data to initialize the vertex buffer.
-    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-    vertexBufferData.pSysMem = cubeVertexPositions;
-    vertexBufferData.SysMemPitch = 0;
-    vertexBufferData.SysMemSlicePitch = 0;
-
-    // [10] Create the vertex buffer and load data.
-    winrt::check_hresult(
-        device->CreateBuffer(
-            &vertexBufferDesc,
-            &vertexBufferData,
-            m_vertexBufferPosition.put()));
-
-    // [11] Create cube vertex colors.
+    // [9] Create cube vertex colors.
     static const VertexColor cubeVertexColors[] =
     {
         {XMFLOAT3(0.0f, 0.0f, 0.0f)},
@@ -128,29 +110,10 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
         {XMFLOAT3(1.0f, 1.0f, 1.0f)}
     };
 
-    // [12] Create the vertex buffer description.
-    vertexBufferDesc = { 0 };
-    vertexBufferDesc.ByteWidth = sizeof(cubeVertexColors);      // the size of the buffer in bytes
-    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;             // the contents of the buffer will not change after creation
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vertexBufferDesc.CPUAccessFlags = 0;                        // CPU does not require read or write access to the buffer after the buffer has been created
-    vertexBufferDesc.MiscFlags = 0;
-    vertexBufferDesc.StructureByteStride = 0;                   // used with structured buffers; 0 for the vertex buffers
+    // [10] Create a vertex buffer for cube colors.
+    m_vertexBufferColor.attach(CreateImmutableVertexBuffer(device, sizeof(cubeVertexColors), &cubeVertexColors));
 
-    // [13] Create data to initialize the vertex buffer.
-    vertexBufferData = { 0 };
-    vertexBufferData.pSysMem = cubeVertexColors;
-    vertexBufferData.SysMemPitch = 0;
-    vertexBufferData.SysMemSlicePitch = 0;
-
-    // [14] Create the vertex buffer and load data.
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &vertexBufferDesc,
-            &vertexBufferData,
-            m_vertexBufferColor.put()));
-
-    // [15] Create cube indices in the left-handed coordinate system.
+    // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
     {
         0,1,2, // -x
@@ -172,10 +135,10 @@ winrt::fire_and_forget ColorRenderer::InitializeInBackground()
         1,5,7,
     };
 
-    // [16] Keep the number of indices.
+    // [12] Keep the number of indices.
     m_indexCount = ARRAYSIZE(cubeIndices);
 
-    // [17] Create index buffer and load indices to the buffer.
+    // [13] Create index buffer and load indices to the buffer.
     D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
     indexBufferData.pSysMem = cubeIndices;
     indexBufferData.SysMemPitch = 0;

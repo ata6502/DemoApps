@@ -16,7 +16,7 @@ DemoMain::DemoMain() :
     m_deviceResources->RegisterDeviceNotify(this);
     
     m_input = std::make_unique<IndependentInput>();
-    m_renderer = winrt::make_self<ColorRenderer>(m_deviceResources);
+    m_renderer = winrt::make_self<MaterialRenderer>(m_deviceResources);
 
     m_timer.Reset();
 }
