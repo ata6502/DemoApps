@@ -2,6 +2,11 @@
 
 #include "DeviceResources.h"
 
+/*
+    ColorRenderer uses two vertex buffers (and two input slots) to feed the pipeline with vertices:
+    - One vertex buffer stores the position element.
+    - Another vertex buffer stores the color element.
+*/
 class ColorRenderer : public winrt::implements<ColorRenderer, winrt::Windows::Foundation::IInspectable>
 {
 public:

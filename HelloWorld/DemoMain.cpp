@@ -292,7 +292,13 @@ void DemoMain::Render()
         UINT stride = sizeof(VertexPositionColor);
         UINT offset = 0;
         ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
-        context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+        context->IASetVertexBuffers(
+            0,                  // the input slot in which to start binding vertex buffers 
+            1,                  // the number of vertex buffers we are binding to the input slots
+            &pVertexBuffer,     // a pointer to the vertex buffer
+            &stride,            // a stride is the size, in bytes, of an element in the corresponding vertex buffer
+            &offset             // an offset, in bytes, from the start of the vertex buffer to the position in the vertex buffer from which the input assembler should start reading the vertex data
+        );
 
         // Each index is one 16-bit unsigned integer (short).
         context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R16_UINT, 0);

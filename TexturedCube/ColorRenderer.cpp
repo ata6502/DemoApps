@@ -175,8 +175,8 @@ void ColorRenderer::Render()
             0,             // the input slot in which to start binding vertex buffers
             2,             // the number of vertex buffers we are binding to the input slots
             vertexBuffers, // a pointer to the first element of an array of vertex buffers
-            strides,       // a pointer to the first element of an array of strides (one for each vertex buffer); a stride is the size, in bytes, of an element in the corresponding vertex buffer
-            offsets        // a pointer to the first element of an array of offsets (one for each vertex buffer); this is an offset, in bytes, from the start of the vertex buffer to the position in the vertex buffer from which the input assembler should start reading the vertex data
+            strides,       // a pointer to the first element of an array of strides (one for each vertex buffer)
+            offsets        // a pointer to the first element of an array of offsets (one for each vertex buffer)
         );
 
         // Each index is one 16-bit unsigned integer (short).
