@@ -59,7 +59,7 @@
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="IRenderer.h">
+    <ClInclude Include="RendererBase.h">
       <Filter>Rendering</Filter>
     </ClInclude>
     <ClInclude Include="RendererFactory.h">

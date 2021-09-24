@@ -9,7 +9,6 @@ using namespace DirectX;
 MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_indexCount(0),
-    m_initialized(false),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr)
@@ -130,7 +129,7 @@ winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackgroun
             m_indexBuffer.put()));
 
     // Inform other parts of the application that the initialization has completed.
-    m_initialized = true;
+    IsInitialized(true);
 }
 
 /// <summary>
@@ -171,45 +170,42 @@ void MaterialRenderer::FinalizeInitialization()
 
 void MaterialRenderer::Render()
 {
-    if (m_initialized)
-    {
-        auto context{ m_deviceResources->GetD3DDeviceContext() };
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-        // Each vertex is one instance of the VertexPositionNormal struct.
-        UINT stride = sizeof(VertexPositionNormal);
-        UINT offset = 0;
-        ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
-        context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+    // Each vertex is one instance of the VertexPositionNormal struct.
+    UINT stride = sizeof(VertexPositionNormal);
+    UINT offset = 0;
+    ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
+    context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
-        // Each index is one 16-bit unsigned integer (short).
-        context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R16_UINT, 0);
+    // Each index is one 16-bit unsigned integer (short).
+    context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R16_UINT, 0);
 
-        context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-        context->IASetInputLayout(m_inputLayout.get());
+    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    context->IASetInputLayout(m_inputLayout.get());
 
-        // Attach shaders.
-        context->VSSetShader(m_vertexShader.get(), nullptr, 0);
-        context->PSSetShader(m_pixelShader.get(), nullptr, 0);
+    // Attach shaders.
+    context->VSSetShader(m_vertexShader.get(), nullptr, 0);
+    context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 
-        // Get pointers to constant buffers.
-        ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
-        ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
-        ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
+    // Get pointers to constant buffers.
+    ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
+    ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
+    ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
 
-        // Send the constant buffers to the graphics device.
-        context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
-        context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
-        context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
-        context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    // Send the constant buffers to the graphics device.
+    context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
+    context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
+    context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
 
-        // Draw the cube.
-        context->DrawIndexed(m_indexCount, 0, 0);
-    }
+    // Draw the cube.
+    context->DrawIndexed(m_indexCount, 0, 0);
 }
 
 void MaterialRenderer::ReleaseResources()
 {
-    m_initialized = false;
+    IsInitialized(false);
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
@@ -227,9 +223,6 @@ void MaterialRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 
 void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
-    if (!m_initialized)
-        return;
-
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
@@ -239,9 +232,6 @@ void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXM
 
 void MaterialRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 {
-    if (!m_initialized)
-        return;
-
     ConstantBufferPerObject constantBufferPerObjectData;
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);

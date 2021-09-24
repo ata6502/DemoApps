@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRenderer.h"
+#include "RendererBase.h"
 
 enum class RendererType
 {
@@ -12,6 +12,6 @@ enum class RendererType
 class RendererFactory
 {
 public:
-    static IRenderer* CreateRenderer(RendererType rendererType, std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    static RendererBase* CreateRenderer(RendererType rendererType, std::shared_ptr<DX::DeviceResources> const& deviceResources);
 };
 

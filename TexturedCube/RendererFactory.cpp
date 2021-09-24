@@ -4,7 +4,7 @@
 #include "MaterialRenderer.h"
 #include "RendererFactory.h"
 
-IRenderer* RendererFactory::CreateRenderer(RendererType rendererType, std::shared_ptr<DX::DeviceResources> const& deviceResources)
+RendererBase* RendererFactory::CreateRenderer(RendererType rendererType, std::shared_ptr<DX::DeviceResources> const& deviceResources)
 {
     switch (rendererType)
     {

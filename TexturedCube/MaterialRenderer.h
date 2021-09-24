@@ -1,9 +1,9 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "IRenderer.h"
+#include "RendererBase.h"
 
-class MaterialRenderer : public IRenderer
+class MaterialRenderer : public RendererBase
 {
 public:
     MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
@@ -33,7 +33,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
     uint32_t                                m_indexCount;
-    bool                                    m_initialized;
     DirectX::XMFLOAT4X4                     m_projMatrix;
 };
 

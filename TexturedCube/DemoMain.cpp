@@ -20,7 +20,7 @@ DemoMain::DemoMain() :
     m_input = std::make_unique<IndependentInput>();
 
     auto renderer = RendererFactory::CreateRenderer(RendererType::Material, m_deviceResources);
-    m_renderer = std::unique_ptr<IRenderer>(renderer);
+    m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_timer.Reset();
 }
@@ -53,8 +53,10 @@ void DemoMain::CreateWindowSizeDependentResources()
 
 void DemoMain::StartRenderLoop()
 {
+    using namespace std::literals::chrono_literals;
+
     // Do not start another thread if the render loop is already running.
-    if (m_renderLoopWorker != nullptr && m_renderLoopWorker.Status() == AsyncStatus::Started)
+    if ((m_renderLoopWorker != nullptr && m_renderLoopWorker.Status() == AsyncStatus::Started))
         return;
 
     m_timer.Start();
@@ -68,6 +70,11 @@ void DemoMain::StartRenderLoop()
         while (action.Status() == AsyncStatus::Started)
         {
             critical_section::scoped_lock lock(m_criticalSection);
+
+            // We have to check if the renderer is initialized before calling any
+            // update or render methods.
+            if (!m_renderer->IsInitialized())
+                continue;
 
             Update();
             Render();

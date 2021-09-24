@@ -1,14 +1,14 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "IRenderer.h"
+#include "RendererBase.h"
 
 /*
     ColorRenderer uses two vertex buffers (and two input slots) to feed the pipeline with vertices:
     - One vertex buffer stores the position element.
     - Another vertex buffer stores the color element.
 */
-class ColorRenderer : public IRenderer
+class ColorRenderer : public RendererBase
 {
 public:
     ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
@@ -38,7 +38,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
     uint32_t                                m_indexCount;
-    bool                                    m_initialized;
     DirectX::XMFLOAT4X4                     m_projMatrix;
 };
 
