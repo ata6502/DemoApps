@@ -32,6 +32,7 @@ namespace winrt::TexturedCube::implementation
 
         std::unique_ptr<DemoMain> m_main;
         bool m_controlPanelVisible;
+        bool m_rendererInitialized;
     };
 }
 

@@ -4,8 +4,8 @@
 
 enum class RendererType
 {
-    Color = 0,
-    Material = 1,
+    Material = 0,
+    Color = 1,
     Texture = 2
 };
 

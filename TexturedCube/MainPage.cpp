@@ -13,7 +13,8 @@ using namespace Concurrency;
 namespace winrt::TexturedCube::implementation
 {
     MainPage::MainPage() :
-        m_controlPanelVisible(false)
+        m_controlPanelVisible(false),
+        m_rendererInitialized(false)
     {
         InitializeComponent();
 
@@ -110,6 +111,12 @@ namespace winrt::TexturedCube::implementation
 
     void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
     {
+        if (!m_rendererInitialized)
+        {
+            m_rendererInitialized = true;
+            return;
+        }
+
         auto listBox = sender.as<ListBox>();
         auto selectedIndex = listBox.SelectedIndex();
         m_main->SetRenderer(selectedIndex);
