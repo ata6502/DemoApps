@@ -28,6 +28,9 @@
     <ClCompile Include="ColorRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="RendererFactory.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -55,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFactory.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,8 @@ using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Xaml;
-using namespace Windows::UI::Xaml::Media::Animation; // Storyboard
+using namespace Windows::UI::Xaml::Controls;            // ListBox
+using namespace Windows::UI::Xaml::Media::Animation;    // Storyboard
 using namespace Concurrency;
 
 namespace winrt::TexturedCube::implementation
@@ -102,9 +103,15 @@ namespace winrt::TexturedCube::implementation
         storyboard.Begin();
     }
 
-    void MainPage::RotationToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    void MainPage::RotationToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         m_main->ToggleRotation();
     }
-}
 
+    void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+    {
+        auto listBox = sender.as<ListBox>();
+        auto selectedIndex = listBox.SelectedIndex();
+        m_main->SetRenderer(selectedIndex);
+    }
+}

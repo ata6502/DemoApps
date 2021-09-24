@@ -1,18 +1,19 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "IRenderer.h"
 
 /*
     ColorRenderer uses two vertex buffers (and two input slots) to feed the pipeline with vertices:
     - One vertex buffer stores the position element.
     - Another vertex buffer stores the color element.
 */
-class ColorRenderer : public winrt::implements<ColorRenderer, winrt::Windows::Foundation::IInspectable>
+class ColorRenderer : public IRenderer
 {
 public:
     ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    winrt::fire_and_forget InitializeInBackground();
+    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();
     void ReleaseResources();
 

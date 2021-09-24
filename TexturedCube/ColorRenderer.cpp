@@ -17,9 +17,8 @@ ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     InitializeInBackground();
 }
 
-winrt::fire_and_forget ColorRenderer::InitializeInBackground()
+winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
 {
-    auto lifetime = get_strong();
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.

@@ -1,5 +1,7 @@
 #include "pch.h"
+
 #include "DemoMain.h"
+#include "RendererFactory.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -16,7 +18,9 @@ DemoMain::DemoMain() :
     m_deviceResources->RegisterDeviceNotify(this);
     
     m_input = std::make_unique<IndependentInput>();
-    m_renderer = winrt::make_self<MaterialRenderer>(m_deviceResources);
+
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Material, m_deviceResources);
+    m_renderer = std::unique_ptr<IRenderer>(renderer);
 
     m_timer.Reset();
 }
@@ -172,4 +176,17 @@ void DemoMain::Render()
 void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
+}
+
+void DemoMain::SetRenderer(int32_t rendererIndex)
+{
+    StopRenderLoop();
+    ReleaseResources();
+
+    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
+    m_renderer.reset();
+    m_renderer.reset(renderer);
+
+    CreateWindowSizeDependentResources();
+    StartRenderLoop();
 }

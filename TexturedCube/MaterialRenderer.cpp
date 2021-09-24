@@ -20,10 +20,8 @@ MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& d
     InitializeInBackground();
 }
 
-winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
+winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackground()
 {
-    auto lifetime = get_strong();
-
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.

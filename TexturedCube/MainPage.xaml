@@ -73,16 +73,27 @@
                     <TranslateTransform X="-220" />
                 </ScrollViewer.RenderTransform>
 
-                <StackPanel Orientation="Horizontal"
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal"
                             Margin="12,8,8,0"
                             VerticalAlignment="Top">
-                    <TextBlock Text="Cube rotation:"
+                        <TextBlock Text="Cube rotation:"
                                VerticalAlignment="Center"
                                Margin="0,0,8,4" />
-                    <ToggleSwitch OnContent="On"
+                        <ToggleSwitch OnContent="On"
                                   OffContent="Off"
                                   IsOn="False" 
                                   Toggled="RotationToggle_Toggled" />
+                    </StackPanel>
+
+                    <ListBox x:Name="RendererListBox"
+                             SelectionChanged="RendererListBox_SelectionChanged">
+                        <ListBox.Items>
+                            <ListBoxItem>Colored Cube Renderer</ListBoxItem>
+                            <ListBoxItem>Material Cube Renderer</ListBoxItem>
+                        </ListBox.Items>
+                    </ListBox>
+
                 </StackPanel>
 
             </ScrollViewer>

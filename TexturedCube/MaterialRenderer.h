@@ -1,13 +1,14 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "IRenderer.h"
 
-class MaterialRenderer : public winrt::implements<MaterialRenderer, winrt::Windows::Foundation::IInspectable>
+class MaterialRenderer : public IRenderer
 {
 public:
     MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    winrt::fire_and_forget InitializeInBackground();
+    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();
     void ReleaseResources();
 
