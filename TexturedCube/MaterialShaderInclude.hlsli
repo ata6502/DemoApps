@@ -24,6 +24,7 @@ cbuffer ConstantBufferPerFrame : register(b1)
 {
     matrix ViewProj;
     float3 EyePosition;
+    float Pad;
 };
 
 cbuffer ConstantBufferPerObject : register(b2)
