@@ -71,7 +71,7 @@ void DemoMain::StartRenderLoop()
         {
             critical_section::scoped_lock lock(m_criticalSection);
 
-            // We have to check if the renderer is initialized before calling any
+            // Check if the renderer is initialized before calling any
             // update or render methods.
             if (!m_renderer->IsInitialized())
                 continue;
@@ -187,6 +187,9 @@ void DemoMain::ReleaseResources()
 
 void DemoMain::SetRenderer(int32_t rendererIndex)
 {
+    if (!m_renderer->IsInitialized())
+        return;
+
     StopRenderLoop();
     ReleaseResources();
 
