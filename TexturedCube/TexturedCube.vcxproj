@@ -101,6 +101,8 @@
     </ClInclude>
     <ClInclude Include="MaterialShaderStructures.h" />
     <ClInclude Include="RendererFactory.h" />
+    <ClInclude Include="TextureRenderer.h" />
+    <ClInclude Include="TextureShaderStructures.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
@@ -143,6 +145,7 @@
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="RendererFactory.cpp" />
+    <ClCompile Include="TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
@@ -157,6 +160,7 @@
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <None Include="MaterialShaderInclude.hlsli" />
+    <None Include="TextureShaderInclude.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorPixelShader.hlsl">
@@ -170,6 +174,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="MaterialVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="TexturePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="TextureVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
     </FxCompile>

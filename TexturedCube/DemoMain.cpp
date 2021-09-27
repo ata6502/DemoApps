@@ -19,7 +19,7 @@ DemoMain::DemoMain() :
     
     m_input = std::make_unique<IndependentInput>();
 
-    auto renderer = RendererFactory::CreateRenderer(RendererType::Material, m_deviceResources);
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Texture, m_deviceResources);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_timer.Reset();
