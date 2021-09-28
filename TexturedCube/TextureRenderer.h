@@ -32,6 +32,10 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
+    // Direct3D objects used with textures.
+    winrt::com_ptr<ID3D11ShaderResourceView> m_crateTexture;
+    winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
+
     uint32_t                                m_indexCount;
     DirectX::XMFLOAT4X4                     m_projMatrix;
 };

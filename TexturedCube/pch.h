@@ -26,6 +26,7 @@
 #include <d3d11_3.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 #include <DirectXColors.h>
+#include <dcommon.h>
 
 #include <concrt.h>
 #include <ppltasks.h>

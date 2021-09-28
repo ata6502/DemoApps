@@ -2,6 +2,7 @@
 
 #include "ColorRenderer.h"
 #include "ColorShaderStructures.h"
+#include "FileReader.h"
 #include "Utilities.h"
 
 using namespace DirectX;
@@ -21,8 +22,8 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"ColorVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"ColorPixelShader.cso");
+    auto vertexShaderBytecode = co_await FileReader::ReadDataAsync(L"ColorVertexShader.cso");
+    auto pixelShaderBytecode = co_await FileReader::ReadDataAsync(L"ColorPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(

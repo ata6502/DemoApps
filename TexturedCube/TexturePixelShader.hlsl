@@ -1,7 +1,20 @@
 #include "TextureShaderInclude.hlsli"
 
+// Declare a texture a.k.a. a diffuse map.
+Texture2D gTexture : register(t0);
+
+// Declare a linear sampler.
+SamplerState gLinearSampler : register(s0);
+
 float4 main(PixelShaderInput input) : SV_TARGET
 {
+    // Default to multiplicative identity. This is a default texture 
+    // sample in case we wanted to make texturing optional.
+    float4 texColor = float4(1, 1, 1, 1);
+
+    // Sample the texture.
+    texColor = gTexture.Sample(gLinearSampler, input.tex);
+
     float3 L = -Light.Direction; // the light vector
 
     // Apply the formula for diffuse, ambient, and specular components of color.
@@ -21,7 +34,15 @@ float4 main(PixelShaderInput input) : SV_TARGET
     }
     float4 S = Light.Specular * float4(Material.Specular.xyz, 1.0f); // replace SpecularPower component (stored in w) with 1.0
 
-    float4 color = A + kd * D + ks * S;
+    float4 ambient = A;
+    float4 diffuse = kd * D;
+    float4 spec = ks* S;
+
+    // Modulate with late add.
+    float4 color = texColor * (ambient + diffuse) + spec;
+
+    // Common to take alpha from diffuse material and texture.
+    color.a = Material.Diffuse.a * texColor.a;
 
     return color;
 }

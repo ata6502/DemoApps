@@ -17,5 +17,8 @@ PixelShaderInput main(VertexShaderInput input)
     // Transform the vertex position to world space. We need that for specular light calculations.
     output.posW = mul(float4(input.posL, 1.0f), World).xyz;
 
+    // Pass-through texture coordinates.
+    output.tex = input.tex;
+
     return output;
 }

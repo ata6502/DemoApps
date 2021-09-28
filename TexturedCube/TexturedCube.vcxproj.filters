@@ -34,6 +34,9 @@
     <ClCompile Include="TextureRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="FileReader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -74,6 +77,12 @@
     <ClInclude Include="TextureShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="FileReader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="FileReaderStructures.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -97,6 +106,9 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Textures\crate.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -116,6 +128,9 @@
     </Filter>
     <Filter Include="Rendering">
       <UniqueIdentifier>{f530e6ed-5def-4cfb-8848-3e68ed491772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{a1079711-ab35-4fcd-907d-40fc53896f02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

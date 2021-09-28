@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "FileReader.h"
 #include "TextureRenderer.h"
 #include "TextureShaderStructures.h"
 #include "Utilities.h"
@@ -11,7 +12,8 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
     m_indexCount(0),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
-    m_constantBufferNeverChanges(nullptr)
+    m_constantBufferNeverChanges(nullptr),
+    m_crateTexture(nullptr)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -24,8 +26,8 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"TextureVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"TexturePixelShader.cso");
+    auto vertexShaderBytecode = co_await FileReader::ReadDataAsync(L"TextureVertexShader.cso");
+    auto pixelShaderBytecode = co_await FileReader::ReadDataAsync(L"TexturePixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -35,11 +37,12 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             nullptr,
             m_vertexShader.put()));
 
-    // [3] Create vertex description.
+    // [3] The input layout describes position, normal, and texture coordinates.
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -74,18 +77,47 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [7] Create cube vertices. Each vertex has a position and a normal vector.
-    float n = 1.0f / sqrtf(3.0f); // all components of coordinates of the normals have the value n
-    static const VertexPositionNormal cubeVertices[] =
+    // [7] Create cube vertices. Each vertex has a position, a normal, and texture coordinates.
+    // Also, we define a 24 vertices instead of 8 vertices. This allows us to specify more 
+    // accurate normal vectors.
+    float l = 0.5f, n = 1.0f;
+    static const VertexPositionTexture cubeVertices[] =
     {
-        { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-n, -n, -n) },
-        { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(-n, -n,  n) },
-        { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(-n,  n, -n) },
-        { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(-n,  n,  n) },
-        { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3( n, -n, -n) },
-        { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3( n, -n,  n) },
-        { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3( n,  n, -n) },
-        { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3( n,  n,  n) }
+        // front face
+        { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(-l, +l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(+l, +l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(+l, -l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(1.0f, 1.0f) },
+
+        // back face
+        { XMFLOAT3(-l, -l, +l), XMFLOAT3(0, 0, n), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(+l, -l, +l), XMFLOAT3(0, 0, n), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(+l, +l, +l), XMFLOAT3(0, 0, n), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(-l, +l, +l), XMFLOAT3(0, 0, n), XMFLOAT2(1.0f, 0.0f) },
+
+        // top face
+        { XMFLOAT3(-l, +l, -l), XMFLOAT3(0, n, 0), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(-l, +l, +l), XMFLOAT3(0, n, 0), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(+l, +l, +l), XMFLOAT3(0, n, 0), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(+l, +l, -l), XMFLOAT3(0, n, 0), XMFLOAT2(1.0f, 1.0f) },
+
+        // bottom face
+        { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, -n, 0), XMFLOAT2(1.0f, 1.0f) },
+        { XMFLOAT3(+l, -l, -l), XMFLOAT3(0, -n, 0), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(+l, -l, +l), XMFLOAT3(0, -n, 0), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(-l, -l, +l), XMFLOAT3(0, -n, 0), XMFLOAT2(1.0f, 0.0f) },
+
+        // left face
+        { XMFLOAT3(-l, -l, +l), XMFLOAT3(-n, 0, 0), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(-l, +l, +l), XMFLOAT3(-n, 0, 0), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(-l, +l, -l), XMFLOAT3(-n, 0, 0), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(-l, -l, -l), XMFLOAT3(-n, 0, 0), XMFLOAT2(1.0f, 1.0f) },
+
+        // right face
+        { XMFLOAT3(+l, -l, -l), XMFLOAT3(n, 0, 0), XMFLOAT2(0.0f, 1.0f) },
+        { XMFLOAT3(+l, +l, -l), XMFLOAT3(n, 0, 0), XMFLOAT2(0.0f, 0.0f) },
+        { XMFLOAT3(+l, +l, +l), XMFLOAT3(n, 0, 0), XMFLOAT2(1.0f, 0.0f) },
+        { XMFLOAT3(+l, -l, +l), XMFLOAT3(n, 0, 0), XMFLOAT2(1.0f, 1.0f) }
     };
 
     // [8] Create an immutable vertex buffer.
@@ -94,23 +126,29 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
     {
-        0,1,2, // -x
-        1,3,2,
+        // front face
+        0, 1, 2,
+        0, 2, 3,
 
-        4,6,5, // +x
-        5,6,7,
+        // back face
+        4, 5, 6,
+        4, 6, 7,
 
-        0,5,1, // -y
-        0,4,5,
+        // top face
+        8, 9, 10,
+        8, 10, 11,
 
-        2,7,6, // +y
-        2,3,7,
+        // bottom face
+        12, 13, 14,
+        12, 14, 15,
 
-        0,6,4, // -z
-        0,2,6,
+        // left face
+        16, 17, 18,
+        16, 18, 19,
 
-        1,7,3, // +z
-        1,5,7,
+        // right face
+        20, 21, 22,
+        20, 22, 23
     };
 
     // [12] Keep the number of indices.
@@ -127,6 +165,30 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             &indexBufferDesc,
             &indexBufferData,
             m_indexBuffer.put()));
+
+    // [14] Load a texture from a file and create the shader resource view to the texture.
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_crateTexture.put());
+
+    // [15] Create a sampler state.
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerDesc.BorderColor[0] = 0.0f; // Red
+    samplerDesc.BorderColor[1] = 1.0f; // Green
+    samplerDesc.BorderColor[2] = 0.0f; // Blue
+    samplerDesc.BorderColor[3] = 1.0f;
+    samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
+    samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
+
+    winrt::check_hresult(
+        device->CreateSamplerState(
+            &samplerDesc, 
+            m_linearSampler.put()));
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
@@ -151,17 +213,17 @@ void TextureRenderer::FinalizeInitialization()
 
     // Create the light.
     DirectionalLight light;
-    light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-    light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    light.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+    light.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+    light.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
     light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
     constantBufferNeverChangesData.Light = light;
 
     // Create the material.
     MaterialDesc material;
-    material.Ambient = XMFLOAT4(0.6f, 0.2f, 0.7f, 1.0f);
-    material.Diffuse = XMFLOAT4(0.2f, 0.5f, 0.9f, 1.0f);
-    material.Specular = XMFLOAT4(0.2f, 0.8f, 0.2f, 16.0f); // w = SpecularPower
+    material.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    material.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f); // w = SpecularPower
     constantBufferNeverChangesData.Material = material;
 
     // Copy data that never changes to the appropriate constant buffer.
@@ -172,8 +234,8 @@ void TextureRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    // Each vertex is one instance of the VertexPositionNormal struct.
-    UINT stride = sizeof(VertexPositionNormal);
+    // Each vertex is one instance of the VertexPositionTexture struct.
+    UINT stride = sizeof(VertexPositionTexture);
     UINT offset = 0;
     ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
@@ -198,6 +260,14 @@ void TextureRenderer::Render()
     context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
     context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
+
+    // Set the sampler.
+    ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
+    context->PSSetSamplers(0, 1, &pLinearSampler);
+
+    // Set the shader resource view i.e. our texture.
+    ID3D11ShaderResourceView* pCrateTexture{ m_crateTexture.get() };
+    context->PSSetShaderResources(0, 1, &pCrateTexture);
 
     // Draw the cube.
     context->DrawIndexed(m_indexCount, 0, 0);

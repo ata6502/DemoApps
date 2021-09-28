@@ -10,5 +10,3 @@ static winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::Stre
     StorageFile file{ co_await folder.GetFileAsync(filename) };
     co_return co_await FileIO::ReadBufferAsync(file);
 }
-
-

@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "FileReader.h"
 #include "MaterialRenderer.h"
 #include "MaterialShaderStructures.h"
 #include "Utilities.h"
@@ -24,8 +25,8 @@ winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackgroun
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"MaterialVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"MaterialPixelShader.cso");
+    auto vertexShaderBytecode = co_await FileReader::ReadDataAsync(L"MaterialVertexShader.cso");
+    auto pixelShaderBytecode = co_await FileReader::ReadDataAsync(L"MaterialPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
