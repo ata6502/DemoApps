@@ -25,7 +25,7 @@ struct MaterialDesc
 
 struct ConstantBufferNeverChanges
 {
-    DirectionalLight Light;
+    DirectionalLight LightArray[2]; // two directional lights
     MaterialDesc Material;
 };
 

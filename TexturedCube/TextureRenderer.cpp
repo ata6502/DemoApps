@@ -211,13 +211,20 @@ void TextureRenderer::FinalizeInitialization()
     // Create a data structure for data that never changes.
     ConstantBufferNeverChanges constantBufferNeverChangesData;
 
-    // Create the light.
-    DirectionalLight light;
-    light.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-    light.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-    light.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-    light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
-    constantBufferNeverChangesData.Light = light;
+    // Create two directional lights.
+    DirectionalLight light1;
+    light1.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+    light1.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+    light1.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
+    light1.Direction = XMFLOAT3(0.707f, -0.707f, 0.0f);
+    constantBufferNeverChangesData.LightArray[0] = light1;
+
+    DirectionalLight light2;
+    light2.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    light2.Diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+    light2.Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 16.0f);
+    light2.Direction = XMFLOAT3(-0.707f, 0.0f, 0.707f);
+    constantBufferNeverChangesData.LightArray[1] = light2;
 
     // Create the material.
     MaterialDesc material;
