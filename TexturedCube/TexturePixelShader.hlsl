@@ -1,5 +1,7 @@
 #include "TextureShaderInclude.hlsli"
 
+// This code is based on the book "Introduction to 3D Game Programming with DirectX 11" by Frank Luna
+ 
 // Two directional lights
 #define LIGHT_COUNT 2
 
