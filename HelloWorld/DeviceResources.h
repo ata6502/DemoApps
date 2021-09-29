@@ -9,6 +9,14 @@ namespace DX
         virtual void OnDeviceRestored() = 0;
     };
 
+    /// <summary>
+    /// The DeviceResources class is based on the similar classes from the Microsoft samples such as Simple3DGame.
+    /// It is much simpler than the Microsoft classes though. Specifically, it does not include:
+    /// - Maintenance of screen orientations
+    /// - Stereo rendering
+    /// - 2D rendering
+    /// Thanks to these simplifications, the code is easier to understand.
+    /// </summary>
     class DeviceResources
     {
     public:
