@@ -1,0 +1,79 @@
+﻿<Page
+    x:Class="SimpleWaves.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Storyboard x:Key="ShowControlPanelStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ControlPanel"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                             EnableDependentAnimation="True"
+                             FillBehavior="HoldEnd"
+                             AutoReverse="False"
+                             RepeatBehavior="1x"
+                             BeginTime="0:0:0"
+                             SpeedRatio="3"
+                             From="-220"
+                             To="0"
+                             Duration="0:0:1.6">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="HideControlPanelStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ControlPanel"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                             EnableDependentAnimation="True"
+                             FillBehavior="HoldEnd"
+                             AutoReverse="False"
+                             RepeatBehavior="1x"
+                             BeginTime="0:0:0"
+                             SpeedRatio="3"
+                             From="0"
+                             To="-220"
+                             Duration="0:0:0.8">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
+    <SwapChainPanel x:Name="DXSwapChainPanel">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!-- the "hamburger" menu button -->
+            <ContentControl Grid.Row="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Margin="16,12,0,12"
+                            Tapped="ContentControl_Tapped">
+                <FontIcon Glyph="&#xE700;" FontSize="25" />
+            </ContentControl>
+
+            <ScrollViewer x:Name="ControlPanel"
+                          Grid.Row="1"
+                          Width="220"
+                          Margin="0,0,0,0"
+                          Background="GhostWhite"
+                          Opacity="0.8"
+                          HorizontalAlignment="Left"
+                          BorderBrush="Black"
+                          BorderThickness="0 1 1 0">
+
+                <ScrollViewer.RenderTransform>
+                    <TranslateTransform X="-220" />
+                </ScrollViewer.RenderTransform>
+
+            </ScrollViewer>
+        </Grid>
+    </SwapChainPanel>
+</Page>

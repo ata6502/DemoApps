@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "HelloWorld\He
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TexturedCube", "TexturedCube\TexturedCube.vcxproj", "{25DEDB84-C104-425E-B4B1-E2CC4E30892C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleWaves", "SimpleWaves\SimpleWaves.vcxproj", "{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -25,6 +27,12 @@ Global
 		{25DEDB84-C104-425E-B4B1-E2CC4E30892C}.Release|x86.ActiveCfg = Release|Win32
 		{25DEDB84-C104-425E-B4B1-E2CC4E30892C}.Release|x86.Build.0 = Release|Win32
 		{25DEDB84-C104-425E-B4B1-E2CC4E30892C}.Release|x86.Deploy.0 = Release|Win32
+		{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}.Debug|x86.ActiveCfg = Debug|Win32
+		{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}.Debug|x86.Build.0 = Debug|Win32
+		{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}.Debug|x86.Deploy.0 = Debug|Win32
+		{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}.Release|x86.ActiveCfg = Release|Win32
+		{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}.Release|x86.Build.0 = Release|Win32
+		{265FAF17-5C07-4EA9-ADF2-1B7AC45F1D9E}.Release|x86.Deploy.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
