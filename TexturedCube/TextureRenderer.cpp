@@ -123,7 +123,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     // [8] Create an immutable vertex buffer.
     m_vertexBuffer.attach(CreateImmutableVertexBuffer(device, sizeof(cubeVertices), &cubeVertices));
 
-    // [11] Create cube indices in the left-handed coordinate system.
+    // [9] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
     {
         // front face
@@ -151,10 +151,10 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
         20, 22, 23
     };
 
-    // [12] Keep the number of indices.
+    // [10] Keep the number of indices.
     m_indexCount = ARRAYSIZE(cubeIndices);
 
-    // [13] Create index buffer and load indices to the buffer.
+    // [11] Create index buffer and load indices to the buffer.
     D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
     indexBufferData.pSysMem = cubeIndices;
     indexBufferData.SysMemPitch = 0;
@@ -166,10 +166,10 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             &indexBufferData,
             m_indexBuffer.put()));
 
-    // [14] Load a texture from a file and create the shader resource view to the texture.
+    // [12] Load a texture from a file and create the shader resource view to the texture.
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_crateTexture.put());
 
-    // [15] Create a sampler state.
+    // [13] Create a sampler state.
     D3D11_SAMPLER_DESC samplerDesc;
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
