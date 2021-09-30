@@ -1,6 +1,6 @@
 # DemoApps
-This repository contains examples of simple applications using Direct3D, WinRT/C++, and XAML. So far, there are two 
-demos in the repository:
+This repository contains examples of simple UWP (Universal Windows Platform) applications 
+using Direct3D, WinRT/C++, and XAML. So far, there are two demos in the repository:
 
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
 * `TexturedCube` - A cube with materials and textures, lit by directional lights.
@@ -37,5 +37,5 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 
 Many pieces of code in DemoApps are based on or inspired by the following sources:
 
-* "Introduction to 3D Game Programming with DirectX 11" by Frank Luna
-* Microsoft sample applications
+* [Luna] "Introduction to 3D Game Programming with DirectX 11" by Frank Luna
+* Microsoft sample applications - [Simple3DGameDX](https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/Simple3DGameDX/cppwinrt)
