@@ -23,7 +23,7 @@
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="SceneRenderer.cpp">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -39,7 +39,13 @@
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderer.h">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShaderStructures.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -78,12 +84,26 @@
     <Filter Include="Input">
       <UniqueIdentifier>{ac2eb6db-8ba0-429a-ace0-b7843971cd14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering">
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{a30d6cec-fbe1-43b7-8781-16c653777ac1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers">
       <UniqueIdentifier>{dc173a27-1171-47e8-b187-003036117561}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
+    <None Include="ColorShaderInclude.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ColorPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ColorVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
