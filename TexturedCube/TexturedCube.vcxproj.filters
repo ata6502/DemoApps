@@ -23,16 +23,16 @@
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="MaterialRenderer.cpp">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="ColorRenderer.cpp">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="RendererFactory.cpp">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="TextureRenderer.cpp">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="FileReader.cpp">
       <Filter>Common</Filter>
@@ -57,22 +57,22 @@
       <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="MaterialRenderer.h">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ColorRenderer.h">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="RendererBase.h">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="RendererFactory.h">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="TextureRenderer.h">
-      <Filter>Rendering</Filter>
+      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="TextureShaderStructures.h">
       <Filter>Shaders</Filter>
@@ -126,11 +126,11 @@
     <Filter Include="Input">
       <UniqueIdentifier>{d7032a72-29be-4016-ab6e-4c29692b80df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering">
-      <UniqueIdentifier>{f530e6ed-5def-4cfb-8848-3e68ed491772}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Textures">
       <UniqueIdentifier>{a1079711-ab35-4fcd-907d-40fc53896f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderers">
+      <UniqueIdentifier>{f530e6ed-5def-4cfb-8848-3e68ed491772}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
