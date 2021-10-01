@@ -2,6 +2,7 @@
 
 #include "DeviceResources.h"
 #include "IndependentInput.h"
+#include "SceneRenderer.h"
 #include "Timer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -40,5 +41,6 @@ private:
     Concurrency::critical_section            m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;
+    std::unique_ptr<SceneRenderer>           m_renderer;
 };
 

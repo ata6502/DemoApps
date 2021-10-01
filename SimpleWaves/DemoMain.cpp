@@ -14,8 +14,7 @@ DemoMain::DemoMain()
     m_deviceResources->RegisterDeviceNotify(this);
 
     m_input = std::make_unique<IndependentInput>();
-
-    // TODO: Create a renderer
+    m_renderer = std::make_unique<SceneRenderer>(m_deviceResources);
 
     m_timer.Reset();
 }
@@ -43,7 +42,7 @@ void DemoMain::CreateWindowSizeDependentResources()
         0.01f,
         100.0f);
 
-    // TODO: m_renderer->SetProjMatrix(projMatrix);
+    m_renderer->SetProjMatrix(projMatrix);
 }
 
 void DemoMain::StartRenderLoop()
@@ -59,7 +58,7 @@ void DemoMain::StartRenderLoop()
     // Create a task that will be run on a background thread.
     auto workItemHandler = ([this](IAsyncAction const& action)
         {
-            // TODO: m_renderer->FinalizeInitialization();
+            m_renderer->FinalizeInitialization();
 
             // Calculate the updated frame and render once per vertical blanking interval.
             while (action.Status() == AsyncStatus::Started)
@@ -68,8 +67,8 @@ void DemoMain::StartRenderLoop()
 
                 // Check if the renderer is initialized before calling any
                 // update or render methods.
-                // TODO: if (!m_renderer->IsInitialized())
-                //    continue;
+                if (!m_renderer->IsInitialized())
+                    continue;
 
                 Update();
                 Render();
@@ -130,7 +129,7 @@ void DemoMain::OnDeviceLost()
 
 void DemoMain::OnDeviceRestored()
 {
-    // TODO: m_renderer->InitializeInBackground();
+    m_renderer->InitializeInBackground();
     CreateWindowSizeDependentResources();
     StartRenderLoop();
 }
@@ -141,7 +140,7 @@ void DemoMain::Update()
     static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
     static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-    // TODO: m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye, m_timer.GetTotalSeconds());
+    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye, m_timer.GetTotalSeconds());
 }
 
 /// <summary>
@@ -163,12 +162,12 @@ void DemoMain::Render()
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
-    // TODO: m_renderer->SetWorldMatrix(XMMatrixRotationY(m_rotation));
+    m_renderer->SetWorldMatrix(XMMatrixIdentity());
 
-    // TODO: m_renderer->Render();
+    m_renderer->Render();
 }
 
 void DemoMain::ReleaseResources()
 {
-    // TODO: m_renderer->ReleaseResources();
+    m_renderer->ReleaseResources();
 }
