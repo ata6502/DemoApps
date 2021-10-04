@@ -34,6 +34,10 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 
 <img src="./Docs/Images/TexturedCube.png"/>
 
+## Simple Waves
+
+This app is under construction. For now, it just renders a colored cube.
+
 # References
 
 Many pieces of code in DemoApps are based on or inspired by the following sources:
