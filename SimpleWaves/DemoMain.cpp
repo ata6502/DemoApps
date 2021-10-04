@@ -14,6 +14,7 @@ DemoMain::DemoMain()
     m_deviceResources->RegisterDeviceNotify(this);
 
     m_input = std::make_unique<IndependentInput>();
+    m_camera = std::make_unique<Camera>();
     m_renderer = std::make_unique<SceneRenderer>(m_deviceResources);
 
     m_timer.Reset();
@@ -32,16 +33,7 @@ DemoMain::~DemoMain()
 void DemoMain::CreateWindowSizeDependentResources()
 {
     Size outputSize = m_deviceResources->GetOutputSize();
-
-    float aspectRatio = outputSize.Width / outputSize.Height;
-    float fovAngleY = 70.0f * XM_PI / 180.0f;
-
-    XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(
-        fovAngleY,
-        aspectRatio,
-        0.01f,
-        100.0f);
-
+    auto projMatrix = m_camera->GetProjMatrix(outputSize);
     m_renderer->SetProjMatrix(projMatrix);
 }
 
@@ -137,10 +129,8 @@ void DemoMain::OnDeviceRestored()
 void DemoMain::Update()
 {
     XMVECTOR eye = m_input->GetPosition();
-    static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
-    static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye, m_timer.GetTotalSeconds());
+    auto viewMatrix = m_camera->GetViewMatrix(eye);
+    m_renderer->SetViewMatrix(viewMatrix, eye, m_timer.GetTotalSeconds());
 }
 
 /// <summary>

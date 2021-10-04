@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Camera.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "SceneRenderer.h"
@@ -41,6 +42,7 @@ private:
     Concurrency::critical_section            m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;
+    std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<SceneRenderer>           m_renderer;
 };
 

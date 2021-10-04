@@ -25,6 +25,9 @@
     <ClCompile Include="SceneRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -45,6 +48,9 @@
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
