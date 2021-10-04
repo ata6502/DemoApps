@@ -113,6 +113,7 @@
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="DeviceResources.h" />
+    <ClInclude Include="GridMesh.h" />
     <ClInclude Include="IndependentInput.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
@@ -151,6 +152,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
+    <ClCompile Include="GridMesh.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

@@ -28,6 +28,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="GridMesh.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -52,6 +55,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="GridMesh.h">
+      <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +101,9 @@
     </Filter>
     <Filter Include="Renderers">
       <UniqueIdentifier>{dc173a27-1171-47e8-b187-003036117561}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{9fb07e0e-55d4-4588-8e43-2147b8bd8918}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

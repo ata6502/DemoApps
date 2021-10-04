@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "GridMesh.h"
 
 class SceneRenderer
 {
@@ -23,8 +24,6 @@ private:
 
     // Direct3D resources for cube geometry.
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
-    winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer;
-    winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
 
@@ -33,8 +32,8 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
-    uint32_t                                m_indexCount;
     DirectX::XMFLOAT4X4                     m_projMatrix;
     bool                                    m_initialized;
+    std::unique_ptr<GridMesh>               m_gridMesh;
 };
 

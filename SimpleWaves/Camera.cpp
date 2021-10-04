@@ -6,8 +6,9 @@ using namespace DirectX;
 
 DirectX::XMMATRIX Camera::GetProjMatrix(winrt::Windows::Foundation::Size const& outputSize)
 {
+    static float fovAngleY = 70.0f * XM_PI / 180.0f;
+
     float aspectRatio = outputSize.Width / outputSize.Height;
-    float fovAngleY = 70.0f * XM_PI / 180.0f;
 
     XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(
         fovAngleY,
