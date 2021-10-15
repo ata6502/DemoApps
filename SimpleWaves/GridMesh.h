@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ColorShaderStructures.h" // TODO: move it to .cpp when pImpl used
 #include "DeviceResources.h"
 
 class GridMesh
@@ -7,7 +8,7 @@ class GridMesh
 public:
     GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    void Initialize();
+    void Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
     void SetBuffers();
     void Draw();
     void ReleaseResources();

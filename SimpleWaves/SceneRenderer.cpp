@@ -76,7 +76,21 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_gridMesh->Initialize();
+    // [7] Create a rasterizer state.
+    D3D11_RASTERIZER_DESC2 rsDesc;
+    ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
+    rsDesc.FillMode = D3D11_FILL_WIREFRAME; // TODO: Create a D3D11_FILL_SOLID rasterizer state
+    rsDesc.CullMode = D3D11_CULL_BACK;
+    rsDesc.FrontCounterClockwise = false;
+    rsDesc.DepthClipEnable = true;
+
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateRasterizerState2(
+            &rsDesc,
+            m_rasterizerState.put()));
+
+    // Create a grid mesh.
+    m_gridMesh->Create(4, 2, 16, 8);
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
@@ -104,10 +118,13 @@ void SceneRenderer::Render()
     ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
     ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
 
-    // Send the constant buffers to the graphics device.
+    // Set the constant buffers.
     context->VSSetConstantBuffers(0, 1, &cbPerFramePtr);
     context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
+
+    // Set the rasterizer state.
+    context->RSSetState(m_rasterizerState.get());
 
     // Draw the grid.
     m_gridMesh->Draw();
@@ -123,6 +140,7 @@ void SceneRenderer::ReleaseResources()
     m_constantBufferNeverChanges = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
+    m_rasterizerState = nullptr;
 }
 
 void SceneRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
