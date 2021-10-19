@@ -17,7 +17,8 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+/// <param name="heightFunction">The heightFunction makes the grid look like a terrain with hills and valleys.</param>
+void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction)
 {
     auto colorBlue = XMFLOAT3(0.0f, 0.0f, 1.0f);
     auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
@@ -60,7 +61,9 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
         for (auto j = 0; j < n; ++j)
         {
             auto k = i * n + j;
-            vertices[k].Position = XMFLOAT3(x, 0, z);
+            auto y = heightFunction(x, z);
+
+            vertices[k].Position = XMFLOAT3(x, y, z);
             vertices[k].Color = colorBlue;
 
             x += dx;
@@ -145,15 +148,16 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
 }
 
 /// <summary>
-/// Builds a two-color grid mesh in the xz-plane procedurally.
+/// Builds a two-color grid mesh in the xz-plane. Flips triangles alternately in the mesh. 
 /// </summary>
 /// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
+/// <param name="heightFunction">The heightFunction makes the grid look like a terrain with hills and valleys.</param>
 /// <param name="color">The color of the grid.</param>
 /// <param name="altColor">The color of the pattern on the grid.</param>
-void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, XMFLOAT3 color, XMFLOAT3 altColor)
+void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, XMFLOAT3 color, XMFLOAT3 altColor)
 {
     auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
     auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
@@ -209,7 +213,9 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
         for (auto j = 0; j < n; ++j)
         {
             auto k = i * n + j;
-            vertices[k].Position = XMFLOAT3(x, 0, z);
+            auto y = heightFunction(x, z);
+
+            vertices[k].Position = XMFLOAT3(x, y, z);
 
             // Set the same color for vertices in even rows.
             if (i % 2 == 0)

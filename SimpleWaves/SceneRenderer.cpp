@@ -79,7 +79,8 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     // [7] Create a rasterizer state.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.FillMode = D3D11_FILL_SOLID; // TODO: Create a D3D11_FILL_WIREFRAME rasterizer state
+    rsDesc.FillMode = D3D11_FILL_WIREFRAME;
+    //rsDesc.FillMode = D3D11_FILL_SOLID; // TODO: Create a D3D11_FILL_SOLID rasterizer state
     rsDesc.CullMode = D3D11_CULL_BACK;
     rsDesc.FrontCounterClockwise = false;
     rsDesc.DepthClipEnable = true;
@@ -89,9 +90,12 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
             &rsDesc,
             m_rasterizerState.put()));
 
-    // Create a grid mesh.
-    //m_gridMesh->Create(4, 2, 16, 8);
-    m_gridMesh->Create(4, 2, 16, 8, XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f));
+    // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
+    // applied to every point. The function makes the grid look like a terrain with hills and valleys.
+    auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
+
+    // Create a grid mesh with two colors: blue and red.
+    m_gridMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f));
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;

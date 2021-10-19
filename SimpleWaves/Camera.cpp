@@ -14,7 +14,7 @@ DirectX::XMMATRIX Camera::GetProjMatrix(winrt::Windows::Foundation::Size const& 
         fovAngleY,
         aspectRatio,
         0.01f,
-        100.0f);
+        300.0f);
 
     return projMatrix;
 }
