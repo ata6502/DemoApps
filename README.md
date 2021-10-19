@@ -36,7 +36,7 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 
 ## Simple Waves
 
-This app is under construction. For now, it just renders a wireframe grid.
+This is the first version of this app. For now, it applies a height function to a wireframe grid.
 
 <img src="./Docs/Images/SimpleWaves.png"/>
 
