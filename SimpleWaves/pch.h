@@ -30,4 +30,7 @@
 
 #include <concrt.h>
 #include <ppltasks.h>
+#include <crtdbg.h> // Microsoft's implementation of CRT; contains _ASSERTE
 
+// Run-time assertion. ASSERT is evaluated only in Debug builds.
+#define ASSERT _ASSERTE

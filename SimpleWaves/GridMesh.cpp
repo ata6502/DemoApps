@@ -11,7 +11,7 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
 }
 
 /// <summary>
-/// Builds a grid in the xz-plane.
+/// Builds a grid mesh in the xz-plane procedurally.
 /// </summary>
 /// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
@@ -128,6 +128,8 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
             k += 6;
         };
     }
+
+    ASSERT(k == m_indexCount);
 
     // Create index buffer and load indices to the buffer.
     D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };

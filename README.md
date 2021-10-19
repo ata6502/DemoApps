@@ -1,6 +1,6 @@
 # DemoApps
 This repository contains examples of simple UWP (Universal Windows Platform) applications 
-using Direct3D, [WinRT/C++](https://docs.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/), 
+using Direct3D 11, [WinRT/C++](https://docs.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/), 
 and XAML. So far, there are two demos in the repository:
 
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
