@@ -79,7 +79,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     // [7] Create a rasterizer state.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.FillMode = D3D11_FILL_WIREFRAME; // TODO: Create a D3D11_FILL_SOLID rasterizer state
+    rsDesc.FillMode = D3D11_FILL_SOLID; // TODO: Create a D3D11_FILL_WIREFRAME rasterizer state
     rsDesc.CullMode = D3D11_CULL_BACK;
     rsDesc.FrontCounterClockwise = false;
     rsDesc.DepthClipEnable = true;
@@ -90,7 +90,8 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
             m_rasterizerState.put()));
 
     // Create a grid mesh.
-    m_gridMesh->Create(4, 2, 16, 8);
+    //m_gridMesh->Create(4, 2, 16, 8);
+    m_gridMesh->Create(4, 2, 16, 8, XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f));
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
