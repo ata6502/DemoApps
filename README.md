@@ -1,10 +1,11 @@
 # DemoApps
 This repository contains examples of simple UWP (Universal Windows Platform) applications 
 using Direct3D 11, [WinRT/C++](https://docs.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/), 
-and XAML. So far, there are two demos in the repository:
+and XAML. So far, there are three demos in the repository:
 
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
 * `TexturedCube` - A cube with materials and textures, lit by directional lights.
+* `SimpleWaves` - A wireframe grid with a height function.
 
 ## Hello World
 
@@ -36,7 +37,7 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 
 ## Simple Waves
 
-This is the first version of this app. For now, it applies a height function to a wireframe grid.
+This is the first version of the Simple Waves app. For now, it applies a height function to a wireframe grid.
 
 <img src="./Docs/Images/SimpleWaves.png"/>
 
