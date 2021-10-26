@@ -94,6 +94,9 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
 
+    // Create a grid mesh.
+    //m_gridMesh->Create(160, 160, 50, 50, heightFunction);
+
     // Create a grid mesh with two colors: blue and red.
     m_gridMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f));
 

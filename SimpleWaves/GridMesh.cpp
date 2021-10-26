@@ -20,6 +20,8 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
 /// <param name="heightFunction">The heightFunction makes the grid look like a terrain with hills and valleys.</param>
 void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction)
 {
+    ReleaseResources();
+
     auto colorBlue = XMFLOAT3(0.0f, 0.0f, 1.0f);
     auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
     auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
@@ -159,6 +161,8 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
 /// <param name="altColor">The color of the pattern on the grid.</param>
 void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, XMFLOAT3 color, XMFLOAT3 altColor)
 {
+    ReleaseResources();
+
     auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
     auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
     auto halfWidth = 0.5 * gridWidth;
