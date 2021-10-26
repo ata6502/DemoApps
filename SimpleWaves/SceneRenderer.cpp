@@ -41,7 +41,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -98,7 +98,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     //m_gridMesh->Create(160, 160, 50, 50, heightFunction);
 
     // Create a grid mesh with two colors: blue and red.
-    m_gridMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f));
+    m_gridMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;

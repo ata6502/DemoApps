@@ -9,7 +9,7 @@ public:
     GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     void Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction);
-    void Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, DirectX::XMFLOAT3 color, DirectX::XMFLOAT3 altColor);
+    void Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, DirectX::XMFLOAT4 color, DirectX::XMFLOAT4 altColor);
 
     void SetBuffers();
     void Draw();

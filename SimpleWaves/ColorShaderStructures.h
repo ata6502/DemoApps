@@ -3,7 +3,7 @@
 struct VertexPositionColor
 {
     DirectX::XMFLOAT3 Position;
-    DirectX::XMFLOAT3 Color;
+    DirectX::XMFLOAT4 Color;
 };
 
 struct ConstantBufferPerFrame
