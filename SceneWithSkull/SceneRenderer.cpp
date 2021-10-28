@@ -76,8 +76,9 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_meshFactory->AddCube();
-    m_meshFactory->AddPyramid();
+    m_meshFactory->MakeCube();
+    m_meshFactory->MakePyramid();
+    m_meshFactory->MakeCylinder(0.5f, 0.2f, 2.0f, 15, 5);
 
     m_meshFactory->Build();
 
@@ -117,6 +118,9 @@ void SceneRenderer::Render()
 
     SetWorldMatrix(XMMatrixIdentity());
     m_meshFactory->Draw(1);
+
+    SetWorldMatrix(XMMatrixTranslation(1.5f, 0.0f, 0.0f));
+    m_meshFactory->Draw(2);
 }
 
 void SceneRenderer::ReleaseResources()

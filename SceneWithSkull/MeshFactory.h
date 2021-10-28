@@ -8,8 +8,9 @@ class MeshFactory
 public:
     MeshFactory(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    void AddCube();
-    void AddPyramid();
+    void MakeCube();
+    void MakePyramid();
+    void MakeCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
 
     void Build();
     void Set();
@@ -32,5 +33,8 @@ private:
     std::vector<VertexPositionColor>        m_vertices;
     std::vector<uint32_t>                   m_indices;
     std::vector<MeshInfo>                   m_meshes;
+
+    void BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
+    void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
 };
 
