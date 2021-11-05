@@ -79,6 +79,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     m_meshFactory->MakeCube();
     m_meshFactory->MakePyramid();
     m_meshFactory->MakeCylinder(0.5f, 0.2f, 2.0f, 15, 5);
+    m_meshFactory->MakeSphere(1.0f, 20, 20);
 
     m_meshFactory->Build();
 
@@ -121,6 +122,9 @@ void SceneRenderer::Render()
 
     SetWorldMatrix(XMMatrixTranslation(1.5f, 0.0f, 0.0f));
     m_meshFactory->Draw(2);
+
+    SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
+    m_meshFactory->Draw(3);
 }
 
 void SceneRenderer::ReleaseResources()

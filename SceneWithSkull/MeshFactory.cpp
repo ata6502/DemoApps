@@ -280,6 +280,109 @@ void MeshFactory::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bott
     }
 }
 
+/// <summary>
+/// Based on [Luna]
+/// Creates a sphere mesh using an approach similar to creating a cylinder mesh.
+/// We use trigonometric functions to calculate the radius per ring.
+/// </summary>
+/// <param name="radius">The sphere's radius</param>
+/// <param name="sliceCount">The number of slices</param>
+/// <param name="stackCount">The number of stacks</param>
+void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCount)
+{
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size();
+    info.StartIndexLocation = m_indices.size();
+
+    // Compute the vertices stating at the top pole and moving down the stacks.
+
+    // Create poles.
+    VertexPositionColor topVertex{ { 0.0f, radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+    VertexPositionColor bottomVertex{ { 0.0f, -radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+
+    m_vertices.push_back(topVertex);
+
+    float phiStep = XM_PI / stackCount;
+    float thetaStep = XM_2PI / sliceCount;
+
+    // Compute vertices for each stack ring (do not count the poles as rings).
+    for (auto i = 0; i <= stackCount; ++i)
+    {
+        float phi = (i+1) * phiStep;
+
+        // Vertices of a ring.
+        for (auto j = 0; j <= sliceCount; ++j)
+        {
+            float theta = j * thetaStep;
+
+            VertexPositionColor v;
+
+            // spherical to cartesian
+            v.Position.x = radius * sinf(phi) * cosf(theta);
+            v.Position.y = radius * cosf(phi);
+            v.Position.z = radius * sinf(phi) * sinf(theta);
+
+            // Alternate color for each stack.
+            if (i % 2)
+                v.Color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+            else
+                v.Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+
+            m_vertices.push_back(v);
+        }
+    }
+
+    m_vertices.push_back(bottomVertex);
+
+    // Compute indices for top stack.  
+    // The top stack was written first to the vertex buffer and connects the top pole to the first ring.
+    for (auto i = 1; i <= sliceCount; ++i)
+    {
+        m_indices.push_back(0);
+        m_indices.push_back(i + 1);
+        m_indices.push_back(i);
+    }
+
+    // Compute indices for inner stacks (not connected to poles).
+    // Offset the indices to the index of the first vertex in the first ring.
+    // This skips the top pole vertex.
+    auto baseIndex = 1;
+    auto n = sliceCount + 1; // the number of vertices in a ring
+    for (auto i = 0; i < stackCount - 2; ++i)
+    {
+        for (auto j = 0; j < sliceCount; ++j)
+        {
+            m_indices.push_back(baseIndex + i * n + j);
+            m_indices.push_back(baseIndex + i * n + j + 1);
+            m_indices.push_back(baseIndex + (i + 1) * n + j);
+
+            m_indices.push_back(baseIndex + (i + 1) * n + j);
+            m_indices.push_back(baseIndex + i * n + j + 1);
+            m_indices.push_back(baseIndex + (i + 1) * n + j + 1);
+        }
+    }
+
+    // Compute indices for the bottom stack. 
+    // The bottom stack was written last to the vertex buffer and connects the bottom pole to the bottom ring.
+
+    // The south pole vertex was added last.
+    uint32_t southPoleIndex = (uint32_t)m_vertices.size() - info.BaseVertexLocation - 1; // TODO: -1 ?
+
+    // Offset the indices to the index of the first vertex in the last ring.
+    baseIndex = southPoleIndex - n;
+
+    for (auto i = 0; i < sliceCount; ++i)
+    {
+        m_indices.push_back(southPoleIndex);
+        m_indices.push_back(baseIndex + i);
+        m_indices.push_back(baseIndex + i + 1);
+    }
+
+    info.IndexCount = m_indices.size() - info.StartIndexLocation;
+
+    m_meshes.push_back(info);
+}
+
 void MeshFactory::Build()
 {
     // TODO: Create const vertex buffers.
@@ -326,7 +429,7 @@ void MeshFactory::Set()
 void MeshFactory::Draw(int index)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
-    auto info = m_meshes[index];
+    const auto& info = m_meshes[index];
 
     context->DrawIndexed(info.IndexCount, info.StartIndexLocation, info.BaseVertexLocation);
 }

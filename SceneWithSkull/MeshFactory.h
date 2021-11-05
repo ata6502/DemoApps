@@ -11,6 +11,7 @@ public:
     void MakeCube();
     void MakePyramid();
     void MakeCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
+    void MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCount);
 
     void Build();
     void Set();
