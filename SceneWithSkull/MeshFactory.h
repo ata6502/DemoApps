@@ -12,6 +12,7 @@ public:
     void MakePyramid();
     void MakeCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCount);
+    void MakeGeosphere(float radius, uint16_t numSubdivisions);
 
     void Build();
     void Set();
@@ -37,5 +38,6 @@ private:
 
     void BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
+    void Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices);
 };
 

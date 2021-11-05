@@ -36,6 +36,8 @@ void MeshFactory::MakeCube()
     i = info.StartIndexLocation;
     m_indices.resize(i + CubeIndexCount);
 
+    // TODO: Create an array and assign.
+
     m_indices[i++] = 0; m_indices[i++] = 1; m_indices[i++] = 2;
     m_indices[i++] = 1; m_indices[i++] = 3; m_indices[i++] = 2;
 
@@ -71,6 +73,8 @@ void MeshFactory::MakePyramid()
 
     auto i = info.BaseVertexLocation;
     m_vertices.resize(i + PyramidVertexCount);
+
+    // TODO: Create an array and assign.
 
     const float l = 0.5f;
     m_vertices[i++] = { XMFLOAT3(0.0f, l, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) };
@@ -284,6 +288,7 @@ void MeshFactory::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bott
 /// Based on [Luna]
 /// Creates a sphere mesh using an approach similar to creating a cylinder mesh.
 /// We use trigonometric functions to calculate the radius per ring.
+/// The triangles of the sphere do not have equal areas.
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
 /// <param name="sliceCount">The number of slices</param>
@@ -381,6 +386,191 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
     info.IndexCount = m_indices.size() - info.StartIndexLocation;
 
     m_meshes.push_back(info);
+}
+
+/*
+    Based on [Luna]
+
+    A geosphere approximates a sphere using triangles with almost equal areas as well as equal side lengths.
+    To generate a geosphere, we start with an icosahedron (a polyhedron with 20 faces), subdivide the triangles,
+    and then project the new vertices onto the sphere with the given radius. We repeat this process to improve
+    the tessellation.
+
+    A triangle can be subdivided into four equal sized triangles:
+
+            v1
+             *
+            / \
+           /   \
+        m0*-----*m1
+         / \   / \
+        /   \ /   \
+       *-----*-----*
+      v0    m2     v2
+
+    The new vertices are found by taking the midpoints along the edges of the original triangle.
+    The new vertices can then be projected onto a sphere of radius r by projecting the vertices
+    onto the unit sphere and then scalar multiplying by r:
+
+               v
+    v' = r * -----
+             ||v||
+*/
+void MeshFactory::MakeGeosphere(float radius, uint16_t numSubdivisions)
+{
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size(); // initial vertex count
+    info.StartIndexLocation = m_indices.size(); // initial index count
+
+    // Put a cap on the number of subdivisions.
+    numSubdivisions = std::min(numSubdivisions, (uint16_t)5);
+
+    // Define vertices and indices of icosahedron.
+    std::vector<VertexPositionColor> vertices;
+    std::vector<uint32_t> indices;
+
+    // TODO: Can we resize in initializer.
+    vertices.resize(12);
+    indices.resize(60);
+
+    const float X = 0.525731f;
+    const float Z = 0.850651f;
+
+    XMFLOAT3 pos[12] =
+    {
+        XMFLOAT3(-X, 0.0f, Z), XMFLOAT3(X, 0.0f, Z),
+        XMFLOAT3(-X, 0.0f, -Z), XMFLOAT3(X, 0.0f, -Z),
+        XMFLOAT3(0.0f, Z, X), XMFLOAT3(0.0f, Z, -X),
+        XMFLOAT3(0.0f, -Z, X), XMFLOAT3(0.0f, -Z, -X),
+        XMFLOAT3(Z, X, 0.0f), XMFLOAT3(-Z, X, 0.0f),
+        XMFLOAT3(Z, -X, 0.0f), XMFLOAT3(-Z, -X, 0.0f)
+    };
+
+    uint32_t k[60] =
+    {
+        1, 4, 0, 4, 9, 0, 4, 5, 9, 8, 5, 4, 1, 8, 4,
+        1, 10, 8, 10, 3, 8, 8, 3, 5, 3, 2, 5, 3, 7, 2,
+        3, 10, 7, 10, 6, 7, 6, 11, 7, 6, 0, 11, 6, 1, 0,
+        10, 1, 6, 11, 0, 9, 2, 11, 9, 5, 2, 9, 11, 2, 7
+    };
+
+    for (auto i = 0; i < 12; ++i)
+        vertices[i].Position = pos[i];
+
+    for (auto i = 0; i < 60; ++i)
+        indices[i] = k[i];
+
+    // Approximate a sphere by tessellating an icosahedron.
+    for (auto i = 0; i < numSubdivisions; ++i)
+        Subdivide(vertices, indices); // vertices and indices collections are modified in Subdivide
+
+    // Project vertices onto sphere and scale.
+    for (auto i = 0; i < vertices.size(); ++i)
+    {
+        // Project onto unit sphere.
+        XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&vertices[i].Position));
+
+        // Project onto sphere.
+        XMVECTOR p = radius * n;
+
+        XMStoreFloat3(&vertices[i].Position, p);
+
+        if (i % 4)
+            vertices[i].Color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+        else
+            vertices[i].Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    // Add the geosphere vertices and indices to the buffers.
+    for (const auto& v : vertices)
+        m_vertices.push_back(v);
+    for (auto i : indices)
+        m_indices.push_back(i);
+
+    info.IndexCount = m_indices.size() - info.StartIndexLocation;
+
+    m_meshes.push_back(info);
+}
+
+// TODO: How to pass a ref to vector ?
+void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices)
+{
+    // Save a copy of the input geometry.
+    std::vector<VertexPositionColor> verticesCopy(vertices);
+    std::vector<uint32_t> indicesCopy(indices);
+
+    // TODO: Why do we need to do that?
+    vertices.resize(0);
+    indices.resize(0);
+
+    //       v1
+    //        *
+    //       / \
+    //      /   \
+    //   m0*-----*m1
+    //    / \   / \
+    //   /   \ /   \
+    //  *-----*-----*
+    // v0    m2     v2
+
+    auto numTris = indicesCopy.size() / 3;
+    for (auto i = 0; i < numTris; ++i)
+    {
+        VertexPositionColor v0 = verticesCopy[indicesCopy[i * 3 + 0]];
+        VertexPositionColor v1 = verticesCopy[indicesCopy[i * 3 + 1]];
+        VertexPositionColor v2 = verticesCopy[indicesCopy[i * 3 + 2]];
+
+        //
+        // Generate the midpoints.
+        //
+
+        VertexPositionColor m0, m1, m2;
+
+        // For subdivision, we just care about the position component.  We derive the other
+        // vertex components in CreateGeosphere.
+
+        m0.Position = XMFLOAT3(
+            0.5f * (v0.Position.x + v1.Position.x),
+            0.5f * (v0.Position.y + v1.Position.y),
+            0.5f * (v0.Position.z + v1.Position.z));
+
+        m1.Position = XMFLOAT3(
+            0.5f * (v1.Position.x + v2.Position.x),
+            0.5f * (v1.Position.y + v2.Position.y),
+            0.5f * (v1.Position.z + v2.Position.z));
+
+        m2.Position = XMFLOAT3(
+            0.5f * (v0.Position.x + v2.Position.x),
+            0.5f * (v0.Position.y + v2.Position.y),
+            0.5f * (v0.Position.z + v2.Position.z));
+
+        //
+        // Add new geometry.
+        //
+
+        vertices.push_back(v0); // 0
+        vertices.push_back(v1); // 1
+        vertices.push_back(v2); // 2
+        vertices.push_back(m0); // 3
+        vertices.push_back(m1); // 4
+        vertices.push_back(m2); // 5
+
+        indices.push_back(i * 6 + 0);
+        indices.push_back(i * 6 + 3);
+        indices.push_back(i * 6 + 5);
+
+        indices.push_back(i * 6 + 3);
+        indices.push_back(i * 6 + 4);
+        indices.push_back(i * 6 + 5);
+
+        indices.push_back(i * 6 + 5);
+        indices.push_back(i * 6 + 4);
+        indices.push_back(i * 6 + 2);
+
+        indices.push_back(i * 6 + 3);
+        indices.push_back(i * 6 + 1);
+        indices.push_back(i * 6 + 4);
+    }
 }
 
 void MeshFactory::Build()
