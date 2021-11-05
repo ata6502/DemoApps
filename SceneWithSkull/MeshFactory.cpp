@@ -12,12 +12,10 @@ MeshFactory::MeshFactory(std::shared_ptr<DX::DeviceResources> const& deviceResou
 void MeshFactory::MakeCube()
 {
     const uint16_t CubeVertexCount = 8;
-    const uint16_t CubeIndexCount = 36;
 
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
-    info.IndexCount = CubeIndexCount;
 
     auto i = info.BaseVertexLocation;
     m_vertices.resize(i + CubeVertexCount);
@@ -33,30 +31,37 @@ void MeshFactory::MakeCube()
 
     ASSERT(m_vertices.size() == i);
 
-    i = info.StartIndexLocation;
-    m_indices.resize(i + CubeIndexCount);
+    std::vector<uint32_t> indices =
+    {
+        0, 1, 2, // -x
+        1, 3, 2,
 
-    // TODO: Create an array and assign.
+        4, 6, 5, // +x
+        5, 6, 7,
 
-    m_indices[i++] = 0; m_indices[i++] = 1; m_indices[i++] = 2;
-    m_indices[i++] = 1; m_indices[i++] = 3; m_indices[i++] = 2;
+        0, 5, 1, // -y
+        0, 4, 5,
 
-    m_indices[i++] = 4; m_indices[i++] = 6; m_indices[i++] = 5;
-    m_indices[i++] = 5; m_indices[i++] = 6; m_indices[i++] = 7;
+        2, 7, 6, // +y
+        2, 3, 7,
 
-    m_indices[i++] = 0; m_indices[i++] = 5; m_indices[i++] = 1;
-    m_indices[i++] = 0; m_indices[i++] = 4; m_indices[i++] = 5;
+        0, 6, 4, // -z
+        0, 2, 6,
 
-    m_indices[i++] = 2; m_indices[i++] = 7; m_indices[i++] = 6;
-    m_indices[i++] = 2; m_indices[i++] = 3; m_indices[i++] = 7;
+        1, 7, 3, // +z
+        1, 5, 7,
+    };
 
-    m_indices[i++] = 0; m_indices[i++] = 6; m_indices[i++] = 4;
-    m_indices[i++] = 0; m_indices[i++] = 2; m_indices[i++] = 6;
+    // TODO: Consider a helper method CopyIndices (cube and pyramid have the same code).
 
-    m_indices[i++] = 1; m_indices[i++] = 7; m_indices[i++] = 3;
-    m_indices[i++] = 1; m_indices[i++] = 5; m_indices[i++] = 7;
+    auto indexCount = indices.size();
+    info.IndexCount = indexCount;
+    m_indices.resize(info.StartIndexLocation + indexCount);
 
-    ASSERT(m_indices.size() == i);
+    for (auto i = 0; i < indexCount; ++i)
+    {
+        m_indices[info.StartIndexLocation + i] = indices[i];
+    }
 
     m_meshes.push_back(info);
 }
@@ -64,17 +69,13 @@ void MeshFactory::MakeCube()
 void MeshFactory::MakePyramid()
 {
     const uint16_t PyramidVertexCount = 5;
-    const uint16_t PyramidIndexCount = 18;
 
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
-    info.IndexCount = PyramidIndexCount;
 
     auto i = info.BaseVertexLocation;
     m_vertices.resize(i + PyramidVertexCount);
-
-    // TODO: Create an array and assign.
 
     const float l = 0.5f;
     m_vertices[i++] = { XMFLOAT3(0.0f, l, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) };
@@ -85,18 +86,25 @@ void MeshFactory::MakePyramid()
 
     ASSERT(m_vertices.size() == i);
 
-    i = info.StartIndexLocation;
-    m_indices.resize(i + PyramidIndexCount);
+    std::vector<uint32_t> indices =
+    {
+        0, 1, 2,
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 1,
 
-    m_indices[i++] = 0; m_indices[i++] = 1; m_indices[i++] = 2;
-    m_indices[i++] = 0; m_indices[i++] = 2; m_indices[i++] = 3;
-    m_indices[i++] = 0; m_indices[i++] = 3; m_indices[i++] = 4;
-    m_indices[i++] = 0; m_indices[i++] = 4; m_indices[i++] = 1;
+        2, 1, 3,
+        3, 1, 4,
+    };
 
-    m_indices[i++] = 2; m_indices[i++] = 1; m_indices[i++] = 3;
-    m_indices[i++] = 3; m_indices[i++] = 1; m_indices[i++] = 4;
+    auto indexCount = indices.size();
+    info.IndexCount = indexCount;
+    m_indices.resize(info.StartIndexLocation + indexCount);
 
-    ASSERT(m_indices.size() == i);
+    for (auto i = 0; i < indexCount; ++i)
+    {
+        m_indices[info.StartIndexLocation + i] = indices[i];
+    }
 
     m_meshes.push_back(info);
 }
@@ -371,7 +379,7 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
     // The bottom stack was written last to the vertex buffer and connects the bottom pole to the bottom ring.
 
     // The south pole vertex was added last.
-    uint32_t southPoleIndex = (uint32_t)m_vertices.size() - info.BaseVertexLocation - 1; // TODO: -1 ?
+    uint32_t southPoleIndex = (uint32_t)m_vertices.size() - info.BaseVertexLocation - 1;
 
     // Offset the indices to the index of the first vertex in the last ring.
     baseIndex = southPoleIndex - n;

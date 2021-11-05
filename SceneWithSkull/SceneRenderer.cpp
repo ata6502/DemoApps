@@ -76,10 +76,10 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_meshFactory->MakeCube();
-    m_meshFactory->MakePyramid();
     m_meshFactory->MakeCylinder(0.5f, 0.2f, 2.0f, 15, 5);
+    m_meshFactory->MakeCube();
     m_meshFactory->MakeSphere(1.0f, 20, 20);
+    m_meshFactory->MakePyramid();
     m_meshFactory->MakeGeosphere(1.0f, 3);
 
     m_meshFactory->Build();
@@ -115,16 +115,16 @@ void SceneRenderer::Render()
     context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
-    SetWorldMatrix(XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
+    SetWorldMatrix(XMMatrixTranslation(1.5f, 0.0f, 0.0f));
     m_meshFactory->Draw(0);
 
-    SetWorldMatrix(XMMatrixIdentity());
+    SetWorldMatrix(XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
     m_meshFactory->Draw(1);
 
-    SetWorldMatrix(XMMatrixTranslation(1.5f, 0.0f, 0.0f));
+    SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
     m_meshFactory->Draw(2);
 
-    SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
+    SetWorldMatrix(XMMatrixIdentity());
     m_meshFactory->Draw(3);
 
     SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(0.7f, 0.6f, 1.4f));
