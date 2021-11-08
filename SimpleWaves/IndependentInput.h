@@ -41,7 +41,6 @@ private:
     uint32_t m_activePointerId;
     Concurrency::critical_section m_criticalSection;
 
-    // TODO: C++/CX makes the GestureRecognizer agile. Do we also need to make it agile in C++/WinRT ?
     winrt::Windows::UI::Input::GestureRecognizer m_gestureRecognizer{ nullptr };
 
     float                               m_radius;

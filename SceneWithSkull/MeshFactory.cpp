@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "MeshFactory.h"
+#include "Utilities.h"
 
 using namespace DirectX;
 
@@ -419,13 +420,9 @@ void MeshFactory::MakeGeosphere(float radius, uint16_t numSubdivisions)
     // Put a cap on the number of subdivisions.
     numSubdivisions = std::min(numSubdivisions, (uint16_t)5);
 
-    // Define vertices and indices of icosahedron.
-    std::vector<VertexPositionColor> vertices;
-    std::vector<uint32_t> indices;
-
-    // TODO: Can we resize in initializer.
-    vertices.resize(12);
-    indices.resize(60);
+    // Define vertices and indices of icosahedron with 12 vertices and 60 indices.
+    std::vector<VertexPositionColor> vertices(12);
+    std::vector<uint32_t> indices(60);
 
     const float X = 0.525731f;
     const float Z = 0.850651f;
@@ -492,9 +489,9 @@ void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vec
     std::vector<VertexPositionColor> verticesCopy(vertices);
     std::vector<uint32_t> indicesCopy(indices);
 
-    // TODO: Why do we need to do that?
-    vertices.resize(0);
-    indices.resize(0);
+    // Clear the original vectors. We will re-populate them with new vertices and indices.
+    vertices.clear();
+    indices.clear();
 
     //       v1
     //        *
@@ -686,19 +683,12 @@ void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountH
 
 void MeshFactory::Build()
 {
-    // TODO: Create const vertex buffers.
-    
-    // Create vertex buffer and load data.
-    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-    vertexBufferData.pSysMem = m_vertices.data();
-    vertexBufferData.SysMemPitch = 0;
-    vertexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC vertexBufferDesc(m_vertices.size() * sizeof(VertexPositionColor), D3D11_BIND_VERTEX_BUFFER);
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &vertexBufferDesc,
-            &vertexBufferData,
-            m_vertexBuffer.put()));
+    // Create an immutable vertex buffer and load data.
+    m_vertexBuffer.attach(
+        CreateImmutableVertexBuffer(
+            m_deviceResources->GetD3DDevice(),
+            m_vertices.size() * sizeof(VertexPositionColor),
+            m_vertices.data()));
 
     // Create index buffer and load indices to the buffer.
     D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
