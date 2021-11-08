@@ -52,16 +52,8 @@ void MeshFactory::MakeCube()
         1, 5, 7,
     };
 
-    // TODO: Consider a helper method CopyIndices (cube and pyramid have the same code).
-
-    auto indexCount = indices.size();
-    info.IndexCount = indexCount;
-    m_indices.resize(info.StartIndexLocation + indexCount);
-
-    for (auto i = 0; i < indexCount; ++i)
-    {
-        m_indices[info.StartIndexLocation + i] = indices[i];
-    }
+    info.IndexCount = indices.size();
+    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
 
     m_meshes.push_back(info);
 }
@@ -97,14 +89,8 @@ void MeshFactory::MakePyramid()
         3, 1, 4,
     };
 
-    auto indexCount = indices.size();
-    info.IndexCount = indexCount;
-    m_indices.resize(info.StartIndexLocation + indexCount);
-
-    for (auto i = 0; i < indexCount; ++i)
-    {
-        m_indices[info.StartIndexLocation + i] = indices[i];
-    }
+    info.IndexCount = indices.size();
+    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
 
     m_meshes.push_back(info);
 }
@@ -500,7 +486,6 @@ void MeshFactory::MakeGeosphere(float radius, uint16_t numSubdivisions)
     m_meshes.push_back(info);
 }
 
-// TODO: How to pass a ref to vector ?
 void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices)
 {
     // Save a copy of the input geometry.
@@ -636,4 +621,14 @@ void MeshFactory::Release()
 {
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
+}
+
+void MeshFactory::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
+{
+    m_indices.resize(startIndexLocation + indexCount);
+
+    for (auto i = 0; i < indexCount; ++i)
+    {
+        m_indices[startIndexLocation + i] = indices[i];
+    }
 }

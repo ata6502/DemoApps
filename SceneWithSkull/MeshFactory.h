@@ -39,5 +39,6 @@ private:
     void BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices);
+    void MeshFactory::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount);
 };
 
