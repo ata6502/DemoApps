@@ -566,6 +566,124 @@ void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vec
     }
 }
 
+/// <summary>
+/// Builds a grid mesh in the xz-plane procedurally.
+/// </summary>
+/// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
+/// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
+/// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
+/// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
+void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+{
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size(); // initial vertex count
+    info.StartIndexLocation = m_indices.size(); // initial index count
+
+    auto colorBlue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+    auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
+    auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
+    auto halfWidth = 0.5 * gridWidth;
+    auto halfDepth = 0.5 * gridDepth;
+
+    // The grid is built from an M x N matrix of vertices. 
+    auto m = quadCountDepth + 1;
+    auto n = quadCountHoriz + 1;
+
+    // Create vertices.
+    auto vertexCount = m * n;
+    m_vertices.resize(info.BaseVertexLocation + vertexCount);
+
+    // An example of a 2 x 4 grid mesh:
+    // - quadCountHoriz = 4
+    // - quadCountDepth = 2
+    // - quadCount = 4 * 2 = 8
+    // - triangleCount = quadCount * 2 = 16
+    // - m = 3 (the depth number of vertices)
+    // - n = 5 (the horizontal number of vertices)
+    // - vertexCount = 15
+    // 
+    //  0--1--2--3--4
+    //  |\ |\ |\ |\ | 
+    //  | \| \| \| \|
+    //  5--6--7--8--9
+    //  |\ |\ |\ |\ | 
+    //  | \| \| \| \|
+    // 10-11-12-13-14
+
+    // Compute vertex positions by starting at the upper-left corner of the grid. 
+    // Then, incrementally compute the vertex coordinates row-by-row. 
+    auto z = halfDepth;
+    for (auto i = 0; i < m; ++i)
+    {
+        auto x = -halfWidth;
+
+        for (auto j = 0; j < n; ++j)
+        {
+            auto k = i * n + j;
+
+            m_vertices[info.BaseVertexLocation + k].Position = XMFLOAT3(x, 0, z);
+            m_vertices[info.BaseVertexLocation + k].Color = colorBlue;
+
+            x += dx;
+        };
+
+        z -= dz;
+    }
+
+    // Create indices: 
+    // - each quad has two triangles
+    // - each triangle has three vertices
+    // - each quad is duplicated for the top and the bottom face of the grid
+    auto indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
+    m_indices.resize(info.StartIndexLocation + indexCount);
+    size_t k = info.StartIndexLocation;
+
+    for (auto i = 0; i < quadCountDepth; ++i)
+    {
+        for (auto j = 0; j < quadCountHoriz; ++j)
+        {
+            // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
+            // The bottom face of the grid has the same indices but in opposite order.
+            //
+            //     a----b
+            //     |\   |
+            //     | \  |
+            //     |  \ |
+            //     |   \|
+            //     c----d
+            //
+            uint16_t a = j + i * n;
+            uint16_t b = j + 1 + i * n;
+            uint16_t c = j + (i + 1) * n;
+            uint16_t d = j + 1 + (i + 1) * n;
+
+            // top face
+            m_indices[k] = a;
+            m_indices[k + 1] = b;
+            m_indices[k + 2] = d;
+            m_indices[k + 3] = a;
+            m_indices[k + 4] = d;
+            m_indices[k + 5] = c;
+            k += 6;
+
+            // bottom face
+            m_indices[k] = a;
+            m_indices[k + 1] = d;
+            m_indices[k + 2] = b;
+            m_indices[k + 3] = a;
+            m_indices[k + 4] = c;
+            m_indices[k + 5] = d;
+            k += 6;
+        };
+    }
+
+    ASSERT(k - info.StartIndexLocation == indexCount);
+
+    info.IndexCount = indexCount;
+
+    m_meshes.push_back(info);
+}
+
 void MeshFactory::Build()
 {
     // TODO: Create const vertex buffers.

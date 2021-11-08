@@ -13,6 +13,7 @@ public:
     void MakeCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCount);
     void MakeGeosphere(float radius, uint16_t numSubdivisions);
+    void MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
 
     void Build();
     void Set();
