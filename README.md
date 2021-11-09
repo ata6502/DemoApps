@@ -9,7 +9,7 @@ and XAML. So far, there are three demos in the repository:
 
 ## Hello World
 
-A colored cube rotating along its axes is a canonical example of 3D animation. As simple as it is, the application
+A cube rotating along its axes is a canonical example of 3D animation. As simple as it is, the application
 requires a little bit of setup to work properly with XAML and Direct3D:
 
 * The `DeviceResources` class creates both the Direct3D device and the device context as well as the swap chain. It also manages 
