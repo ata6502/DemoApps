@@ -1,6 +1,7 @@
 # DemoApps
 This repository contains examples of simple UWP (Universal Windows Platform) applications 
-using Direct3D 11, [WinRT/C++](https://docs.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/), 
+using [Direct3D 11](https://docs.microsoft.com/en-us/windows/win32/direct3d11/atoc-dx-graphics-direct3d-11), 
+[WinRT/C++](https://docs.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/), 
 and XAML. So far, there are three demos in the repository:
 
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
@@ -9,8 +10,8 @@ and XAML. So far, there are three demos in the repository:
 
 ## Hello World
 
-A cube rotating along its axes is a canonical example of 3D animation. As simple as it is, the application
-requires a little bit of setup to work properly with XAML and Direct3D:
+A rotating cube is a canonical example of 3D animation. As simple as it is, the application
+requires quite a bit of setup to work properly with XAML and Direct3D:
 
 * The `DeviceResources` class creates both the Direct3D device and the device context as well as the swap chain. It also manages 
 the device lost event. 
