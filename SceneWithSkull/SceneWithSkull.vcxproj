@@ -114,7 +114,7 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="IndependentInput.h" />
-    <ClInclude Include="MeshFactory.h" />
+    <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -153,7 +153,7 @@
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
-    <ClCompile Include="MeshFactory.cpp" />
+    <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

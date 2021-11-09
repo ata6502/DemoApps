@@ -15,7 +15,7 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
-    m_meshFactory = std::make_unique<MeshFactory>(deviceResources);
+    m_meshGenerator = std::make_unique<MeshGenerator>(deviceResources);
 
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -76,14 +76,14 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_meshFactory->MakeCylinder(0.5f, 0.2f, 2.0f, 15, 5);
-    m_meshFactory->MakeCube();
-    m_meshFactory->MakeSphere(1.0f, 20, 20);
-    m_meshFactory->MakePyramid();
-    m_meshFactory->MakeGeosphere(1.0f, 3);
-    m_meshFactory->MakeGrid(4, 2, 5, 5);
+    m_meshGenerator->CreateCylinder(0.5f, 0.2f, 2.0f, 15, 5);
+    m_meshGenerator->CreateCube();
+    m_meshGenerator->CreateSphere(1.0f, 20, 20);
+    m_meshGenerator->CreatePyramid();
+    m_meshGenerator->CreateGeosphere(1.0f, 3);
+    m_meshGenerator->CreateGrid(4, 2, 5, 5);
 
-    m_meshFactory->Build();
+    m_meshGenerator->CreateBuffers();
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
@@ -98,7 +98,7 @@ void SceneRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    m_meshFactory->Set();
+    m_meshGenerator->SetBuffers();
 
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     context->IASetInputLayout(m_inputLayout.get());
@@ -117,28 +117,28 @@ void SceneRenderer::Render()
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
     SetWorldMatrix(XMMatrixTranslation(1.5f, 0.0f, 0.0f));
-    m_meshFactory->Draw(0);
+    m_meshGenerator->DrawMesh(0);
 
     SetWorldMatrix(XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
-    m_meshFactory->Draw(1);
+    m_meshGenerator->DrawMesh(1);
 
     SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
-    m_meshFactory->Draw(2);
+    m_meshGenerator->DrawMesh(2);
 
     SetWorldMatrix(XMMatrixIdentity());
-    m_meshFactory->Draw(3);
+    m_meshGenerator->DrawMesh(3);
 
     SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(0.7f, 0.6f, 1.4f));
-    m_meshFactory->Draw(4);
+    m_meshGenerator->DrawMesh(4);
 
     SetWorldMatrix(XMMatrixTranslation(0.0f, -1.01f, 0.0f));
-    m_meshFactory->Draw(5);
+    m_meshGenerator->DrawMesh(5);
 }
 
 void SceneRenderer::ReleaseResources()
 {
     m_initialized = false;
-    m_meshFactory->Release();
+    m_meshGenerator->ReleaseBuffers();
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;

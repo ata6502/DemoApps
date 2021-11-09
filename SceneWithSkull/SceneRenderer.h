@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "MeshFactory.h"
+#include "MeshGenerator.h"
 
 class SceneRenderer
 {
@@ -34,6 +34,6 @@ private:
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
     bool                                    m_initialized;
-    std::unique_ptr<MeshFactory>            m_meshFactory;
+    std::unique_ptr<MeshGenerator>          m_meshGenerator;
 };
 

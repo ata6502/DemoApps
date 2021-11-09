@@ -1,16 +1,16 @@
 #include "pch.h"
 
-#include "MeshFactory.h"
+#include "MeshGenerator.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-MeshFactory::MeshFactory(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+MeshGenerator::MeshGenerator(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources)
 {
 }
 
-void MeshFactory::MakeCube()
+void MeshGenerator::CreateCube()
 {
     const uint16_t CubeVertexCount = 8;
 
@@ -59,7 +59,7 @@ void MeshFactory::MakeCube()
     m_meshes.push_back(info);
 }
 
-void MeshFactory::MakePyramid()
+void MeshGenerator::CreatePyramid()
 {
     const uint16_t PyramidVertexCount = 5;
 
@@ -94,6 +94,16 @@ void MeshFactory::MakePyramid()
     CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
 
     m_meshes.push_back(info);
+}
+
+void MeshGenerator::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
+{
+    m_indices.resize(startIndexLocation + indexCount);
+
+    for (size_t i = 0; i < indexCount; ++i)
+    {
+        m_indices[startIndexLocation + i] = indices[i];
+    }
 }
 
 /*
@@ -132,7 +142,7 @@ void MeshFactory::MakePyramid()
 
     The idea is to iterate over each ring and generate the vertices that lie on that ring.
 */
-void MeshFactory::MakeCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
@@ -146,7 +156,7 @@ void MeshFactory::MakeCylinder(float bottomRadius, float topRadius, float cylind
     uint32_t ringCount = stackCount + 1;
 
     // Compute vertices for each stack ring starting at the bottom and moving up.
-    for (auto i = 0; i < ringCount; ++i)
+    for (uint32_t i = 0; i < ringCount; ++i)
     {
         float y = -0.5f * cylinderHeight + i * stackHeight; // the height of the i-th ring
         float r = bottomRadius + i * radiusStep;  // the radius of the i-th ring
@@ -154,7 +164,7 @@ void MeshFactory::MakeCylinder(float bottomRadius, float topRadius, float cylind
         // Vertices of ring.
         // Note that we duplicate the first and last vertex per ring. It has meaning with textures.
         float theta = XM_2PI / sliceCount; // an "top" angle of a single slice triangle
-        for (auto j = 0; j <= sliceCount; ++j)
+        for (uint32_t j = 0; j <= sliceCount; ++j)
         {
             float x = r * cosf(j * theta);
             float z = r * sinf(j * theta);
@@ -177,9 +187,9 @@ void MeshFactory::MakeCylinder(float bottomRadius, float topRadius, float cylind
     auto n = sliceCount + 1; // the number of vertices per ring
 
     // Compute indices for each stack.
-    for (auto i = 0; i < stackCount; ++i)
+    for (uint32_t i = 0; i < stackCount; ++i)
     {
-        for (auto j = 0; j < sliceCount; ++j)
+        for (uint32_t j = 0; j < sliceCount; ++j)
         {
             // Each quad is composed of two triangles: ABC and ACD
 
@@ -198,15 +208,15 @@ void MeshFactory::MakeCylinder(float bottomRadius, float topRadius, float cylind
         }
     }
 
-    BuildCylinderTopCap(info.BaseVertexLocation, bottomRadius, topRadius, cylinderHeight, sliceCount, stackCount);
-    BuildCylinderBottomCap(info.BaseVertexLocation, bottomRadius, topRadius, cylinderHeight, sliceCount, stackCount);
+    BuildCylinderTopCap(info.BaseVertexLocation, topRadius, cylinderHeight, sliceCount);
+    BuildCylinderBottomCap(info.BaseVertexLocation, bottomRadius, cylinderHeight, sliceCount);
 
     info.IndexCount = m_indices.size() - info.StartIndexLocation;
 
     m_meshes.push_back(info);
 }
 
-void MeshFactory::BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount)
 {
     uint32_t baseIndex = (uint32_t)m_vertices.size() - baseVertexLocation;
 
@@ -217,7 +227,7 @@ void MeshFactory::BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomR
     v.Color = XMFLOAT4(0.3f, 0.3f, 0.0f, 1.0f);
 
     // Duplicate top cap ring vertices because the texture coordinates and normals differ (TODO: texture and normals)
-    for (auto i = 0; i <= sliceCount; ++i)
+    for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = topRadius * cosf(i * theta);
         float z = topRadius * sinf(i * theta);
@@ -235,7 +245,7 @@ void MeshFactory::BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomR
     // Index of the center vertex.
     uint32_t centerIndex = (uint32_t)m_vertices.size() - baseVertexLocation - 1;
 
-    for (auto i = 0; i < sliceCount; ++i)
+    for (uint32_t i = 0; i < sliceCount; ++i)
     {
         m_indices.push_back(centerIndex);
         m_indices.push_back(baseIndex + i + 1);
@@ -243,7 +253,7 @@ void MeshFactory::BuildCylinderTopCap(uint32_t baseVertexLocation, float bottomR
     }
 }
 
-void MeshFactory::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount)
 {
     uint32_t baseIndex = (uint32_t)m_vertices.size() - baseVertexLocation;
 
@@ -254,7 +264,7 @@ void MeshFactory::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bott
     v.Color = XMFLOAT4(0.3f, 0.3f, 0.0f, 1.0f);
 
     // Duplicate bottom cap ring vertices.
-    for (auto i = 0; i <= sliceCount; ++i)
+    for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = bottomRadius * cosf(i * theta);
         float z = bottomRadius * sinf(i * theta);
@@ -271,7 +281,7 @@ void MeshFactory::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bott
     // Index of the center vertex.
     uint32_t centerIndex = (uint32_t)m_vertices.size() - baseVertexLocation - 1;
 
-    for (auto i = 0; i < sliceCount; ++i)
+    for (uint32_t i = 0; i < sliceCount; ++i)
     {
         m_indices.push_back(centerIndex);
         m_indices.push_back(baseIndex + i);
@@ -283,12 +293,12 @@ void MeshFactory::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bott
 /// Based on [Luna]
 /// Creates a sphere mesh using an approach similar to creating a cylinder mesh.
 /// We use trigonometric functions to calculate the radius per ring.
-/// The triangles of the sphere do not have equal areas.
+/// Note that the triangles of the sphere do not have equal areas.
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
 /// <param name="sliceCount">The number of slices</param>
 /// <param name="stackCount">The number of stacks</param>
-void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t stackCount)
 {
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
@@ -306,12 +316,12 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
     float thetaStep = XM_2PI / sliceCount;
 
     // Compute vertices for each stack ring (do not count the poles as rings).
-    for (auto i = 0; i <= stackCount; ++i)
+    for (uint32_t i = 0; i <= stackCount; ++i)
     {
         float phi = (i+1) * phiStep;
 
         // Vertices of a ring.
-        for (auto j = 0; j <= sliceCount; ++j)
+        for (uint32_t j = 0; j <= sliceCount; ++j)
         {
             float theta = j * thetaStep;
 
@@ -334,9 +344,9 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
 
     m_vertices.push_back(bottomVertex);
 
-    // Compute indices for top stack.  
+    // Compute indices for the top stack.  
     // The top stack was written first to the vertex buffer and connects the top pole to the first ring.
-    for (auto i = 1; i <= sliceCount; ++i)
+    for (uint32_t i = 1; i <= sliceCount; ++i)
     {
         m_indices.push_back(0);
         m_indices.push_back(i + 1);
@@ -348,9 +358,9 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
     // This skips the top pole vertex.
     auto baseIndex = 1;
     auto n = sliceCount + 1; // the number of vertices in a ring
-    for (auto i = 0; i < stackCount - 2; ++i)
+    for (uint32_t i = 0; i < stackCount - 2; ++i)
     {
-        for (auto j = 0; j < sliceCount; ++j)
+        for (uint32_t j = 0; j < sliceCount; ++j)
         {
             m_indices.push_back(baseIndex + i * n + j);
             m_indices.push_back(baseIndex + i * n + j + 1);
@@ -371,7 +381,7 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
     // Offset the indices to the index of the first vertex in the last ring.
     baseIndex = southPoleIndex - n;
 
-    for (auto i = 0; i < sliceCount; ++i)
+    for (uint32_t i = 0; i < sliceCount; ++i)
     {
         m_indices.push_back(southPoleIndex);
         m_indices.push_back(baseIndex + i);
@@ -411,7 +421,7 @@ void MeshFactory::MakeSphere(float radius, uint32_t sliceCount, uint32_t stackCo
     v' = r * -----
              ||v||
 */
-void MeshFactory::MakeGeosphere(float radius, uint16_t numSubdivisions)
+void MeshGenerator::CreateGeosphere(float radius, uint16_t numSubdivisions)
 {
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
@@ -456,7 +466,7 @@ void MeshFactory::MakeGeosphere(float radius, uint16_t numSubdivisions)
         Subdivide(vertices, indices); // vertices and indices collections are modified in Subdivide
 
     // Project vertices onto sphere and scale.
-    for (auto i = 0; i < vertices.size(); ++i)
+    for (uint32_t i = 0; i < vertices.size(); ++i)
     {
         // Project onto unit sphere.
         XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&vertices[i].Position));
@@ -483,7 +493,7 @@ void MeshFactory::MakeGeosphere(float radius, uint16_t numSubdivisions)
     m_meshes.push_back(info);
 }
 
-void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices)
+void MeshGenerator::Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices)
 {
     // Save a copy of the input geometry.
     std::vector<VertexPositionColor> verticesCopy(vertices);
@@ -504,7 +514,7 @@ void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vec
     // v0    m2     v2
 
     auto numTris = indicesCopy.size() / 3;
-    for (auto i = 0; i < numTris; ++i)
+    for (uint32_t i = 0; i < numTris; ++i)
     {
         VertexPositionColor v0 = verticesCopy[indicesCopy[i * 3 + 0]];
         VertexPositionColor v1 = verticesCopy[indicesCopy[i * 3 + 1]];
@@ -570,24 +580,24 @@ void MeshFactory::Subdivide(std::vector<VertexPositionColor>& vertices, std::vec
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+void MeshGenerator::CreateGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
 {
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
     info.StartIndexLocation = m_indices.size(); // initial index count
 
     auto colorBlue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-    auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
-    auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
-    auto halfWidth = 0.5 * gridWidth;
-    auto halfDepth = 0.5 * gridDepth;
+    float dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
+    float dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
+    float halfWidth = 0.5f * gridWidth;
+    float halfDepth = 0.5f * gridDepth;
 
     // The grid is built from an M x N matrix of vertices. 
-    auto m = quadCountDepth + 1;
-    auto n = quadCountHoriz + 1;
+    uint32_t m = quadCountDepth + 1;
+    uint32_t n = quadCountHoriz + 1;
 
     // Create vertices.
-    auto vertexCount = m * n;
+    uint32_t vertexCount = m * n;
     m_vertices.resize(info.BaseVertexLocation + vertexCount);
 
     // An example of a 2 x 4 grid mesh:
@@ -609,12 +619,12 @@ void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountH
 
     // Compute vertex positions by starting at the upper-left corner of the grid. 
     // Then, incrementally compute the vertex coordinates row-by-row. 
-    auto z = halfDepth;
-    for (auto i = 0; i < m; ++i)
+    float z = halfDepth;
+    for (uint32_t i = 0; i < m; ++i)
     {
         auto x = -halfWidth;
 
-        for (auto j = 0; j < n; ++j)
+        for (uint32_t j = 0; j < n; ++j)
         {
             auto k = i * n + j;
 
@@ -631,13 +641,13 @@ void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountH
     // - each quad has two triangles
     // - each triangle has three vertices
     // - each quad is duplicated for the top and the bottom face of the grid
-    auto indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
+    uint32_t indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
     m_indices.resize(info.StartIndexLocation + indexCount);
     size_t k = info.StartIndexLocation;
 
-    for (auto i = 0; i < quadCountDepth; ++i)
+    for (uint32_t i = 0; i < quadCountDepth; ++i)
     {
-        for (auto j = 0; j < quadCountHoriz; ++j)
+        for (uint32_t j = 0; j < quadCountHoriz; ++j)
         {
             // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
             // The bottom face of the grid has the same indices but in opposite order.
@@ -649,10 +659,10 @@ void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountH
             //     |   \|
             //     c----d
             //
-            uint16_t a = j + i * n;
-            uint16_t b = j + 1 + i * n;
-            uint16_t c = j + (i + 1) * n;
-            uint16_t d = j + 1 + (i + 1) * n;
+            uint32_t a = j + i * n;
+            uint32_t b = j + 1 + i * n;
+            uint32_t c = j + (i + 1) * n;
+            uint32_t d = j + 1 + (i + 1) * n;
 
             // top face
             m_indices[k] = a;
@@ -681,7 +691,7 @@ void MeshFactory::MakeGrid(float gridWidth, float gridDepth, uint32_t quadCountH
     m_meshes.push_back(info);
 }
 
-void MeshFactory::Build()
+void MeshGenerator::CreateBuffers()
 {
     // Create an immutable vertex buffer and load data.
     m_vertexBuffer.attach(
@@ -703,7 +713,7 @@ void MeshFactory::Build()
             m_indexBuffer.put()));
 }
 
-void MeshFactory::Set()
+void MeshGenerator::SetBuffers()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -717,7 +727,7 @@ void MeshFactory::Set()
     context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-void MeshFactory::Draw(int index)
+void MeshGenerator::DrawMesh(int index)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
     const auto& info = m_meshes[index];
@@ -725,18 +735,9 @@ void MeshFactory::Draw(int index)
     context->DrawIndexed(info.IndexCount, info.StartIndexLocation, info.BaseVertexLocation);
 }
 
-void MeshFactory::Release()
+void MeshGenerator::ReleaseBuffers()
 {
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
 }
 
-void MeshFactory::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
-{
-    m_indices.resize(startIndexLocation + indexCount);
-
-    for (auto i = 0; i < indexCount; ++i)
-    {
-        m_indices[startIndexLocation + i] = indices[i];
-    }
-}

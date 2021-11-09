@@ -28,7 +28,7 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="MeshFactory.cpp">
+    <ClCompile Include="MeshGenerator.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,7 +56,7 @@
     <ClInclude Include="Camera.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="MeshFactory.h">
+    <ClInclude Include="MeshGenerator.h">
       <Filter>Geometry</Filter>
     </ClInclude>
   </ItemGroup>
