@@ -10,16 +10,17 @@ MeshGenerator::MeshGenerator(std::shared_ptr<DX::DeviceResources> const& deviceR
 {
 }
 
+/// <summary>
+/// Creates a unit cube i.e., a cube whose sides are 1 unit long.
+/// </summary>
 void MeshGenerator::CreateCube()
 {
-    const uint16_t CubeVertexCount = 8;
-
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
 
     auto i = info.BaseVertexLocation;
-    m_vertices.resize(i + CubeVertexCount);
+    m_vertices.resize(i + 8); // the cube has 8 vertices
 
     m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) };
     m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) };
@@ -59,6 +60,9 @@ void MeshGenerator::CreateCube()
     m_meshes.push_back(info);
 }
 
+/// <summary>
+/// Creates a pyramid. The pyramid's base is a unit square.
+/// </summary>
 void MeshGenerator::CreatePyramid()
 {
     const uint16_t PyramidVertexCount = 5;
@@ -68,14 +72,14 @@ void MeshGenerator::CreatePyramid()
     info.StartIndexLocation = m_indices.size();
 
     auto i = info.BaseVertexLocation;
-    m_vertices.resize(i + PyramidVertexCount);
+    m_vertices.resize(i + 5); // the pyramid has 5 vertices
 
     const float l = 0.5f;
-    m_vertices[i++] = { XMFLOAT3(0.0f, l, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3(0.0f, l, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
     m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
 
     ASSERT(m_vertices.size() == i);
 
@@ -101,47 +105,29 @@ void MeshGenerator::CopyIndices(std::vector<uint32_t> const& indices, uint32_t s
     m_indices.resize(startIndexLocation + indexCount);
 
     for (size_t i = 0; i < indexCount; ++i)
-    {
         m_indices[startIndexLocation + i] = indices[i];
-    }
 }
 
-/*
-    Based on [Luna]
-
-    We define a cylinder by specifying:
-    - the bottom radius
-    - the top radius
-    - the cylider height
-    - the slice count (a slice is one triangle from the top or the bottom cap)
-    - the stack count (a stack is one segment of the cylinder between its "rings")
-
-    The slices and stacks control the triangle density.
-
-    This cylinder has 3 stacks and 4 rings. Its top and bottom radii differ:
-       ____
-      /    \
-     /      \
-    /________\
-
-    We break the cylinder into three parts:
-    - the side geometry
-    - the top cap geometry
-    - the bottom cap geometry
-
-    We generate the cylinder centered at the origin, parallel to the y-axis.
-    All its vertices lie on the "rings" of the cylinder.
-
-    - ringCount = stackCount + 1
-    - each ring has sliceCount unique vertices
-    - the difference in radius between consecutive rings: radiusStep = (topRadius – bottomRadius)/stackCount
-
-    If we start at the bottom ring with index 0, then:
-    - the radius of the i-th ring is Ri = bottomRadius + i * radiusStep
-    - the height of the i-th ring is Hi = -cylinderHeight / 2 + i * stackHeight
-
-    The idea is to iterate over each ring and generate the vertices that lie on that ring.
-*/
+/// <summary>
+/// Based on [Luna]
+/// 
+/// Creates a cylinder centered at the origin and parallel to the y-axis. The cylinder is composed of
+/// stacks placed vertically one on another. The bottom stack has a cap as its base. Similarily,
+/// the top stack has a cap as its top. We build the cylinder starting from the bottom stack.
+/// 
+/// An example of a cylinder with 3 stacks:
+///    ____
+///   /    \
+///  /      \
+/// /________\
+///
+/// Note that in the above cylinder the radii of the top and bottom caps differ.
+/// </summary>
+/// <param name="bottomRadius">The radius of the bottom cap</param>
+/// <param name="topRadius">The radius of the top cap</param>
+/// <param name="cylinderHeight">The cylider's height</param>
+/// <param name="sliceCount">The number of slices. A slice is one triangle in the top or the bottom cap.</param>
+/// <param name="stackCount">The number of stacks. A stack is one vertical segment of the cylinder.</param>
 void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
     MeshInfo info;
@@ -150,20 +136,27 @@ void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cy
 
     float stackHeight = cylinderHeight / stackCount;
 
-    // Amount to increment radius as we move up each stack from bottom to top.
-    float radiusStep = (topRadius - bottomRadius) / stackCount;
+    // Calculate the "top" angle of a single slice triangle.
+    float theta = XM_2PI / sliceCount;
 
-    uint32_t ringCount = stackCount + 1;
+    // Calculate the difference between the radii of two consecutive stacks.
+    // This difference may be positive, negative, or zero depending on the relative
+    // sizes of the top and bottom caps.
+    float radiusDelta = (topRadius - bottomRadius) / stackCount;
 
-    // Compute vertices for each stack ring starting at the bottom and moving up.
-    for (uint32_t i = 0; i < ringCount; ++i)
+    // Generate vertices for each stack starting at the bottom stack. We use <= rater than <
+    // because we want to generate vertices for the top of the last (top) stack.
+    for (uint32_t i = 0; i <= stackCount; ++i)
     {
-        float y = -0.5f * cylinderHeight + i * stackHeight; // the height of the i-th ring
-        float r = bottomRadius + i * radiusStep;  // the radius of the i-th ring
+        // Calculate the y-coordinate of the i-th stack base (or the top of the last stack).
+        float y = -0.5f * cylinderHeight + i * stackHeight; 
 
-        // Vertices of ring.
-        // Note that we duplicate the first and last vertex per ring. It has meaning with textures.
-        float theta = XM_2PI / sliceCount; // an "top" angle of a single slice triangle
+        // Calculate the radius of the i-th stack base (or the radius of the top of the last stack).
+        float r = bottomRadius + i * radiusDelta;
+
+        // Create vertices for the i-th stack. Note that we duplicate the first vertex as 
+        // the last one by using <= rather than < 
+        // TODO: This is necessary for correct texture rendering.
         for (uint32_t j = 0; j <= sliceCount; ++j)
         {
             float x = r * cosf(j * theta);
@@ -173,8 +166,8 @@ void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cy
             v.Position = XMFLOAT3(x, y, z);
 
             // Alternate color for each stack.
-            if ((i + 1) % 2)
-                v.Color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+            if (i % 2)
+                v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
             else
                 v.Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0);
 
@@ -182,17 +175,15 @@ void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cy
         }
     }
 
-    // Add one because we duplicate the first and last vertex per ring
-    // since the texture coordinates are different.
-    auto n = sliceCount + 1; // the number of vertices per ring
+    // Increase the number of vertices per stack by one because we duplicated the first vertex.
+    auto n = sliceCount + 1; 
 
-    // Compute indices for each stack.
+    // Calculate indices for each stack.
     for (uint32_t i = 0; i < stackCount; ++i)
     {
         for (uint32_t j = 0; j < sliceCount; ++j)
         {
             // Each quad is composed of two triangles: ABC and ACD
-
             auto A = i * n + j;
             auto B = (i + 1) * n + j;
             auto C = (i + 1) * n + j + 1;
@@ -220,13 +211,13 @@ void MeshGenerator::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRa
 {
     uint32_t baseIndex = (uint32_t)m_vertices.size() - baseVertexLocation;
 
-    float y = 0.5f * cylinderHeight; // the height of the top cap
+    float y = 0.5f * cylinderHeight; // the y-coordinate of the top cap
     float theta = XM_2PI / sliceCount;
 
     VertexPositionColor v;
     v.Color = XMFLOAT4(0.3f, 0.3f, 0.0f, 1.0f);
 
-    // Duplicate top cap ring vertices because the texture coordinates and normals differ (TODO: texture and normals)
+    // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = topRadius * cosf(i * theta);
@@ -237,12 +228,12 @@ void MeshGenerator::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRa
 
     }
 
-    // Cap center vertex.
+    // The center vertex of the top cap.
     v.Position = XMFLOAT3(0.0f, y, 0.0f);
     v.Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_vertices.push_back(v);
 
-    // Index of the center vertex.
+    // The index of the center vertex.
     uint32_t centerIndex = (uint32_t)m_vertices.size() - baseVertexLocation - 1;
 
     for (uint32_t i = 0; i < sliceCount; ++i)
@@ -257,13 +248,13 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
 {
     uint32_t baseIndex = (uint32_t)m_vertices.size() - baseVertexLocation;
 
-    float y = -0.5f * cylinderHeight; // the height of the bottom cap
+    float y = -0.5f * cylinderHeight; // the y-coordinate of the bottom cap
     float theta = XM_2PI / sliceCount;
 
     VertexPositionColor v;
     v.Color = XMFLOAT4(0.3f, 0.3f, 0.0f, 1.0f);
 
-    // Duplicate bottom cap ring vertices.
+    // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = bottomRadius * cosf(i * theta);
@@ -273,12 +264,12 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
         m_vertices.push_back(v);
     }
 
-    // Cap center vertex.
+    // The center vertex of the bottom cap.
     v.Position = XMFLOAT3(0.0f, y, 0.0f);
     v.Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_vertices.push_back(v);
 
-    // Index of the center vertex.
+    // The index of the center vertex.
     uint32_t centerIndex = (uint32_t)m_vertices.size() - baseVertexLocation - 1;
 
     for (uint32_t i = 0; i < sliceCount; ++i)
@@ -291,6 +282,7 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
 
 /// <summary>
 /// Based on [Luna]
+/// 
 /// Creates a sphere mesh using an approach similar to creating a cylinder mesh.
 /// We use trigonometric functions to calculate the radius per ring.
 /// Note that the triangles of the sphere do not have equal areas.
@@ -732,6 +724,7 @@ void MeshGenerator::DrawMesh(int index)
     auto context{ m_deviceResources->GetD3DDeviceContext() };
     const auto& info = m_meshes[index];
 
+    // Draw one object at a time as each object may have a different world matrix.
     context->DrawIndexed(info.IndexCount, info.StartIndexLocation, info.BaseVertexLocation);
 }
 

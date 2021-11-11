@@ -76,7 +76,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_meshGenerator->CreateCylinder(0.5f, 0.2f, 2.0f, 15, 5);
+    m_meshGenerator->CreateCylinder(0.3f, 0.15f, 1.1f, 15, 6);
     m_meshGenerator->CreateCube();
     m_meshGenerator->CreateSphere(1.0f, 20, 20);
     m_meshGenerator->CreatePyramid();
@@ -116,7 +116,7 @@ void SceneRenderer::Render()
     context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
-    SetWorldMatrix(XMMatrixTranslation(1.5f, 0.0f, 0.0f));
+    SetWorldMatrix(XMMatrixTranslation(1.5f, 0.4f, 0.0f));
     m_meshGenerator->DrawMesh(0);
 
     SetWorldMatrix(XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
