@@ -173,7 +173,7 @@ void MeshGenerator::CreateCylinder(std::string name, float bottomRadius, float t
             if (i % 2)
                 v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
             else
-                v.Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0);
+                v.Color = XMFLOAT4(1.0f, 0.2f, 0.0f, 1.0f);
 
             m_vertices.push_back(v);
         }
@@ -219,7 +219,7 @@ void MeshGenerator::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRa
     float theta = XM_2PI / sliceCount;
 
     VertexPositionColor v;
-    v.Color = XMFLOAT4(0.3f, 0.3f, 0.0f, 1.0f);
+    v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
     // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
@@ -256,7 +256,7 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
     float theta = XM_2PI / sliceCount;
 
     VertexPositionColor v;
-    v.Color = XMFLOAT4(0.3f, 0.3f, 0.0f, 1.0f);
+    v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
     // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
@@ -330,9 +330,9 @@ void MeshGenerator::CreateSphere(std::string name, float radius, uint32_t sliceC
 
             // Alternate color for each stack.
             if (i % 2)
-                v.Color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+                v.Color = XMFLOAT4(1.0f, 0.9f, 0.0f, 1.0f);
             else
-                v.Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+                v.Color = XMFLOAT4(0.0f, 0.1f, 1.0f, 1.0f);
 
             m_vertices.push_back(v);
         }
@@ -566,7 +566,6 @@ void MeshGenerator::CreateGrid(std::string name, float gridWidth, float gridDept
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
     info.StartIndexLocation = m_indices.size(); // initial index count
 
-    auto colorBlue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
     float dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
     float dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
     float halfWidth = 0.5f * gridWidth;
@@ -609,7 +608,7 @@ void MeshGenerator::CreateGrid(std::string name, float gridWidth, float gridDept
             auto k = i * n + j;
 
             m_vertices[info.BaseVertexLocation + k].Position = XMFLOAT3(x, 0, z);
-            m_vertices[info.BaseVertexLocation + k].Color = colorBlue;
+            m_vertices[info.BaseVertexLocation + k].Color = XMFLOAT4(0.219f, 0.254f, 0.717f, 1.0f);
 
             x += dx;
         };

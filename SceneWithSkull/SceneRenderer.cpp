@@ -76,9 +76,9 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_meshGenerator->CreateCylinder("cylinder", 0.3f, 0.15f, 1.1f, 15, 6);
+    m_meshGenerator->CreateCylinder("cylinder", 0.3f, 0.15f, 1.1f, 15, 4);
     m_meshGenerator->CreateCube("cube");
-    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 20);
+    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 10);
     m_meshGenerator->CreatePyramid("pyramid");
     m_meshGenerator->CreateGeosphere("geosphere", 1.0f, 3);
     m_meshGenerator->CreateGrid("grid", 4, 2, 5, 5);
