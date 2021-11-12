@@ -12,7 +12,7 @@ public:
     void CreatePyramid();
     void CreateCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void CreateSphere(float radius, uint32_t sliceCount, uint32_t stackCount);
-    void CreateGeosphere(float radius, uint16_t numSubdivisions);
+    void CreateGeosphere(float radius, uint16_t subdivisionCount);
     void CreateGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
 
     void CreateBuffers();

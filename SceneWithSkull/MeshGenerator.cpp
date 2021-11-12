@@ -283,8 +283,8 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
 /// <summary>
 /// Based on [Luna]
 /// 
-/// Creates a sphere mesh using an approach similar to creating a cylinder mesh.
-/// We use trigonometric functions to calculate the radius per ring.
+/// Creates a sphere using an approach similar to creating a cylinder.
+/// We use trigonometric functions to calculate the radius per stack.
 /// Note that the triangles of the sphere do not have equal areas.
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
@@ -296,30 +296,28 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
 
-    // Compute the vertices stating at the top pole and moving down the stacks.
-
-    // Create poles.
+    // Create the sphere's poles.
     VertexPositionColor topVertex{ { 0.0f, radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
     VertexPositionColor bottomVertex{ { 0.0f, -radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
 
+    // Add the north pole as the first vertex.
     m_vertices.push_back(topVertex);
 
     float phiStep = XM_PI / stackCount;
     float thetaStep = XM_2PI / sliceCount;
 
-    // Compute vertices for each stack ring (do not count the poles as rings).
+    // Compute vertices for each stack.
     for (uint32_t i = 0; i <= stackCount; ++i)
     {
         float phi = (i+1) * phiStep;
 
-        // Vertices of a ring.
         for (uint32_t j = 0; j <= sliceCount; ++j)
         {
             float theta = j * thetaStep;
 
             VertexPositionColor v;
 
-            // spherical to cartesian
+            // Convert spherical coordinates to Cartesian coordinates.
             v.Position.x = radius * sinf(phi) * cosf(theta);
             v.Position.y = radius * cosf(phi);
             v.Position.z = radius * sinf(phi) * sinf(theta);
@@ -334,10 +332,10 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
         }
     }
 
+    // Add the south pole as the last vertex.
     m_vertices.push_back(bottomVertex);
 
-    // Compute indices for the top stack.  
-    // The top stack was written first to the vertex buffer and connects the top pole to the first ring.
+    // Compute indices for the top stack which contains the north pole.
     for (uint32_t i = 1; i <= sliceCount; ++i)
     {
         m_indices.push_back(0);
@@ -345,11 +343,9 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
         m_indices.push_back(i);
     }
 
-    // Compute indices for inner stacks (not connected to poles).
-    // Offset the indices to the index of the first vertex in the first ring.
-    // This skips the top pole vertex.
-    auto baseIndex = 1;
-    auto n = sliceCount + 1; // the number of vertices in a ring
+    // Compute indices for inner stacks.
+    auto baseIndex = 1; // skip the north pole vertex
+    auto n = sliceCount + 1; // the number of vertices in a stack
     for (uint32_t i = 0; i < stackCount - 2; ++i)
     {
         for (uint32_t j = 0; j < sliceCount; ++j)
@@ -364,13 +360,10 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
         }
     }
 
-    // Compute indices for the bottom stack. 
-    // The bottom stack was written last to the vertex buffer and connects the bottom pole to the bottom ring.
-
-    // The south pole vertex was added last.
+    // Compute indices for the bottom stack which contains the south pole.
     uint32_t southPoleIndex = (uint32_t)m_vertices.size() - info.BaseVertexLocation - 1;
 
-    // Offset the indices to the index of the first vertex in the last ring.
+    // Offset the indices to the index of the first vertex in the last stack.
     baseIndex = southPoleIndex - n;
 
     for (uint32_t i = 0; i < sliceCount; ++i)
@@ -386,24 +379,7 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
 }
 
 /*
-    Based on [Luna]
-
-    A geosphere approximates a sphere using triangles with almost equal areas as well as equal side lengths.
-    To generate a geosphere, we start with an icosahedron (a polyhedron with 20 faces), subdivide the triangles,
-    and then project the new vertices onto the sphere with the given radius. We repeat this process to improve
-    the tessellation.
-
-    A triangle can be subdivided into four equal sized triangles:
-
-            v1
-             *
-            / \
-           /   \
-        m0*-----*m1
-         / \   / \
-        /   \ /   \
-       *-----*-----*
-      v0    m2     v2
+    
 
     The new vertices are found by taking the midpoints along the edges of the original triangle.
     The new vertices can then be projected onto a sphere of radius r by projecting the vertices
@@ -413,16 +389,41 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
     v' = r * -----
              ||v||
 */
-void MeshGenerator::CreateGeosphere(float radius, uint16_t numSubdivisions)
+
+/// <summary>
+/// Based on [Luna]
+/// 
+/// Creates a geosphere - a sphere in which each triangle has the same area and equal side lengths.
+/// The geosphere generator starts with an icosahedron (a polyhedron with 20 faces) and subdivides
+/// its sides (the triangles) into smaller triangles. Then, it projects the new vertices onto
+/// a sphere. The process is repeated to improve tessellation.
+/// 
+/// This is how a single triangle is subdivided into four equal sized triangles:
+/// 
+///            v1
+///             *
+///            / \
+///           /   \
+///       m0 *-----*m1
+///         / \   / \
+///        /   \ /   \
+///       *-----*-----*
+///      v0    m2     v2
+///
+/// </summary>
+/// <param name="radius">The sphere's radius</param>
+/// <param name="subdivisionCount"></param>
+void MeshGenerator::CreateGeosphere(float radius, uint16_t subdivisionCount)
 {
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
     info.StartIndexLocation = m_indices.size(); // initial index count
 
-    // Put a cap on the number of subdivisions.
-    numSubdivisions = std::min(numSubdivisions, (uint16_t)5);
+    // Limit the number of subdivisions to 5.
+    subdivisionCount = std::min(subdivisionCount, (uint16_t)5);
 
-    // Define vertices and indices of icosahedron with 12 vertices and 60 indices.
+    // Define geometry of in icosahedron with 12 vertices and 60 indices.
+    // The icosahedron is the starting point to generate the geosphere.
     std::vector<VertexPositionColor> vertices(12);
     std::vector<uint32_t> indices(60);
 
@@ -453,17 +454,15 @@ void MeshGenerator::CreateGeosphere(float radius, uint16_t numSubdivisions)
     for (auto i = 0; i < 60; ++i)
         indices[i] = k[i];
 
-    // Approximate a sphere by tessellating an icosahedron.
-    for (auto i = 0; i < numSubdivisions; ++i)
-        Subdivide(vertices, indices); // vertices and indices collections are modified in Subdivide
+    // Tessellate the icosahedron.
+    for (auto i = 0; i < subdivisionCount; ++i)
+        // The vertices and indices collections are modified in Subdivide.
+        Subdivide(vertices, indices); 
 
-    // Project vertices onto sphere and scale.
+    // Project vertices onto a unit sphere and scale.
     for (uint32_t i = 0; i < vertices.size(); ++i)
     {
-        // Project onto unit sphere.
         XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&vertices[i].Position));
-
-        // Project onto sphere.
         XMVECTOR p = radius * n;
 
         XMStoreFloat3(&vertices[i].Position, p);
@@ -505,21 +504,15 @@ void MeshGenerator::Subdivide(std::vector<VertexPositionColor>& vertices, std::v
     //  *-----*-----*
     // v0    m2     v2
 
-    auto numTris = indicesCopy.size() / 3;
-    for (uint32_t i = 0; i < numTris; ++i)
+    auto triangleCount = indicesCopy.size() / 3;
+    for (uint32_t i = 0; i < triangleCount; ++i)
     {
         VertexPositionColor v0 = verticesCopy[indicesCopy[i * 3 + 0]];
         VertexPositionColor v1 = verticesCopy[indicesCopy[i * 3 + 1]];
         VertexPositionColor v2 = verticesCopy[indicesCopy[i * 3 + 2]];
 
-        //
-        // Generate the midpoints.
-        //
-
+        // Calculate the triangle midpoints.
         VertexPositionColor m0, m1, m2;
-
-        // For subdivision, we just care about the position component.  We derive the other
-        // vertex components in CreateGeosphere.
 
         m0.Position = XMFLOAT3(
             0.5f * (v0.Position.x + v1.Position.x),
@@ -536,10 +529,7 @@ void MeshGenerator::Subdivide(std::vector<VertexPositionColor>& vertices, std::v
             0.5f * (v0.Position.y + v2.Position.y),
             0.5f * (v0.Position.z + v2.Position.z));
 
-        //
-        // Add new geometry.
-        //
-
+        // Populate vertex and index collections.
         vertices.push_back(v0); // 0
         vertices.push_back(v1); // 1
         vertices.push_back(v2); // 2
