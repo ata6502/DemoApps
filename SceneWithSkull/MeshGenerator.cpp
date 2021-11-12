@@ -13,8 +13,10 @@ MeshGenerator::MeshGenerator(std::shared_ptr<DX::DeviceResources> const& deviceR
 /// <summary>
 /// Creates a unit cube i.e., a cube whose sides are 1 unit long.
 /// </summary>
-void MeshGenerator::CreateCube()
+void MeshGenerator::CreateCube(std::string name)
 {
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
@@ -57,15 +59,15 @@ void MeshGenerator::CreateCube()
     info.IndexCount = indices.size();
     CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
 
-    m_meshes.push_back(info);
+    m_meshes[name] = info;
 }
 
 /// <summary>
 /// Creates a pyramid. The pyramid's base is a unit square.
 /// </summary>
-void MeshGenerator::CreatePyramid()
+void MeshGenerator::CreatePyramid(std::string name)
 {
-    const uint16_t PyramidVertexCount = 5;
+    ASSERT(m_meshes.find(name) == m_meshes.end());
 
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
@@ -97,7 +99,7 @@ void MeshGenerator::CreatePyramid()
     info.IndexCount = indices.size();
     CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
 
-    m_meshes.push_back(info);
+    m_meshes[name] = info;
 }
 
 void MeshGenerator::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
@@ -128,8 +130,10 @@ void MeshGenerator::CopyIndices(std::vector<uint32_t> const& indices, uint32_t s
 /// <param name="cylinderHeight">The cylider's height</param>
 /// <param name="sliceCount">The number of slices. A slice is one triangle in the top or the bottom cap.</param>
 /// <param name="stackCount">The number of stacks. A stack is one vertical segment of the cylinder.</param>
-void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
@@ -204,7 +208,7 @@ void MeshGenerator::CreateCylinder(float bottomRadius, float topRadius, float cy
 
     info.IndexCount = m_indices.size() - info.StartIndexLocation;
 
-    m_meshes.push_back(info);
+    m_meshes[name] = info;
 }
 
 void MeshGenerator::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount)
@@ -290,8 +294,10 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
 /// <param name="radius">The sphere's radius</param>
 /// <param name="sliceCount">The number of slices</param>
 /// <param name="stackCount">The number of stacks</param>
-void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount)
 {
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size();
     info.StartIndexLocation = m_indices.size();
@@ -375,20 +381,8 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
 
     info.IndexCount = m_indices.size() - info.StartIndexLocation;
 
-    m_meshes.push_back(info);
+    m_meshes[name] = info;
 }
-
-/*
-    
-
-    The new vertices are found by taking the midpoints along the edges of the original triangle.
-    The new vertices can then be projected onto a sphere of radius r by projecting the vertices
-    onto the unit sphere and then scalar multiplying by r:
-
-               v
-    v' = r * -----
-             ||v||
-*/
 
 /// <summary>
 /// Based on [Luna]
@@ -413,8 +407,10 @@ void MeshGenerator::CreateSphere(float radius, uint32_t sliceCount, uint32_t sta
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
 /// <param name="subdivisionCount"></param>
-void MeshGenerator::CreateGeosphere(float radius, uint16_t subdivisionCount)
+void MeshGenerator::CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount)
 {
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
     info.StartIndexLocation = m_indices.size(); // initial index count
@@ -481,7 +477,7 @@ void MeshGenerator::CreateGeosphere(float radius, uint16_t subdivisionCount)
 
     info.IndexCount = m_indices.size() - info.StartIndexLocation;
 
-    m_meshes.push_back(info);
+    m_meshes[name] = info;
 }
 
 void MeshGenerator::Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices)
@@ -562,8 +558,10 @@ void MeshGenerator::Subdivide(std::vector<VertexPositionColor>& vertices, std::v
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-void MeshGenerator::CreateGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+void MeshGenerator::CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
 {
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
     info.StartIndexLocation = m_indices.size(); // initial index count
@@ -670,7 +668,7 @@ void MeshGenerator::CreateGrid(float gridWidth, float gridDepth, uint32_t quadCo
 
     info.IndexCount = indexCount;
 
-    m_meshes.push_back(info);
+    m_meshes[name] = info;
 }
 
 void MeshGenerator::CreateBuffers()
@@ -709,10 +707,10 @@ void MeshGenerator::SetBuffers()
     context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-void MeshGenerator::DrawMesh(int index)
+void MeshGenerator::DrawMesh(std::string name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
-    const auto& info = m_meshes[index];
+    const auto& info = m_meshes[name];
 
     // Draw one object at a time as each object may have a different world matrix.
     context->DrawIndexed(info.IndexCount, info.StartIndexLocation, info.BaseVertexLocation);

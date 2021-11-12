@@ -8,16 +8,16 @@ class MeshGenerator
 public:
     MeshGenerator(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    void CreateCube();
-    void CreatePyramid();
-    void CreateCylinder(float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
-    void CreateSphere(float radius, uint32_t sliceCount, uint32_t stackCount);
-    void CreateGeosphere(float radius, uint16_t subdivisionCount);
-    void CreateGrid(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
+    void CreateCube(std::string name);
+    void CreatePyramid(std::string name);
+    void CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
+    void CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount);
+    void CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount);
+    void CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
 
     void CreateBuffers();
     void SetBuffers();
-    void DrawMesh(int index);
+    void DrawMesh(std::string name);
     void ReleaseBuffers();
 
 private:
@@ -35,7 +35,7 @@ private:
 
     std::vector<VertexPositionColor>        m_vertices;
     std::vector<uint32_t>                   m_indices;
-    std::vector<MeshInfo>                   m_meshes;
+    std::map<std::string, MeshInfo>         m_meshes;
 
     void BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount);
     void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount);
