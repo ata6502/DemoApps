@@ -76,14 +76,11 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    m_meshGenerator->CreateCylinder("cylinder", 0.3f, 0.15f, 1.1f, 15, 4);
-    m_meshGenerator->CreateCube("cube");
-    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 10);
-    m_meshGenerator->CreatePyramid("pyramid");
-    m_meshGenerator->CreateGeosphere("geosphere", 1.0f, 3);
-    m_meshGenerator->CreateGrid("grid", 4, 2, 5, 5);
+    // [7] Create meshes using the MeshGenerator.
+    CreateMeshes();
 
-    m_meshGenerator->CreateBuffers();
+    // [8] Define the scene.
+    DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
@@ -116,23 +113,12 @@ void SceneRenderer::Render()
     context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
-    SetWorldMatrix(XMMatrixTranslation(1.5f, 0.4f, 0.0f));
-    m_meshGenerator->DrawMesh("cylinder");
-
-    SetWorldMatrix(XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
-    m_meshGenerator->DrawMesh("cube");
-
-    SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
-    m_meshGenerator->DrawMesh("sphere");
-
-    SetWorldMatrix(XMMatrixIdentity());
-    m_meshGenerator->DrawMesh("pyramid");
-
-    SetWorldMatrix(XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(0.7f, 0.6f, 1.4f));
-    m_meshGenerator->DrawMesh("geosphere");
-
-    SetWorldMatrix(XMMatrixTranslation(0.0f, -1.01f, 0.0f));
-    m_meshGenerator->DrawMesh("grid");
+    // Render the scene.
+    for (auto& obj : m_objects)
+    {
+        SetWorldMatrix(XMLoadFloat4x4(&obj.WorldMatrix));
+        m_meshGenerator->DrawMesh(obj.MeshName);
+    }
 }
 
 void SceneRenderer::ReleaseResources()
@@ -165,4 +151,45 @@ void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
     ConstantBufferPerObject constantBufferPerObjectData;
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
+}
+
+void SceneRenderer::CreateMeshes()
+{
+    m_meshGenerator->CreateCylinder("cylinder", 0.3f, 0.15f, 1.1f, 15, 4);
+    m_meshGenerator->CreateCube("cube");
+    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 10);
+    m_meshGenerator->CreatePyramid("pyramid");
+    m_meshGenerator->CreateGeosphere("geosphere", 1.0f, 3);
+    m_meshGenerator->CreateGrid("grid", 4, 2, 5, 5);
+
+    m_meshGenerator->CreateBuffers();
+}
+
+void SceneRenderer::DefineSceneObjects()
+{
+    ObjectInfo info;
+
+    info.MeshName = "cylinder";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(1.5f, 0.4f, 0.0f));
+    m_objects.push_back(info);
+
+    info.MeshName = "cube";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
+    m_objects.push_back(info);
+
+    info.MeshName = "sphere";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
+    m_objects.push_back(info);
+
+    info.MeshName = "pyramid";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
+    m_objects.push_back(info);
+
+    info.MeshName = "geosphere";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(0.7f, 0.6f, 1.4f));
+    m_objects.push_back(info);
+
+    info.MeshName = "grid";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.0f, -1.01f, 0.0f));
+    m_objects.push_back(info);
 }

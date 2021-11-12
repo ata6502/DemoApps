@@ -20,6 +20,12 @@ public:
     void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
 private:
+    struct ObjectInfo
+    {
+        std::string MeshName;
+        DirectX::XMFLOAT4X4 WorldMatrix;
+    };
+
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
     // Direct3D resources for cube geometry.
@@ -35,5 +41,9 @@ private:
     DirectX::XMFLOAT4X4                     m_projMatrix;
     bool                                    m_initialized;
     std::unique_ptr<MeshGenerator>          m_meshGenerator;
+    std::vector<ObjectInfo>                 m_objects;
+
+    void CreateMeshes();
+    void DefineSceneObjects();
 };
 

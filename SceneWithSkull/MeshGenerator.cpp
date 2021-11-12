@@ -171,7 +171,7 @@ void MeshGenerator::CreateCylinder(std::string name, float bottomRadius, float t
 
             // Alternate color for each stack.
             if (i % 2)
-                v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
+                v.Color = XMFLOAT4(0.0f, 0.2f, 1.0f, 1.0f);
             else
                 v.Color = XMFLOAT4(1.0f, 0.2f, 0.0f, 1.0f);
 
