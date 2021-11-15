@@ -46,7 +46,7 @@ This is the first version of the Simple Waves app. For now, it applies a height 
 ## Simple Scene
 
 This is the first version of this app. For now, it's called "Simple Scene" but in the source code the project 
-has the name SceneWithSkull. The reason is that the app is going to laod a skull mesh form a file and display it
+has the name SceneWithSkull. A reason is that the app is going to load a skull mesh form a file and display it
 on the screen. 
 
 * The `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
