@@ -45,8 +45,8 @@ This is the first version of the Simple Waves app. For now, it applies a height 
 
 ## Simple Scene
 
-This is the first version of this app. For now, it's called Simple Scene but in the source code it's called
-"Scene with Skull" because we are going to load a skull scene in the future. 
+This is the first version of this app. For now, it's called "Simple Scene" but in the source code the solution 
+has the name SceneWithSkull. The reason is that in the future we are going to display a skull mesh in this app. 
 
 * The `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
 * The `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
