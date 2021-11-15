@@ -155,12 +155,12 @@ void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 
 void SceneRenderer::CreateMeshes()
 {
-    m_meshGenerator->CreateCylinder("cylinder", 0.3f, 0.15f, 1.1f, 15, 4);
+    m_meshGenerator->CreateCylinder("cylinder", 0.2f, 0.1f, 1.0f, 16, 2);
     m_meshGenerator->CreateCube("cube");
-    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 10);
-    m_meshGenerator->CreatePyramid("pyramid");
     m_meshGenerator->CreateGeosphere("geosphere", 1.0f, 3);
-    m_meshGenerator->CreateGrid("grid", 4, 2, 5, 5);
+    m_meshGenerator->CreatePyramid("pyramid");
+    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 10);
+    m_meshGenerator->CreateGrid("grid", 4, 3, 4, 4);
 
     m_meshGenerator->CreateBuffers();
 }
@@ -170,26 +170,44 @@ void SceneRenderer::DefineSceneObjects()
     ObjectInfo info;
 
     info.MeshName = "cylinder";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(1.5f, 0.4f, 0.0f));
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.5f, 0.5f, -0.5f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-0.5f, 0.5f, -0.5f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.5f, 0.5f, 0.5f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-0.5f, 0.5f, 0.5f));
     m_objects.push_back(info);
 
     info.MeshName = "cube";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 1.0f) * XMMatrixTranslation(-1.0f, 0.5f, 0.0f));
-    m_objects.push_back(info);
-
-    info.MeshName = "sphere";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(-0.6f, 0.8f, 1.1f));
-    m_objects.push_back(info);
-
-    info.MeshName = "pyramid";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.3f, 0.18f, 1.3f) * XMMatrixRotationZ(XM_PI) * XMMatrixTranslation(0.0f, 1.09f, 0.0f));
     m_objects.push_back(info);
 
     info.MeshName = "geosphere";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.4f, 0.4f, 0.4f) * XMMatrixTranslation(0.7f, 0.6f, 1.4f));
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+    m_objects.push_back(info);
+
+    info.MeshName = "pyramid";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 1.4f, 0.0f));
+    m_objects.push_back(info);
+
+    info.MeshName = "sphere";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.0f, 0.19f, 0.0f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.3f, 0.19f, 0.0f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.6f, 0.19f, 0.0f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.15f, 0.19f, -0.2f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.45f, 0.19f, 0.2f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.15f, 0.19f, 0.2f));
+    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.45f, 0.19f, -0.2f));
     m_objects.push_back(info);
 
     info.MeshName = "grid";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.0f, -1.01f, 0.0f));
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.0f, -0.01f, 0.0f));
     m_objects.push_back(info);
 }

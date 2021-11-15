@@ -171,9 +171,9 @@ void MeshGenerator::CreateCylinder(std::string name, float bottomRadius, float t
 
             // Alternate color for each stack.
             if (i % 2)
-                v.Color = XMFLOAT4(0.0f, 0.2f, 1.0f, 1.0f);
-            else
                 v.Color = XMFLOAT4(1.0f, 0.2f, 0.0f, 1.0f);
+            else
+                v.Color = XMFLOAT4(0.219f, 0.254f, 0.717f, 1.0f);
 
             m_vertices.push_back(v);
         }
@@ -608,7 +608,7 @@ void MeshGenerator::CreateGrid(std::string name, float gridWidth, float gridDept
             auto k = i * n + j;
 
             m_vertices[info.BaseVertexLocation + k].Position = XMFLOAT3(x, 0, z);
-            m_vertices[info.BaseVertexLocation + k].Color = XMFLOAT4(0.219f, 0.254f, 0.717f, 1.0f);
+            m_vertices[info.BaseVertexLocation + k].Color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
 
             x += dx;
         };
