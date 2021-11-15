@@ -13,13 +13,13 @@ cbuffer ConstantBufferPerObject : register(b1)
 struct VertexShaderInput
 {
     float3 Position : POSITION;
-    float3 Color : COLOR;
+    float4 Color : COLOR;
 };
 
 // Per-pixel color data passed through the pixel shader.
 struct PixelShaderInput
 {
     float4 Position : SV_POSITION;
-    float3 Color : COLOR;
+    float4 Color : COLOR;
 };
 

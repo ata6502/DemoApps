@@ -6,6 +6,7 @@
 #include "Utilities.h"
 
 using namespace DirectX;
+using namespace DirectX::PackedVector;
 
 ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
@@ -36,10 +37,12 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
     // [3] Create vertex description.
     // Hook up the position element to the input slot 0 and the color element to the input slot 1.
     // Note that the AlignedByteOffset parameter is 0 for both elements.
+    // 
+    // [Luna] Ex.10 p.243 Change 128-bit color values to 32-bit color values.
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -94,23 +97,23 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
     };
 
     // [8] Create a vertex buffer for cube vertices.
-    m_vertexBufferPosition.attach(CreateImmutableVertexBuffer(device, sizeof(cubeVertexPositions), &cubeVertexPositions));
+    m_vertexBufferPosition.attach(CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertexPositions), &cubeVertexPositions));
 
     // [9] Create cube vertex colors.
     static const VertexColor cubeVertexColors[] =
     {
-        {XMFLOAT3(0.0f, 0.0f, 0.0f)},
-        {XMFLOAT3(0.0f, 0.0f, 1.0f)},
-        {XMFLOAT3(0.0f, 1.0f, 0.0f)},
-        {XMFLOAT3(0.0f, 1.0f, 1.0f)},
-        {XMFLOAT3(1.0f, 0.0f, 0.0f)},
-        {XMFLOAT3(1.0f, 0.0f, 1.0f)},
-        {XMFLOAT3(1.0f, 1.0f, 0.0f)},
-        {XMFLOAT3(1.0f, 1.0f, 1.0f)}
+        {XMCOLOR(0.0f, 0.0f, 0.0f, 1.0f)},
+        {XMCOLOR(0.0f, 0.0f, 1.0f, 1.0f)},
+        {XMCOLOR(0.0f, 1.0f, 0.0f, 1.0f)},
+        {XMCOLOR(0.0f, 1.0f, 1.0f, 1.0f)},
+        {XMCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
+        {XMCOLOR(1.0f, 0.0f, 1.0f, 1.0f)},
+        {XMCOLOR(1.0f, 1.0f, 0.0f, 1.0f)},
+        {XMCOLOR(1.0f, 1.0f, 1.0f, 1.0f)}
     };
 
     // [10] Create a vertex buffer for cube colors.
-    m_vertexBufferColor.attach(CreateImmutableVertexBuffer(device, sizeof(cubeVertexColors), &cubeVertexColors));
+    m_vertexBufferColor.attach(CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertexColors), &cubeVertexColors));
 
     // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
@@ -138,16 +141,12 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
     m_indexCount = ARRAYSIZE(cubeIndices);
 
     // [13] Create index buffer and load indices to the buffer.
-    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-    indexBufferData.pSysMem = cubeIndices;
-    indexBufferData.SysMemPitch = 0;
-    indexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
-    winrt::check_hresult(
-        device->CreateBuffer(
-            &indexBufferDesc,
-            &indexBufferData,
-            m_indexBuffer.put()));
+    m_indexBuffer.attach(
+        CreateImmutableBuffer(
+            m_deviceResources->GetD3DDevice(),
+            D3D11_BIND_INDEX_BUFFER,
+            sizeof(cubeIndices),
+            &cubeIndices));
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
