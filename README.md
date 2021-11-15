@@ -2,11 +2,12 @@
 This repository contains examples of simple UWP (Universal Windows Platform) applications 
 using [Direct3D 11](https://docs.microsoft.com/en-us/windows/win32/direct3d11/atoc-dx-graphics-direct3d-11), 
 [WinRT/C++](https://docs.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/), 
-and XAML. So far, there are three demos in the repository:
+and XAML. So far, there are four demos in the repository:
 
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
 * `TexturedCube` - A cube with materials and textures, lit by directional lights.
 * `SimpleWaves` - A wireframe grid with a height function.
+* `SimpleScene` - A scene built from meshes.
 
 ## Hello World
 
@@ -41,6 +42,17 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 This is the first version of the Simple Waves app. For now, it applies a height function to a wireframe grid.
 
 <img src="./Docs/Images/SimpleWaves.png"/>
+
+## Simple Scene
+
+This is the first version of this app. For now, it's called Simple Scene but in the source code it's called
+"Scene with Skull" because we are going to load a skull scene in the future. 
+
+* The `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
+* The `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
+* The `MeshGenerator` creates the following meshes: Cube, Pyramid, Cylinder, Sphere, Grid, and Geosphere.
+
+<img src="./Docs/Images/SceneWithSkull.png"/>
 
 # References
 
