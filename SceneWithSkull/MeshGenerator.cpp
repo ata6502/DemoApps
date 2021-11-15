@@ -64,6 +64,8 @@ void MeshGenerator::CreateCube(std::string name)
 
 /// <summary>
 /// Creates a pyramid. The pyramid's base is a unit square.
+/// 
+/// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
 /// </summary>
 void MeshGenerator::CreatePyramid(std::string name)
 {
@@ -674,22 +676,19 @@ void MeshGenerator::CreateBuffers()
 {
     // Create an immutable vertex buffer and load data.
     m_vertexBuffer.attach(
-        CreateImmutableVertexBuffer(
+        CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
+            D3D11_BIND_VERTEX_BUFFER,
             m_vertices.size() * sizeof(VertexPositionColor),
             m_vertices.data()));
 
-    // Create index buffer and load indices to the buffer.
-    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-    indexBufferData.pSysMem = m_indices.data();
-    indexBufferData.SysMemPitch = 0;
-    indexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC indexBufferDesc(m_indices.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &indexBufferDesc,
-            &indexBufferData,
-            m_indexBuffer.put()));
+    // Create an immutable index buffer and load indices to the buffer.
+    m_indexBuffer.attach(
+        CreateImmutableBuffer(
+            m_deviceResources->GetD3DDevice(),
+            D3D11_BIND_INDEX_BUFFER,
+            m_indices.size() * sizeof(uint32_t),
+            m_indices.data()));
 }
 
 void MeshGenerator::SetBuffers()

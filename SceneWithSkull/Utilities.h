@@ -11,31 +11,33 @@ static winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::Stre
     co_return co_await FileIO::ReadBufferAsync(file);
 }
 
-// Create an immutable vertex buffer.
-static ID3D11Buffer* CreateImmutableVertexBuffer(ID3D11Device3* device, unsigned int byteWidth, void const* data)
+// Create an immutable buffer.
+static ID3D11Buffer* CreateImmutableBuffer(ID3D11Device3* device, D3D11_BIND_FLAG bufferType, unsigned int byteWidth, void const* data)
 {
+    ASSERT(bufferType == D3D11_BIND_VERTEX_BUFFER || bufferType == D3D11_BIND_INDEX_BUFFER);
+
     ID3D11Buffer* pBuffer;
 
-    // Create the vertex buffer description.
-    D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
-    vertexBufferDesc.ByteWidth = byteWidth;                     // the size of the buffer in bytes
-    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;             // the contents of the buffer will not change after creation
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vertexBufferDesc.CPUAccessFlags = 0;                        // CPU does not require read or write access to the buffer after the buffer has been created
-    vertexBufferDesc.MiscFlags = 0;
-    vertexBufferDesc.StructureByteStride = 0;                   // used with structured buffers; 0 for the vertex buffers
+    // Create the buffer description.
+    D3D11_BUFFER_DESC bufferDesc = { 0 };
+    bufferDesc.ByteWidth = byteWidth;                     // the size of the buffer in bytes
+    bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;             // the contents of the buffer will not change after creation
+    bufferDesc.BindFlags = bufferType;
+    bufferDesc.CPUAccessFlags = 0;                        // CPU does not require read or write access to the buffer after the buffer has been created
+    bufferDesc.MiscFlags = 0;
+    bufferDesc.StructureByteStride = 0;                   // used with structured buffers
 
-    // Create data structure to initialize the vertex buffer.
-    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-    vertexBufferData.pSysMem = data;
-    vertexBufferData.SysMemPitch = 0;
-    vertexBufferData.SysMemSlicePitch = 0;
+    // Create data structure to initialize the buffer.
+    D3D11_SUBRESOURCE_DATA bufferData = { 0 };
+    bufferData.pSysMem = data;
+    bufferData.SysMemPitch = 0;
+    bufferData.SysMemSlicePitch = 0;
 
-    // Create the vertex buffer and load data.
+    // Create the buffer and load data.
     winrt::check_hresult(
         device->CreateBuffer(
-            &vertexBufferDesc,
-            &vertexBufferData,
+            &bufferDesc,
+            &bufferData,
             &pBuffer));
 
     return pBuffer;

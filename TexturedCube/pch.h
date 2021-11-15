@@ -26,7 +26,12 @@
 #include <d3d11_3.h>
 #include <windows.ui.xaml.media.dxinterop.h>
 #include <DirectXColors.h>
+#include <DirectXPackedVector.h>
 #include <dcommon.h>
 
 #include <concrt.h>
 #include <ppltasks.h>
+#include <crtdbg.h> // Microsoft's implementation of CRT; contains _ASSERTE
+
+// Run-time assertion. ASSERT is evaluated only in Debug builds.
+#define ASSERT _ASSERTE

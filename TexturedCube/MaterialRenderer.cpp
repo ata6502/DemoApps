@@ -90,7 +90,7 @@ winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackgroun
     };
 
     // [8] Create an immutable vertex buffer.
-    m_vertexBuffer.attach(CreateImmutableVertexBuffer(device, sizeof(cubeVertices), &cubeVertices));
+    m_vertexBuffer.attach(CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertices), &cubeVertices));
 
     // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
@@ -118,16 +118,12 @@ winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackgroun
     m_indexCount = ARRAYSIZE(cubeIndices);
 
     // [13] Create index buffer and load indices to the buffer.
-    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-    indexBufferData.pSysMem = cubeIndices;
-    indexBufferData.SysMemPitch = 0;
-    indexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC indexBufferDesc(sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER);
-    winrt::check_hresult(
-        device->CreateBuffer(
-            &indexBufferDesc,
-            &indexBufferData,
-            m_indexBuffer.put()));
+    m_indexBuffer.attach(
+        CreateImmutableBuffer(
+            m_deviceResources->GetD3DDevice(),
+            D3D11_BIND_INDEX_BUFFER,
+            sizeof(cubeIndices),
+            &cubeIndices));
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
