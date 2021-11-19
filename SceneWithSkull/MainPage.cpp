@@ -101,4 +101,11 @@ namespace winrt::SceneWithSkull::implementation
         auto storyboard = winrt::unbox_value<Storyboard>(this->Resources().Lookup(resourceKey));
         storyboard.Begin();
     }
+
+    void MainPage::ScissorTestToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        critical_section::scoped_lock lock(m_main->GetCriticalSection());
+
+        m_main->ToggleScissorTest();
+    }
 }

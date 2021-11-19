@@ -8,7 +8,8 @@ using namespace Windows::System::Threading;
 using namespace Concurrency;
 using namespace DirectX;
 
-DemoMain::DemoMain()
+DemoMain::DemoMain() :
+    m_scissorTestEnabled(false)
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -160,4 +161,11 @@ void DemoMain::Render()
 void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
+}
+
+void DemoMain::ToggleScissorTest()
+{ 
+    m_scissorTestEnabled = !m_scissorTestEnabled;
+
+    m_renderer->EnableScissorTest(m_scissorTestEnabled);
 }

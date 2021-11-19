@@ -26,6 +26,8 @@ public:
     void Suspend();
     void Resume();
 
+    void ToggleScissorTest();
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();
@@ -44,5 +46,6 @@ private:
     std::unique_ptr<IndependentInput>        m_input;
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<SceneRenderer>           m_renderer;
+    bool                                     m_scissorTestEnabled;
 };
 

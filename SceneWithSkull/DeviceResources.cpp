@@ -232,8 +232,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         0.0f,
         0.0f,
         m_outputSize.Width,
-        m_outputSize.Height
-    );
+        m_outputSize.Height);
 
     m_d3dContext->RSSetViewports(1, &m_screenViewport);
 }

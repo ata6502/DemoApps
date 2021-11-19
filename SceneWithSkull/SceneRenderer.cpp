@@ -88,7 +88,6 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
 
 void SceneRenderer::FinalizeInitialization()
 {
-
 }
 
 void SceneRenderer::Render()
@@ -210,4 +209,37 @@ void SceneRenderer::DefineSceneObjects()
     info.MeshName = "grid";
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.0f, -0.01f, 0.0f));
     m_objects.push_back(info);
+}
+
+void SceneRenderer::EnableScissorTest(bool enabled)
+{
+    // TODO: Create the rasterizer state in advance in FinalizeInitialization.
+    // 
+    // Set the scissor test rectangle.
+    D3D11_RECT rects = { 300, 150, 900, 500 };
+    m_deviceResources->GetD3DDeviceContext()->RSSetScissorRects(1, &rects);
+
+    D3D11_RASTERIZER_DESC rasterDesc;
+    rasterDesc.AntialiasedLineEnable = false;
+    rasterDesc.CullMode = D3D11_CULL_BACK;
+    rasterDesc.DepthBias = 0;
+    rasterDesc.DepthBiasClamp = 0.0f;
+    rasterDesc.DepthClipEnable = true;
+    rasterDesc.FillMode = D3D11_FILL_SOLID;
+    rasterDesc.FrontCounterClockwise = false;
+    rasterDesc.MultisampleEnable = false;
+    rasterDesc.ScissorEnable = enabled; // enable/disable the scissor test
+    rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+    // Direct3D rasterizer state to change the culling settings.
+    winrt::com_ptr<ID3D11RasterizerState> rasterizerState;
+
+    // Create the rasterizer state from the description we just filled out.
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateRasterizerState(
+            &rasterDesc,
+            rasterizerState.put()));
+
+    // Set the rasterizer state.
+    m_deviceResources->GetD3DDeviceContext()->RSSetState(rasterizerState.get());
 }

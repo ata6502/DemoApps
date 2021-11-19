@@ -19,6 +19,8 @@ public:
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
+    void EnableScissorTest(bool enabled);
+
 private:
     struct ObjectInfo
     {
