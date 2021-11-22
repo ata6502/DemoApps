@@ -211,6 +211,10 @@ void SceneRenderer::DefineSceneObjects()
     m_objects.push_back(info);
 }
 
+/// <summary>
+/// Sends an array of screen rectangles (in this example, there is only one rectangle in the array)
+/// to the Direct3D scissor test. The scissor test discards all pixels outside the scissor rectangles.
+/// </summary>
 void SceneRenderer::EnableScissorTest(bool enabled)
 {
     // TODO: Create the rasterizer state in advance in FinalizeInitialization.
@@ -219,6 +223,7 @@ void SceneRenderer::EnableScissorTest(bool enabled)
     D3D11_RECT rects = { 300, 150, 900, 500 };
     m_deviceResources->GetD3DDeviceContext()->RSSetScissorRects(1, &rects);
 
+    // Enable or diable the scissor test using the D3D11_RASTERIZER_DESC::ScissorEnable flag.
     D3D11_RASTERIZER_DESC rasterDesc;
     rasterDesc.AntialiasedLineEnable = false;
     rasterDesc.CullMode = D3D11_CULL_BACK;
