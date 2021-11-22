@@ -76,10 +76,34 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [7] Create meshes using the MeshGenerator.
+    // [7] Create rasterizer states to enable or diable the scissor test using 
+    // the D3D11_RASTERIZER_DESC::ScissorEnable flag.
+    D3D11_RASTERIZER_DESC2 rsDesc;
+    ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
+    rsDesc.AntialiasedLineEnable = false;
+    rsDesc.CullMode = D3D11_CULL_BACK;
+    rsDesc.DepthBias = 0;
+    rsDesc.DepthBiasClamp = 0.0f;
+    rsDesc.DepthClipEnable = true;
+    rsDesc.FillMode = D3D11_FILL_SOLID;
+    rsDesc.FrontCounterClockwise = false;
+    rsDesc.MultisampleEnable = false;
+    rsDesc.ScissorEnable = true; // enable the scissor test
+    rsDesc.SlopeScaledDepthBias = 0.0f;
+
+    // Create the rasterizer state to enable the scissor test.
+    winrt::check_hresult(
+        device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestEnabled.put()));
+
+    // Create the rasterizer state to disable the scissor test.
+    rsDesc.ScissorEnable = false; // disable the scissor test
+    winrt::check_hresult(
+        device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestDisabled.put()));
+
+    // [8] Create meshes using the MeshGenerator.
     CreateMeshes();
 
-    // [8] Define the scene.
+    // [9] Define the scene.
     DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.
@@ -217,34 +241,13 @@ void SceneRenderer::DefineSceneObjects()
 /// </summary>
 void SceneRenderer::EnableScissorTest(bool enabled)
 {
-    // TODO: Create the rasterizer state in advance in FinalizeInitialization.
-    // 
     // Set the scissor test rectangle.
     D3D11_RECT rects = { 300, 150, 900, 500 };
     m_deviceResources->GetD3DDeviceContext()->RSSetScissorRects(1, &rects);
 
-    // Enable or diable the scissor test using the D3D11_RASTERIZER_DESC::ScissorEnable flag.
-    D3D11_RASTERIZER_DESC rasterDesc;
-    rasterDesc.AntialiasedLineEnable = false;
-    rasterDesc.CullMode = D3D11_CULL_BACK;
-    rasterDesc.DepthBias = 0;
-    rasterDesc.DepthBiasClamp = 0.0f;
-    rasterDesc.DepthClipEnable = true;
-    rasterDesc.FillMode = D3D11_FILL_SOLID;
-    rasterDesc.FrontCounterClockwise = false;
-    rasterDesc.MultisampleEnable = false;
-    rasterDesc.ScissorEnable = enabled; // enable/disable the scissor test
-    rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-    // Direct3D rasterizer state to change the culling settings.
-    winrt::com_ptr<ID3D11RasterizerState> rasterizerState;
-
-    // Create the rasterizer state from the description we just filled out.
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateRasterizerState(
-            &rasterDesc,
-            rasterizerState.put()));
-
     // Set the rasterizer state.
-    m_deviceResources->GetD3DDeviceContext()->RSSetState(rasterizerState.get());
+    if (enabled)
+        m_deviceResources->GetD3DDeviceContext()->RSSetState(m_rasterizerStateScissorTestEnabled.get());
+    else 
+        m_deviceResources->GetD3DDeviceContext()->RSSetState(m_rasterizerStateScissorTestDisabled.get());
 }
