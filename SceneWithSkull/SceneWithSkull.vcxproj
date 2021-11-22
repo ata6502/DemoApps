@@ -79,6 +79,12 @@
     <Import Project="PropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(MSBuildProjectDirectory)\..\Shared;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(MSBuildProjectDirectory)\..\Shared;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -112,7 +118,6 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
-    <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="IndependentInput.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="pch.h" />
@@ -149,9 +154,9 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\DeviceResources.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DemoMain.cpp" />
-    <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="pch.cpp">

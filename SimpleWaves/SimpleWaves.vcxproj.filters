@@ -16,9 +16,6 @@
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="DemoMain.cpp" />
-    <ClCompile Include="DeviceResources.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -26,20 +23,20 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="GridMesh.cpp">
       <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\DeviceResources.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DemoMain.h" />
-    <ClInclude Include="DeviceResources.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
@@ -51,10 +48,10 @@
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="GridMesh.h">
       <Filter>Geometry</Filter>
@@ -90,9 +87,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{e48dc53e-40b1-40cb-970a-f89935452892}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{5d9ced02-8b0f-49ad-89ae-dfa32f7f9919}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{ac2eb6db-8ba0-429a-ace0-b7843971cd14}</UniqueIdentifier>
     </Filter>
@@ -104,6 +98,9 @@
     </Filter>
     <Filter Include="Geometry">
       <UniqueIdentifier>{9fb07e0e-55d4-4588-8e43-2147b8bd8918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{5d9ced02-8b0f-49ad-89ae-dfa32f7f9919}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

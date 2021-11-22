@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="MainPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -16,9 +13,6 @@
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="DemoMain.cpp" />
-    <ClCompile Include="DeviceResources.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
@@ -26,20 +20,20 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="MeshGenerator.cpp">
       <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\DeviceResources.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DemoMain.h" />
-    <ClInclude Include="DeviceResources.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
@@ -51,10 +45,10 @@
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="MeshGenerator.h">
       <Filter>Geometry</Filter>
@@ -90,9 +84,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{e48dc53e-40b1-40cb-970a-f89935452892}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{5d9ced02-8b0f-49ad-89ae-dfa32f7f9919}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{ac2eb6db-8ba0-429a-ace0-b7843971cd14}</UniqueIdentifier>
     </Filter>
@@ -104,6 +95,9 @@
     </Filter>
     <Filter Include="Geometry">
       <UniqueIdentifier>{9ef76c1e-6b75-4884-9123-a277ba5a5b64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{5d9ced02-8b0f-49ad-89ae-dfa32f7f9919}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,5 +114,10 @@
     <FxCompile Include="ColorVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Filter>Renderers</Filter>
+    </ApplicationDefinition>
   </ItemGroup>
 </Project>

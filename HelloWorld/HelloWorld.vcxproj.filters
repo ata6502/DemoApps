@@ -16,24 +16,21 @@
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="DemoMain.cpp" />
-    <ClCompile Include="DeviceResources.cpp">
-      <Filter>Common</Filter>
+    <ClCompile Include="..\Shared\DeviceResources.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="Timer.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="DeviceResources.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="ShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -66,11 +63,11 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{e48dc53e-40b1-40cb-970a-f89935452892}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{dbcc1fa7-ea1d-4136-888e-e884fa17d512}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{8daaff76-2d3f-4fac-8e02-b3ccd92110e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{dbcc1fa7-ea1d-4136-888e-e884fa17d512}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

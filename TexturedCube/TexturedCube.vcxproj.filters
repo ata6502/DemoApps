@@ -15,9 +15,6 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="DeviceResources.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
@@ -35,19 +32,19 @@
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="FileReader.cpp">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\DeviceResources.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="DeviceResources.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="MaterialShaderStructures.h">
       <Filter>Shaders</Filter>
@@ -78,10 +75,10 @@
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="FileReader.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="FileReaderStructures.h">
-      <Filter>Common</Filter>
+      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -117,9 +114,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{e48dc53e-40b1-40cb-970a-f89935452892}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{ef4a33b4-b2ab-40ce-8c3f-69715953ba26}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{182c0248-94f8-4135-99d8-f85d9a41e820}</UniqueIdentifier>
     </Filter>
@@ -131,6 +125,9 @@
     </Filter>
     <Filter Include="Renderers">
       <UniqueIdentifier>{f530e6ed-5def-4cfb-8848-3e68ed491772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{ef4a33b4-b2ab-40ce-8c3f-69715953ba26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
