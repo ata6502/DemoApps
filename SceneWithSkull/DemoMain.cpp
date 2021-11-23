@@ -36,6 +36,7 @@ void DemoMain::CreateWindowSizeDependentResources()
     Size outputSize = m_deviceResources->GetOutputSize();
     auto projMatrix = m_camera->GetProjMatrix(outputSize);
     m_renderer->SetProjMatrix(projMatrix);
+    m_renderer->SetOutputSize(outputSize);
 }
 
 void DemoMain::StartRenderLoop()

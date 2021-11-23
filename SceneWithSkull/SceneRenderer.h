@@ -18,6 +18,7 @@ public:
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
+    void SetOutputSize(winrt::Windows::Foundation::Size outputSize);
 
     void EnableScissorTest(bool enabled);
 

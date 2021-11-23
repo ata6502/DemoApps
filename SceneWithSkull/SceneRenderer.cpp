@@ -176,6 +176,19 @@ void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
 
+void SceneRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
+{
+    const float LeftRightMarginPercent = 0.3;
+    const float UpDownMarginPercent = 0.2;
+
+    long leftRightMargin = static_cast<long>(LeftRightMarginPercent * outputSize.Width);
+    long upDownMargin = static_cast<long>(UpDownMarginPercent * outputSize.Height);
+
+    // Set the scissor test rectangle.
+    D3D11_RECT rects = { leftRightMargin, upDownMargin, outputSize.Width - leftRightMargin, outputSize.Height - upDownMargin };
+    m_deviceResources->GetD3DDeviceContext()->RSSetScissorRects(1, &rects);
+}
+
 void SceneRenderer::CreateMeshes()
 {
     m_meshGenerator->CreateCylinder("cylinder", 0.2f, 0.1f, 1.0f, 16, 2);
@@ -241,10 +254,6 @@ void SceneRenderer::DefineSceneObjects()
 /// </summary>
 void SceneRenderer::EnableScissorTest(bool enabled)
 {
-    // Set the scissor test rectangle.
-    D3D11_RECT rects = { 300, 150, 900, 500 };
-    m_deviceResources->GetD3DDeviceContext()->RSSetScissorRects(1, &rects);
-
     // Set the rasterizer state.
     if (enabled)
         m_deviceResources->GetD3DDeviceContext()->RSSetState(m_rasterizerStateScissorTestEnabled.get());
