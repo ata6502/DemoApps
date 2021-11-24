@@ -106,6 +106,31 @@ namespace winrt::SceneWithSkull::implementation
     {
         critical_section::scoped_lock lock(m_main->GetCriticalSection());
 
-        m_main->ToggleScissorTest();
+        auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
+        auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
+
+        m_main->ToggleScissorTest(leftRightMarginPercent, topBottomMarginPercent);
+    }
+
+    void MainPage::LeftRightMarginSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        critical_section::scoped_lock lock(m_main->GetCriticalSection());
+
+        auto marginPercent = static_cast<float>(args.NewValue());
+        m_main->SetScissorTestLeftRightMargin(marginPercent);
+    }
+
+    void MainPage::TopBottomMarginSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        critical_section::scoped_lock lock(m_main->GetCriticalSection());
+
+        auto marginPercent = static_cast<float>(args.NewValue());
+        m_main->SetScissorTestTopBottomMargin(marginPercent);
     }
 }

@@ -164,9 +164,21 @@ void DemoMain::ReleaseResources()
     m_renderer->ReleaseResources();
 }
 
-void DemoMain::ToggleScissorTest()
+void DemoMain::ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent)
 { 
     m_scissorTestEnabled = !m_scissorTestEnabled;
 
+    SetScissorTestLeftRightMargin(leftRightMarginPercent);
+    SetScissorTestTopBottomMargin(topBottomMarginPercent);
     m_renderer->EnableScissorTest(m_scissorTestEnabled);
+}
+
+void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
+{
+    m_renderer->SetScissorTestLeftRightMargin(marginPercent);
+}
+
+void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
+{
+    m_renderer->SetScissorTestTopBottomMargin(marginPercent);
 }

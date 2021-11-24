@@ -26,7 +26,9 @@ public:
     void Suspend();
     void Resume();
 
-    void ToggleScissorTest();
+    void ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent);
+    void SetScissorTestLeftRightMargin(float marginPercent);
+    void SetScissorTestTopBottomMargin(float marginPercent);
 
     // IDeviceNotify
     virtual void OnDeviceLost();

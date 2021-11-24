@@ -11,7 +11,8 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
-    m_initialized(false)
+    m_initialized(false),
+    m_outputSize()
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -178,15 +179,8 @@ void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 
 void SceneRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 {
-    const float LeftRightMarginPercent = 0.3;
-    const float UpDownMarginPercent = 0.2;
-
-    long leftRightMargin = static_cast<long>(LeftRightMarginPercent * outputSize.Width);
-    long upDownMargin = static_cast<long>(UpDownMarginPercent * outputSize.Height);
-
-    // Set the scissor test rectangle.
-    D3D11_RECT rects = { leftRightMargin, upDownMargin, outputSize.Width - leftRightMargin, outputSize.Height - upDownMargin };
-    m_deviceResources->GetD3DDeviceContext()->RSSetScissorRects(1, &rects);
+    m_outputSize = outputSize;
+    SetScissorTestRectangle();
 }
 
 void SceneRenderer::CreateMeshes()
@@ -254,9 +248,35 @@ void SceneRenderer::DefineSceneObjects()
 /// </summary>
 void SceneRenderer::EnableScissorTest(bool enabled)
 {
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
     // Set the rasterizer state.
     if (enabled)
-        m_deviceResources->GetD3DDeviceContext()->RSSetState(m_rasterizerStateScissorTestEnabled.get());
+        context->RSSetState(m_rasterizerStateScissorTestEnabled.get());
     else 
-        m_deviceResources->GetD3DDeviceContext()->RSSetState(m_rasterizerStateScissorTestDisabled.get());
+        context->RSSetState(m_rasterizerStateScissorTestDisabled.get());
+}
+
+void SceneRenderer::SetScissorTestLeftRightMargin(float marginPercent)
+{
+    m_leftRightMarginPercent = marginPercent;
+    SetScissorTestRectangle();
+}
+
+void SceneRenderer::SetScissorTestTopBottomMargin(float marginPercent)
+{
+    m_topBottomMarginPercent = marginPercent;
+    SetScissorTestRectangle();
+}
+
+void SceneRenderer::SetScissorTestRectangle()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    float leftRightMargin = (m_leftRightMarginPercent / 100.0f) * m_outputSize.Width;
+    float topBottomMargin = (m_topBottomMarginPercent / 100.0f) * m_outputSize.Width;
+
+    // Set the scissor test rectangle.
+    D3D11_RECT rects = { leftRightMargin, topBottomMargin, m_outputSize.Width - leftRightMargin, m_outputSize.Height - topBottomMargin };
+    context->RSSetScissorRects(1, &rects);
 }

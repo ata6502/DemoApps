@@ -73,18 +73,38 @@
                     <TranslateTransform X="-220" />
                 </ScrollViewer.RenderTransform>
 
-                <StackPanel Orientation="Horizontal"
-                            Margin="12,8,8,0"
-                            VerticalAlignment="Top">
-                    <TextBlock Text="Scissor Test:"
-                               VerticalAlignment="Center"
-                               Margin="0,0,8,4" />
-                    <ToggleSwitch OnContent="On"
-                                  OffContent="Off"
-                                  IsOn="False" 
-                                  Toggled="ScissorTestToggle_Toggled" />
-                </StackPanel>
+                <StackPanel Margin="12,8,8,0">
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,8,8,0"
+                                VerticalAlignment="Top">
+                        <TextBlock Text="Scissor Test:"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,4" />
+                        <ToggleSwitch OnContent="On"
+                                      OffContent="Off"
+                                      IsOn="False" 
+                                      Toggled="ScissorTestToggle_Toggled" />
+                    </StackPanel>
 
+                    <Slider x:Name="LeftRightMarginSlider"
+                            Header="Left/Right Margin %"
+                            Minimum="20"
+                            Maximum="45"
+                            Padding="0,0,0,0"
+                            StepFrequency="1"
+                            TickFrequency="10"
+                            ValueChanged="LeftRightMarginSlider_ValueChanged" />
+
+                    <Slider x:Name="TopBottomMarginSlider"
+                            Header="Top/Bottom Margin %"
+                            Minimum="10"
+                            Maximum="25"
+                            Padding="0,0,0,0"
+                            StepFrequency="1"
+                            TickFrequency="10"
+                            ValueChanged="TopBottomMarginSlider_ValueChanged" />
+                </StackPanel>
+                
             </ScrollViewer>
         </Grid>
     </SwapChainPanel>
