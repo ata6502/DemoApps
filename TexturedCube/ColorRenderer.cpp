@@ -97,7 +97,7 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
     };
 
     // [8] Create a vertex buffer for cube vertices.
-    m_vertexBufferPosition.attach(CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertexPositions), &cubeVertexPositions));
+    m_vertexBufferPosition.attach(Utilities::CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertexPositions), &cubeVertexPositions));
 
     // [9] Create cube vertex colors.
     static const VertexColor cubeVertexColors[] =
@@ -113,7 +113,7 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
     };
 
     // [10] Create a vertex buffer for cube colors.
-    m_vertexBufferColor.attach(CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertexColors), &cubeVertexColors));
+    m_vertexBufferColor.attach(Utilities::CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertexColors), &cubeVertexColors));
 
     // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
@@ -142,7 +142,7 @@ winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
 
     // [13] Create index buffer and load indices to the buffer.
     m_indexBuffer.attach(
-        CreateImmutableBuffer(
+        Utilities::CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
             D3D11_BIND_INDEX_BUFFER,
             sizeof(cubeIndices),

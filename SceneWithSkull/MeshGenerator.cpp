@@ -676,7 +676,7 @@ void MeshGenerator::CreateBuffers()
 {
     // Create an immutable vertex buffer and load data.
     m_vertexBuffer.attach(
-        CreateImmutableBuffer(
+        Utilities::CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
             D3D11_BIND_VERTEX_BUFFER,
             m_vertices.size() * sizeof(VertexPositionColor),
@@ -684,7 +684,7 @@ void MeshGenerator::CreateBuffers()
 
     // Create an immutable index buffer and load indices to the buffer.
     m_indexBuffer.attach(
-        CreateImmutableBuffer(
+        Utilities::CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
             D3D11_BIND_INDEX_BUFFER,
             m_indices.size() * sizeof(uint32_t),

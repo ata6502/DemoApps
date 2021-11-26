@@ -26,8 +26,8 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"ColorVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"ColorPixelShader.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorVertexShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(

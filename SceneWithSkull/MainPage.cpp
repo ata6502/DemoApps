@@ -118,7 +118,7 @@ namespace winrt::SceneWithSkull::implementation
         m_main->ToggleScissorTest(leftRightMarginPercent, topBottomMarginPercent);
     }
 
-    void MainPage::LeftRightMarginSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    void MainPage::LeftRightMarginSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
     {
         if (m_main == nullptr)
             return;
@@ -129,7 +129,7 @@ namespace winrt::SceneWithSkull::implementation
         m_main->SetScissorTestLeftRightMargin(marginPercent);
     }
 
-    void MainPage::TopBottomMarginSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    void MainPage::TopBottomMarginSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
     {
         if (m_main == nullptr)
             return;

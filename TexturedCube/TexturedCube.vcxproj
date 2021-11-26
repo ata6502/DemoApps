@@ -110,8 +110,6 @@
     <ClInclude Include="RendererFactory.h" />
     <ClInclude Include="TextureRenderer.h" />
     <ClInclude Include="TextureShaderStructures.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -138,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
+    <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="ColorRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="FileReader.cpp" />

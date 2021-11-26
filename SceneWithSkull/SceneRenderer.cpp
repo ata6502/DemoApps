@@ -27,8 +27,8 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"ColorVertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"ColorPixelShader.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorVertexShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -162,7 +162,7 @@ void SceneRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void SceneRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds)
+void SceneRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
@@ -273,10 +273,15 @@ void SceneRenderer::SetScissorTestRectangle()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    float leftRightMargin = (m_leftRightMarginPercent / 100.0f) * m_outputSize.Width;
-    float topBottomMargin = (m_topBottomMarginPercent / 100.0f) * m_outputSize.Width;
+    auto leftRightMargin = static_cast<long>((m_leftRightMarginPercent / 100.0f) * m_outputSize.Width);
+    auto topBottomMargin = static_cast<long>((m_topBottomMarginPercent / 100.0f) * m_outputSize.Width);
 
     // Set the scissor test rectangle.
-    D3D11_RECT rects = { leftRightMargin, topBottomMargin, m_outputSize.Width - leftRightMargin, m_outputSize.Height - topBottomMargin };
+    D3D11_RECT rects = { 
+        leftRightMargin, 
+        topBottomMargin, 
+        static_cast<long>(m_outputSize.Width) - leftRightMargin, 
+        static_cast<long>(m_outputSize.Height) - topBottomMargin };
+
     context->RSSetScissorRects(1, &rects);
 }

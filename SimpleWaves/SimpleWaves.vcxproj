@@ -128,8 +128,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="SceneRenderer.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -155,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
+    <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="GridMesh.cpp" />

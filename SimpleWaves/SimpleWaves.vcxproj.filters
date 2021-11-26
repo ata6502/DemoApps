@@ -31,13 +31,13 @@
     <ClCompile Include="..\Shared\DeviceResources.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Utilities.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DemoMain.h" />
-    <ClInclude Include="Timer.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -46,9 +46,6 @@
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities.h">
-      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Shared</Filter>

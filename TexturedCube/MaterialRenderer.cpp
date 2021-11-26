@@ -90,7 +90,7 @@ winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackgroun
     };
 
     // [8] Create an immutable vertex buffer.
-    m_vertexBuffer.attach(CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertices), &cubeVertices));
+    m_vertexBuffer.attach(Utilities::CreateImmutableBuffer(device, D3D11_BIND_VERTEX_BUFFER, sizeof(cubeVertices), &cubeVertices));
 
     // [11] Create cube indices in the left-handed coordinate system.
     static const unsigned short cubeIndices[] =
@@ -119,7 +119,7 @@ winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackgroun
 
     // [13] Create index buffer and load indices to the buffer.
     m_indexBuffer.attach(
-        CreateImmutableBuffer(
+        Utilities::CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
             D3D11_BIND_INDEX_BUFFER,
             sizeof(cubeIndices),

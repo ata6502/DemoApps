@@ -1,8 +1,19 @@
-#pragma once
+#include "pch.h"
+#include "Utilities.h"
 
+// Reads data from a binary file.
+winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::Streams::IBuffer> Utilities::ReadDataAsync(winrt::hstring const& filename)
+{
+    using namespace winrt::Windows::ApplicationModel;
+    using namespace winrt::Windows::Storage;
+
+    auto folder = Package::Current().InstalledLocation();
+    StorageFile file{ co_await folder.GetFileAsync(filename) };
+    co_return co_await FileIO::ReadBufferAsync(file);
+}
 
 // Create an immutable buffer.
-static ID3D11Buffer* CreateImmutableBuffer(ID3D11Device3* device, D3D11_BIND_FLAG bufferType, unsigned int byteWidth, void const* data)
+ID3D11Buffer* Utilities::CreateImmutableBuffer(ID3D11Device3* device, D3D11_BIND_FLAG bufferType, unsigned int byteWidth, void const* data)
 {
     ASSERT(bufferType == D3D11_BIND_VERTEX_BUFFER || bufferType == D3D11_BIND_INDEX_BUFFER);
 

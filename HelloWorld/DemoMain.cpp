@@ -37,8 +37,8 @@ winrt::fire_and_forget DemoMain::InitializeInBackground()
     auto lifetime = get_strong();
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await ReadDataAsync(L"VertexShader.cso");
-    auto pixelShaderBytecode = co_await ReadDataAsync(L"PixelShader.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"VertexShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"PixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
