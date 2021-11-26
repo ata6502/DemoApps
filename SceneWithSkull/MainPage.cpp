@@ -6,7 +6,8 @@ using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Xaml;
-using namespace Windows::UI::Xaml::Media::Animation;    // Storyboard
+using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::UI::Xaml::Media::Animation; // Storyboard
 using namespace Concurrency;
 
 namespace winrt::SceneWithSkull::implementation
@@ -105,6 +106,11 @@ namespace winrt::SceneWithSkull::implementation
     void MainPage::ScissorTestToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         critical_section::scoped_lock lock(m_main->GetCriticalSection());
+
+        auto isOn = sender.as<ToggleSwitch>().IsOn();
+
+        LeftRightMarginSlider().IsEnabled(isOn);
+        TopBottomMarginSlider().IsEnabled(isOn);
 
         auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
         auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());

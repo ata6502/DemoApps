@@ -88,6 +88,7 @@
 
                     <Slider x:Name="LeftRightMarginSlider"
                             Header="Left/Right Margin %"
+                            IsEnabled="False"
                             Minimum="20"
                             Maximum="45"
                             Padding="0,0,0,0"
@@ -97,6 +98,7 @@
 
                     <Slider x:Name="TopBottomMarginSlider"
                             Header="Top/Bottom Margin %"
+                            IsEnabled="False"
                             Minimum="10"
                             Maximum="25"
                             Padding="0,0,0,0"
