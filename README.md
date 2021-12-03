@@ -46,13 +46,13 @@ This is the first version of the Simple Waves app. For now, it applies a height 
 
 ## Simple Scene
 
-This is the first version of this app. For now, it's called "Simple Scene" but in the source code the project 
-has the name SceneWithSkull. The reason is that the app is going to load a skull mesh from a file and display it
-on the screen. 
+It's the first version of the Simple Scene app. In the source code, it's called SceneWithSkull because 
+in the future we will load a skull mesh from a file. 
 
 * The `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
 * The `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
 * The `MeshGenerator` creates the following meshes: Cube, Pyramid, Cylinder, Sphere, Grid, and Geosphere.
+* The application allows the user to enable a scissor test that culls pixels that are outside of a scissor rectangle.
 
 <img src="./Docs/Images/SceneWithSkull.png"/>
 
