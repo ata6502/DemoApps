@@ -120,6 +120,7 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="GridMesh.h" />
     <ClInclude Include="IndependentInput.h" />
+    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -127,7 +128,9 @@
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="SceneRenderer.h" />
+    <ClInclude Include="RendererBase.h" />
+    <ClInclude Include="RendererFactory.h" />
+    <ClInclude Include="WaveRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -158,6 +161,7 @@
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="GridMesh.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -168,7 +172,8 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="RendererFactory.cpp" />
+    <ClCompile Include="WaveRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">

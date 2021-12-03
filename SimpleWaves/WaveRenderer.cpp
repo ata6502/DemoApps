@@ -1,17 +1,16 @@
 #include "pch.h"
 
 #include "ColorShaderStructures.h"
-#include "SceneRenderer.h"
+#include "WaveRenderer.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+WaveRenderer::WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
-    m_constantBufferNeverChanges(nullptr),
-    m_initialized(false)
+    m_constantBufferNeverChanges(nullptr)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -21,7 +20,7 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
+winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
@@ -94,22 +93,19 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
 
-    // Create a grid mesh.
-    //m_gridMesh->Create(160, 160, 50, 50, heightFunction);
-
     // Create a grid mesh with two colors: blue and red.
     m_gridMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f));
 
     // Inform other parts of the application that the initialization has completed.
-    m_initialized = true;
+    IsInitialized(true);
 }
 
-void SceneRenderer::FinalizeInitialization()
+void WaveRenderer::FinalizeInitialization()
 {
 
 }
 
-void SceneRenderer::Render()
+void WaveRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -138,9 +134,9 @@ void SceneRenderer::Render()
     m_gridMesh->Draw();
 }
 
-void SceneRenderer::ReleaseResources()
+void WaveRenderer::ReleaseResources()
 {
-    m_initialized = false;
+    IsInitialized(false);
     m_gridMesh->ReleaseResources();
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
@@ -151,12 +147,12 @@ void SceneRenderer::ReleaseResources()
     m_rasterizerState = nullptr;
 }
 
-void SceneRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+void WaveRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void SceneRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds)
+void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
@@ -164,7 +160,7 @@ void SceneRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVEC
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
+void WaveRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 {
     ConstantBufferPerObject constantBufferPerObjectData;
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));

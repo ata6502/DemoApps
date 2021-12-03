@@ -2,17 +2,16 @@
 
 #include "DeviceResources.h"
 #include "GridMesh.h"
+#include "RendererBase.h"
 
-class SceneRenderer
+class WaveRenderer : public RendererBase
 {
 public:
-    SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();
     void ReleaseResources();
-
-    bool IsInitialized() const { return m_initialized; }
 
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
@@ -34,7 +33,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
-    bool                                    m_initialized;
     std::unique_ptr<GridMesh>               m_gridMesh;
 };
 

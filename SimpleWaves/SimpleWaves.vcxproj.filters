@@ -19,9 +19,6 @@
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="SceneRenderer.cpp">
-      <Filter>Renderers</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -34,15 +31,21 @@
     <ClCompile Include="..\Shared\Utilities.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererFactory.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneRenderer.h">
-      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
@@ -52,6 +55,18 @@
     </ClInclude>
     <ClInclude Include="GridMesh.h">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBase.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFactory.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

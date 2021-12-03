@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "DemoMain.h"
+#include "RendererFactory.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -15,7 +16,9 @@ DemoMain::DemoMain()
 
     m_input = std::make_unique<IndependentInput>();
     m_camera = std::make_unique<Camera>();
-    m_renderer = std::make_unique<SceneRenderer>(m_deviceResources);
+
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources);
+    m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_timer.Reset();
 }
