@@ -6,13 +6,15 @@ using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Controls;            // ListBox
 using namespace Windows::UI::Xaml::Media::Animation;    // Storyboard
 using namespace Concurrency;
 
 namespace winrt::SimpleWaves::implementation
 {
     MainPage::MainPage() :
-        m_controlPanelVisible(false)
+        m_controlPanelVisible(false),
+        m_rendererInitialized(false)
     {
         InitializeComponent();
 
@@ -100,5 +102,18 @@ namespace winrt::SimpleWaves::implementation
         auto resourceKey = winrt::box_value(m_controlPanelVisible ? L"ShowControlPanelStoryboard" : L"HideControlPanelStoryboard");
         auto storyboard = winrt::unbox_value<Storyboard>(this->Resources().Lookup(resourceKey));
         storyboard.Begin();
+    }
+
+    void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+    {
+        if (!m_rendererInitialized)
+        {
+            m_rendererInitialized = true;
+            return;
+        }
+
+        auto listBox = sender.as<ListBox>();
+        auto selectedIndex = listBox.SelectedIndex();
+        m_main->SetRenderer(selectedIndex);
     }
 }

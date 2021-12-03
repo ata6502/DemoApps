@@ -164,3 +164,19 @@ void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
 }
+
+void DemoMain::SetRenderer(int32_t rendererIndex)
+{
+    if (!m_renderer->IsInitialized())
+        return;
+
+    StopRenderLoop();
+    ReleaseResources();
+
+    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
+    m_renderer.reset();
+    m_renderer.reset(renderer);
+
+    CreateWindowSizeDependentResources();
+    StartRenderLoop();
+}

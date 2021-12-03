@@ -26,6 +26,8 @@ public:
     void Suspend();
     void Resume();
 
+    void SetRenderer(int32_t rendererIndex);
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();
