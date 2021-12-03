@@ -105,6 +105,11 @@ void MeshRenderer::FinalizeInitialization()
 
 }
 
+void MeshRenderer::Update([[maybe_unused]] float totalSeconds, [[maybe_unused]] float elapsedSeconds)
+{
+
+}
+
 void MeshRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
@@ -152,7 +157,7 @@ void MeshRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void MeshRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds)
+void MeshRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,

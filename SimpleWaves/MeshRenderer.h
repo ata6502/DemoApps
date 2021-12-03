@@ -10,6 +10,7 @@ public:
     MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    void Update(float totalSeconds, float elapsedSeconds);
     void Render();
     void ReleaseResources();
 

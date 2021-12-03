@@ -40,6 +40,9 @@
     <ClCompile Include="RendererFactory.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="Waves.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -66,6 +69,9 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="RendererFactory.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="Waves.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

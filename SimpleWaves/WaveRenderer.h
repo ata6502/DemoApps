@@ -3,6 +3,7 @@
 #include "DeviceResources.h"
 #include "GridMesh.h"
 #include "RendererBase.h"
+#include "Waves.h"
 
 class WaveRenderer : public RendererBase
 {
@@ -10,6 +11,7 @@ public:
     WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    void Update(float totalSeconds, float elapsedSeconds);
     void Render();
     void ReleaseResources();
 
@@ -23,6 +25,8 @@ private:
 
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
+    winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer; // a dynamic vertex buffer; TODO: rename to m_waveVertexBuffer
+    winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
     winrt::com_ptr<ID3D11RasterizerState2>  m_rasterizerState;
@@ -34,5 +38,6 @@ private:
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_gridMesh;
+    Waves                                   m_waves; // wave simulation
 };
 

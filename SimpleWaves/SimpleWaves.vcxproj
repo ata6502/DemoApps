@@ -131,6 +131,7 @@
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererFactory.h" />
     <ClInclude Include="WaveRenderer.h" />
+    <ClInclude Include="Waves.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -174,6 +175,7 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="RendererFactory.cpp" />
     <ClCompile Include="WaveRenderer.cpp" />
+    <ClCompile Include="Waves.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
