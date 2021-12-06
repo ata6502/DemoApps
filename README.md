@@ -40,7 +40,11 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 
 ## Simple Waves
 
-This is the first version of the Simple Waves app. For now, it applies a height function to a wireframe grid.
+This is the first version of the Simple Waves app. 
+
+* It applies a height function to a wireframe grid.
+* Utilizes a dynamic vertex buffer to animate waves. The buffer is populated using the `ID3D11DeviceContext2::Map` method.
+* Includes a `Waves` class from [Luna] that performs calculations of waves. The code is based on [Lengyel].
 
 <img src="./Docs/Images/SimpleWaves.png"/>
 
@@ -60,5 +64,6 @@ in the future we will load a skull mesh from a file.
 
 Many pieces of code in DemoApps are based on or inspired by the following sources:
 
-* [Luna] "Introduction to 3D Game Programming with DirectX 11" by Frank Luna
+* [Luna] Luna, Frank, "Introduction to 3D Game Programming with DirectX 11". Mercury Learning, 2012
+* [Lengyel] Lengyel, Eric, "Mathematics for 3D Game Programming and Computer Graphics". Charles River Media, Inc., Boston, MA, 2002.
 * Microsoft sample applications - [Simple3DGameDX](https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/Simple3DGameDX/cppwinrt)
