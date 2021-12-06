@@ -78,8 +78,8 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     // Initialize wave data.
     m_waves.Init(200, 200, 0.8f, 0.03f, 3.25f, 0.4f);
 
-    // [7] Create the vertex buffer. Note that we allocate space only, as
-    // we will be updating the data every frame.
+    // [7] Create the vertex buffer. Note that we only allocate space. 
+    // We will be updating the data every frame.
     D3D11_BUFFER_DESC vertexBufferDesc;
     vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     vertexBufferDesc.ByteWidth = sizeof(VertexPositionColor) * m_waves.VertexCount();
@@ -91,7 +91,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
         device->CreateBuffer(
             &vertexBufferDesc,
             0, // no inital data
-            m_vertexBuffer.put()));
+            m_waveVertexBuffer.put()));
 
     // [8] Create the index buffer. The index buffer is fixed, so we only need to create it once.
     std::vector<uint32_t> indices(3 * m_waves.TriangleCount()); // 3 indices per face
@@ -125,7 +125,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &indexBufferDesc,
             &indexBufferData,
-            m_indexBuffer.put()));
+            m_waveIndexBuffer.put()));
 
     // [9] Create a rasterizer state. It is set using RSSetState in the Render method.
     D3D11_RASTERIZER_DESC2 rsDesc;
@@ -176,6 +176,7 @@ static float RandF(float a, float b)
     return a + RandF() * (b - a);
 }
 
+// Animate waves.
 void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
 {
     // Every quarter second, generate a random wave.
@@ -200,7 +201,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
     D3D11_MAPPED_SUBRESOURCE mappedData;
     winrt::check_hresult(
         context->Map(
-            m_vertexBuffer.get(),
+            m_waveVertexBuffer.get(),
             0,
             D3D11_MAP_WRITE_DISCARD,
             0,
@@ -213,7 +214,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
         v[i].Color = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
-    context->Unmap(m_vertexBuffer.get(), 0);
+    context->Unmap(m_waveVertexBuffer.get(), 0);
 }
 
 void WaveRenderer::Render()
@@ -246,9 +247,9 @@ void WaveRenderer::Render()
     // Draw the waves.
     UINT stride = sizeof(VertexPositionColor);
     UINT offset = 0;
-    ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
+    ID3D11Buffer* pVertexBuffer{ m_waveVertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
-    context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
+    context->IASetIndexBuffer(m_waveIndexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
     context->DrawIndexed(3 * m_waves.TriangleCount(), 0, 0);
 }
 
@@ -256,8 +257,8 @@ void WaveRenderer::ReleaseResources()
 {
     IsInitialized(false);
     m_gridMesh->ReleaseResources();
-    m_vertexBuffer = nullptr;
-    m_indexBuffer = nullptr;
+    m_waveVertexBuffer = nullptr;
+    m_waveIndexBuffer = nullptr;
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;

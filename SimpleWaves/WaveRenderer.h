@@ -25,8 +25,8 @@ private:
 
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
-    winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer; // a dynamic vertex buffer; TODO: rename to m_waveVertexBuffer
-    winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
+    winrt::com_ptr<ID3D11Buffer>            m_waveVertexBuffer; // a dynamic vertex buffer
+    winrt::com_ptr<ID3D11Buffer>            m_waveIndexBuffer;
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
     winrt::com_ptr<ID3D11RasterizerState2>  m_rasterizerState;
