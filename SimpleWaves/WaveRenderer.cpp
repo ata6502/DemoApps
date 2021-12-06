@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "ColorShaderStructures.h"
+#include "MathHelper.h"
 #include "WaveRenderer.h"
 #include "Utilities.h"
 
@@ -162,20 +163,6 @@ void WaveRenderer::FinalizeInitialization()
 
 }
 
-// TODO: Move to MathHelper in Shared.
- 
-// Returns random float in [0, 1).
-static float RandF()
-{
-    return (float)(rand()) / (float)RAND_MAX;
-}
-
-// Returns random float in [a, b).
-static float RandF(float a, float b)
-{
-    return a + RandF() * (b - a);
-}
-
 // Animate waves.
 void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
 {
@@ -188,7 +175,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
         uint32_t i = 5 + rand() % 190;
         uint32_t j = 5 + rand() % 190;
 
-        float r = RandF(1.0f, 2.0f);
+        float r = MathHelper::RandF(1.0f, 2.0f);
 
         m_waves.Disturb(i, j, r);
     }

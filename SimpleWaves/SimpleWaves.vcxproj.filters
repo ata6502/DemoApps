@@ -43,6 +43,9 @@
     <ClCompile Include="Waves.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\MathHelper.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

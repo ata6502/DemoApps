@@ -157,6 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
+    <ClCompile Include="..\Shared\MathHelper.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DemoMain.cpp" />
