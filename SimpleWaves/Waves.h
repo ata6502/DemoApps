@@ -1,12 +1,7 @@
 #pragma once
 
-//***************************************************************************************
-// 
-//
-//***************************************************************************************
-
 /// <summary>
-/// This code is brought from the [Luna] book by Frank Luna (C) 2011 All Rights Reserved.
+/// This code is from the [Luna] book by Frank Luna (C) 2011 All Rights Reserved.
 /// 
 /// Performs the calculations for the wave simulation. After the simulation has been
 /// updated, the client must copy the current solution into vertex buffers for rendering.

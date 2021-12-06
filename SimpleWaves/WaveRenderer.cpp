@@ -127,14 +127,19 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             &indexBufferData,
             m_indexBuffer.put()));
 
-    // [9] Create a rasterizer state.
+    // [9] Create a rasterizer state. It is set using RSSetState in the Render method.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.FillMode = D3D11_FILL_WIREFRAME;
-    //rsDesc.FillMode = D3D11_FILL_SOLID; // TODO: Create a D3D11_FILL_SOLID rasterizer state
+    rsDesc.AntialiasedLineEnable = false;
     rsDesc.CullMode = D3D11_CULL_BACK;
-    rsDesc.FrontCounterClockwise = false;
+    rsDesc.DepthBias = 0;
+    rsDesc.DepthBiasClamp = 0.0f;
     rsDesc.DepthClipEnable = true;
+    rsDesc.FillMode = D3D11_FILL_SOLID;
+    rsDesc.FrontCounterClockwise = false;
+    rsDesc.MultisampleEnable = false;
+    rsDesc.ScissorEnable = false;
+    rsDesc.SlopeScaledDepthBias = 0.0f;
 
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateRasterizerState2(
