@@ -130,6 +130,9 @@
     <None Include="ColorShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="LightingFunctions.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorPixelShader.hlsl">

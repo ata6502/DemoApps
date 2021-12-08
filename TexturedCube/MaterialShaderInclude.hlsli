@@ -39,7 +39,6 @@ struct VertexShaderInput
     float3 normal : NORMAL;
 };
 
-// Per-pixel color data passed through the pixel shader.
 struct PixelShaderInput
 {
     float4 posH : SV_POSITION;  // a position in homogenous coordinates
