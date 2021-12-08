@@ -46,6 +46,9 @@ This is the first version of the Simple Waves app.
 * Utilizes a dynamic vertex buffer to animate waves. The buffer is populated using the `ID3D11DeviceContext2::Map` method.
 * Includes a `Waves` class from [Luna] that performs calculations of waves. The code is based on [Lengyel].
 
+This app could be implemented on the GPU using rendering to texture or the compute shader as well as vertex texture fetch. 
+For simplicity, we compute wave simulation on the CPU and update vertices using a dynamic vertex buffer.
+
 <img src="./Docs/Images/SimpleWaves.png"/>
 
 ## Simple Scene
