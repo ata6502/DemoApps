@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "ColorShaderStructures.h"
 #include "GridMesh.h"
 
 using namespace DirectX;
@@ -26,12 +27,12 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
 
     auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
     auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
-    auto halfWidth = 0.5 * gridWidth;
-    auto halfDepth = 0.5 * gridDepth;
+    float halfWidth = 0.5f * gridWidth;
+    float halfDepth = 0.5f * gridDepth;
 
     // The grid is built from an M x N matrix of vertices. 
-    auto m = quadCountDepth + 1;
-    auto n = quadCountHoriz + 1;
+    uint32_t m = quadCountDepth + 1;
+    uint32_t n = quadCountHoriz + 1;
 
     // Create vertices.
     auto vertexCount = m * n;
@@ -70,12 +71,12 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
 
     // Compute vertex positions by starting at the upper-left corner of the grid. 
     // Then, incrementally compute the vertex coordinates row-by-row. 
-    auto z = halfDepth;
-    for (auto i = 0; i < m; ++i)
+    float z = halfDepth;
+    for (uint32_t i = 0; i < m; ++i)
     {
-        auto x = -halfWidth;
+        float x = -halfWidth;
 
-        for (auto j = 0; j < n; ++j)
+        for (uint32_t j = 0; j < n; ++j)
         {
             auto k = i * n + j;
             auto y = heightFunction(x, z);
@@ -118,9 +119,9 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
     std::vector<uint16_t> indices(m_indexCount);
     size_t k = 0;
 
-    for (auto i = 0; i < quadCountDepth; ++i)
+    for (uint32_t i = 0; i < quadCountDepth; ++i)
     {
-        for (auto j = 0; j < quadCountHoriz; ++j)
+        for (uint32_t j = 0; j < quadCountHoriz; ++j)
         {
             // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
             // The bottom face of the grid has the same indices but in opposite order.
@@ -138,10 +139,10 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
             // (j+1) % 2 - alternates index order within a row
             // (i+1+j) % 2 - alternates index order in every other row by starting from / or \
             //
-            uint16_t a = j + i * n;
-            uint16_t b = j + 1 + i * n;
-            uint16_t c = j + (i + 1) * n;
-            uint16_t d = j + 1 + (i + 1) * n;
+            uint32_t a = j + i * n;
+            uint32_t b = j + 1 + i * n;
+            uint32_t c = j + (i + 1) * n;
+            uint32_t d = j + 1 + (i + 1) * n;
 
             if ((i + 1 + j) % 2)
             {

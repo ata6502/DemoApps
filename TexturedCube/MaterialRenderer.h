@@ -7,6 +7,7 @@ class MaterialRenderer : public RendererBase
 {
 public:
     MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~MaterialRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();

@@ -9,6 +9,7 @@ class WaveRenderer : public RendererBase
 {
 public:
     WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~WaveRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Update(float totalSeconds, float elapsedSeconds);

@@ -77,6 +77,9 @@
     <ClInclude Include="Waves.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="LightsShaderStructures.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -130,7 +133,10 @@
     <None Include="ColorShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="LightingFunctions.hlsli">
+    <None Include="LightsFunctions.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="LightsShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -139,6 +145,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ColorVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="LightsPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="LightsVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

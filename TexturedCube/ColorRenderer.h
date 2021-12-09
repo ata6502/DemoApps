@@ -12,6 +12,7 @@ class ColorRenderer : public RendererBase
 {
 public:
     ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~ColorRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();

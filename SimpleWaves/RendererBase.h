@@ -4,6 +4,7 @@ class RendererBase
 {
 public:
     RendererBase() : m_initialized(false) {}
+    virtual ~RendererBase() {}
 
     virtual winrt::Windows::Foundation::IAsyncAction InitializeInBackground() = 0;
     virtual void Update(float totalSeconds, float elapsedSeconds) = 0;

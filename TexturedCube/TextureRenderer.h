@@ -7,6 +7,7 @@ class TextureRenderer : public RendererBase
 {
 public:
     TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~TextureRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();

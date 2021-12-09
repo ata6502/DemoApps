@@ -104,7 +104,7 @@ namespace winrt::SimpleWaves::implementation
         storyboard.Begin();
     }
 
-    void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+    void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
     {
         if (!m_rendererInitialized)
         {

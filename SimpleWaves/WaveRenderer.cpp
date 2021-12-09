@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "ColorShaderStructures.h"
+#include "LightsShaderStructures.h"
 #include "MathHelper.h"
 #include "WaveRenderer.h"
 #include "Utilities.h"
@@ -26,8 +26,8 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorVertexShader.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorPixelShader.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsVertexShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -41,7 +41,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -83,7 +83,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     // We will be updating the data every frame.
     D3D11_BUFFER_DESC vertexBufferDesc;
     vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    vertexBufferDesc.ByteWidth = sizeof(VertexPositionColor) * m_waves.VertexCount();
+    vertexBufferDesc.ByteWidth = sizeof(VertexPositionNormal) * m_waves.VertexCount();
     vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     vertexBufferDesc.MiscFlags = 0;
@@ -136,7 +136,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     rsDesc.DepthBias = 0;
     rsDesc.DepthBiasClamp = 0.0f;
     rsDesc.DepthClipEnable = true;
-    rsDesc.FillMode = D3D11_FILL_SOLID;
+    rsDesc.FillMode = D3D11_FILL_WIREFRAME;
     rsDesc.FrontCounterClockwise = false;
     rsDesc.MultisampleEnable = false;
     rsDesc.ScissorEnable = false;
@@ -158,9 +158,43 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     IsInitialized(true);
 }
 
+/// <summary>
+/// Device context dependent initialization.
+/// </summary>
 void WaveRenderer::FinalizeInitialization()
 {
+    auto device{ m_deviceResources->GetD3DDevice() };
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
 
+    // TODO: Create data for ConstantBufferNeverChanges
+    /*
+    // Create a constant buffer for data that never changes.
+    auto byteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
+    CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
+    winrt::check_hresult(
+        device->CreateBuffer(&constantBufferDesc, nullptr, m_constantBufferNeverChanges.put()));
+
+    // Create a data structure for data that never changes.
+    ConstantBufferNeverChanges constantBufferNeverChangesData;
+
+    // Create the light.
+    DirectionalLight light;
+    light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
+    constantBufferNeverChangesData.Light = light;
+
+    // Create the material.
+    MaterialDesc material;
+    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    constantBufferNeverChangesData.Material = material;
+
+    // Copy data that never changes to the appropriate constant buffer.
+    context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
+    */
 }
 
 // Animate waves.
@@ -194,11 +228,11 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
             0,
             &mappedData));
 
-    VertexPositionColor* v = reinterpret_cast<VertexPositionColor*>(mappedData.pData);
+    VertexPositionNormal* v = reinterpret_cast<VertexPositionNormal*>(mappedData.pData);
     for (uint32_t i = 0; i < m_waves.VertexCount(); ++i)
     {
         v[i].Position = m_waves[i];
-        v[i].Color = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+        v[i].Normal = XMFLOAT3(1.0f, 1.0f, 1.0f); // TODO: calculate normal vector
     }
 
     context->Unmap(m_waveVertexBuffer.get(), 0);
@@ -224,6 +258,20 @@ void WaveRenderer::Render()
     context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
+    // TODO: Set constantBufferNeverChanges in the slot 0.
+    /*
+    // Get pointers to constant buffers.
+    ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
+    ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
+    ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
+
+    // Send the constant buffers to the graphics device.
+    context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
+    context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
+    context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    */
+
     // Set the rasterizer state.
     context->RSSetState(m_rasterizerState.get());
 
@@ -232,7 +280,7 @@ void WaveRenderer::Render()
     m_gridMesh->Draw();
 
     // Draw the waves.
-    UINT stride = sizeof(VertexPositionColor);
+    UINT stride = sizeof(VertexPositionNormal);
     UINT offset = 0;
     ID3D11Buffer* pVertexBuffer{ m_waveVertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);

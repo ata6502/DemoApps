@@ -8,6 +8,7 @@ class MeshRenderer : public RendererBase
 {
 public:
     MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~MeshRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Update(float totalSeconds, float elapsedSeconds);

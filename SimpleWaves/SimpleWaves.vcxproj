@@ -120,6 +120,7 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="GridMesh.h" />
     <ClInclude Include="IndependentInput.h" />
+    <ClInclude Include="LightsShaderStructures.h" />
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
@@ -188,7 +189,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ColorShaderInclude.hlsli" />
-    <None Include="LightingFunctions.hlsli" />
+    <None Include="LightsFunctions.hlsli" />
+    <None Include="LightsShaderInclude.hlsli" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
   </ItemGroup>
@@ -198,6 +200,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="ColorVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="LightsPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="LightsVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
     </FxCompile>
