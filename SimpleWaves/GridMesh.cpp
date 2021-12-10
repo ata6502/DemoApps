@@ -28,7 +28,129 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
     auto vertexCount = m * n;
     std::vector<VertexPositionNormal> vertices(vertexCount);
 
-    // TODO: Implement the rest of the method.
+    // Compute vertex positions by starting at the upper-left corner of the grid. 
+    // Then, incrementally compute the vertex coordinates row-by-row. 
+    float z = halfDepth;
+    for (uint32_t i = 0; i < m; ++i)
+    {
+        float x = -halfWidth;
+
+        for (uint32_t j = 0; j < n; ++j)
+        {
+            auto k = i * n + j;
+            auto y = heightFunction(x, z);
+
+            vertices[k].Position = XMFLOAT3(x, y, z);
+            vertices[k].Normal = normalFunction(x, z);
+
+            x += dx;
+        };
+
+        z -= dz;
+    }
+
+    // Create vertex buffer and load data.
+    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+    vertexBufferData.pSysMem = vertices.data();
+    vertexBufferData.SysMemPitch = 0;
+    vertexBufferData.SysMemSlicePitch = 0;
+    CD3D11_BUFFER_DESC vertexBufferDesc(vertices.size() * sizeof(VertexPositionNormal), D3D11_BIND_VERTEX_BUFFER);
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateBuffer(
+            &vertexBufferDesc,
+            &vertexBufferData,
+            m_vertexBuffer.put()));
+
+    // Create indices: 
+    // - each quad has two triangles
+    // - each triangle has three vertices
+    // - each quad is duplicated for the top and the bottom face of the grid
+    m_indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
+
+    std::vector<uint16_t> indices(m_indexCount);
+    size_t k = 0;
+
+    for (uint32_t i = 0; i < quadCountDepth; ++i)
+    {
+        for (uint32_t j = 0; j < quadCountHoriz; ++j)
+        {
+            // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
+            // The bottom face of the grid has the same indices but in opposite order.
+            //
+            //     a----b   alternated   a----b
+            //     |\   |                |   /|  
+            //     | \  |                |  / |
+            //     |  \ |                | /  |
+            //     |   \|                |/   |
+            //     c----d                c----d
+            //
+            // 1st row: /\/\/\ etc.
+            // 2nd row: \/\/\/ etc.
+            // 3rd row: /\/\/\ etc.
+            // (j+1) % 2 - alternates index order within a row
+            // (i+1+j) % 2 - alternates index order in every other row by starting from / or \
+            //
+            uint32_t a = j + i * n;
+            uint32_t b = j + 1 + i * n;
+            uint32_t c = j + (i + 1) * n;
+            uint32_t d = j + 1 + (i + 1) * n;
+
+            if ((i + 1 + j) % 2)
+            {
+                // top
+                indices[k] = a;
+                indices[k + 1] = b;
+                indices[k + 2] = d;
+                indices[k + 3] = a;
+                indices[k + 4] = d;
+                indices[k + 5] = c;
+                k += 6;
+
+                // bottom
+                indices[k] = a;
+                indices[k + 1] = d;
+                indices[k + 2] = b;
+                indices[k + 3] = a;
+                indices[k + 4] = c;
+                indices[k + 5] = d;
+                k += 6;
+            }
+            else
+            {
+                // top
+                indices[k] = a;
+                indices[k + 1] = b;
+                indices[k + 2] = c;
+                indices[k + 3] = c;
+                indices[k + 4] = b;
+                indices[k + 5] = d;
+                k += 6;
+
+                // botom
+                indices[k] = a;
+                indices[k + 1] = c;
+                indices[k + 2] = b;
+                indices[k + 3] = c;
+                indices[k + 4] = d;
+                indices[k + 5] = b;
+                k += 6;
+            }
+        };
+    }
+
+    ASSERT(k == m_indexCount);
+
+    // Create index buffer and load indices to the buffer.
+    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+    indexBufferData.pSysMem = indices.data();
+    indexBufferData.SysMemPitch = 0;
+    indexBufferData.SysMemSlicePitch = 0;
+    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateBuffer(
+            &indexBufferDesc,
+            &indexBufferData,
+            m_indexBuffer.put()));
 }
 
 /// <summary>
@@ -222,12 +344,10 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
             m_indexBuffer.put()));
 }
 
-void GridMesh::SetBuffers()
+void GridMesh::SetBuffers(unsigned int stride)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    // Each vertex is one instance of the VertexPositionColor struct.
-    UINT stride = sizeof(VertexPositionColor);
     UINT offset = 0;
     ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);

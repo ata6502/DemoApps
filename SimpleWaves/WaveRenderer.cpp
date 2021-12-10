@@ -152,8 +152,23 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
 
+    // The normal function calculates normals using partial derivatives of the height function.
+    auto normalFunction = [](float x, float z)->XMFLOAT3
+    {
+        // n = (-df/dx, 1, -df/dz)
+        XMFLOAT3 n(
+            -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z),
+            1.0f,
+            -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z));
+
+        XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
+        XMStoreFloat3(&n, unitNormal);
+
+        return n;
+    };
+
     // Create a grid mesh with two colors: blue and red.
-    m_terrainMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
+    m_terrainMesh->Create(160, 160, 50, 50, heightFunction, normalFunction);
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
@@ -262,7 +277,7 @@ void WaveRenderer::Render()
     context->RSSetState(m_rasterizerState.get());
 
     // Draw the grid.
-    m_terrainMesh->SetBuffers();
+    m_terrainMesh->SetBuffers(sizeof(VertexPositionNormal));
     m_terrainMesh->Draw();
 
     // Draw the waves.

@@ -10,7 +10,7 @@ public:
     void Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, DirectX::XMFLOAT4 color, DirectX::XMFLOAT4 altColor);
     void Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, std::function<DirectX::XMFLOAT3(float, float)> normalFunction);
 
-    void SetBuffers();
+    void SetBuffers(unsigned int stride);
     void Draw();
     void ReleaseResources();
 

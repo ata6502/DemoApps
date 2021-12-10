@@ -115,7 +115,7 @@ void MeshRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    m_gridMesh->SetBuffers();
+    m_gridMesh->SetBuffers(sizeof(VertexPositionColor));
 
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     context->IASetInputLayout(m_inputLayout.get());
