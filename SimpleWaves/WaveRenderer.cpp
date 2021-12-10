@@ -136,7 +136,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     rsDesc.DepthBias = 0;
     rsDesc.DepthBiasClamp = 0.0f;
     rsDesc.DepthClipEnable = true;
-    rsDesc.FillMode = D3D11_FILL_WIREFRAME;
+    rsDesc.FillMode = D3D11_FILL_SOLID;
     rsDesc.FrontCounterClockwise = false;
     rsDesc.MultisampleEnable = false;
     rsDesc.ScissorEnable = false;
