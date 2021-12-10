@@ -232,7 +232,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
     for (uint32_t i = 0; i < m_waves.VertexCount(); ++i)
     {
         v[i].Position = m_waves[i];
-        v[i].Normal = XMFLOAT3(1.0f, 1.0f, 1.0f); // TODO: calculate normal vector
+        v[i].Normal = m_waves.Normal(i);
     }
 
     context->Unmap(m_waveVertexBuffer.get(), 0);
