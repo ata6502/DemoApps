@@ -166,8 +166,6 @@ void WaveRenderer::FinalizeInitialization()
     auto device{ m_deviceResources->GetD3DDevice() };
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    // TODO: Create data for ConstantBufferNeverChanges
-    /*
     // Create a constant buffer for data that never changes.
     auto byteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
     CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
@@ -194,7 +192,6 @@ void WaveRenderer::FinalizeInitialization()
 
     // Copy data that never changes to the appropriate constant buffer.
     context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
-    */
 }
 
 // Animate waves.
@@ -250,17 +247,6 @@ void WaveRenderer::Render()
     context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 
     // Get pointers to constant buffers.
-    ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
-    ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
-
-    // Set the constant buffers.
-    context->VSSetConstantBuffers(0, 1, &cbPerFramePtr);
-    context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
-    context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
-
-    // TODO: Set constantBufferNeverChanges in the slot 0.
-    /*
-    // Get pointers to constant buffers.
     ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
     ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
     ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
@@ -270,7 +256,6 @@ void WaveRenderer::Render()
     context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
     context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
-    */
 
     // Set the rasterizer state.
     context->RSSetState(m_rasterizerState.get());
@@ -308,11 +293,12 @@ void WaveRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds)
+void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
+    XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
