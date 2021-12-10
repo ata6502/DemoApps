@@ -4,6 +4,7 @@
 #include "MathHelper.h"
 #include "WaveRenderer.h"
 #include "Utilities.h"
+#include "VertexStructures.h"
 
 using namespace DirectX;
 
@@ -15,7 +16,7 @@ WaveRenderer::WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceRes
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
-    m_gridMesh = std::make_unique<GridMesh>(deviceResources);
+    m_terrainMesh = std::make_unique<GridMesh>(deviceResources);
 
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -152,7 +153,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
 
     // Create a grid mesh with two colors: blue and red.
-    m_gridMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
+    m_terrainMesh->Create(160, 160, 50, 50, heightFunction, XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f));
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
@@ -261,8 +262,8 @@ void WaveRenderer::Render()
     context->RSSetState(m_rasterizerState.get());
 
     // Draw the grid.
-    m_gridMesh->SetBuffers();
-    m_gridMesh->Draw();
+    m_terrainMesh->SetBuffers();
+    m_terrainMesh->Draw();
 
     // Draw the waves.
     UINT stride = sizeof(VertexPositionNormal);
@@ -276,7 +277,7 @@ void WaveRenderer::Render()
 void WaveRenderer::ReleaseResources()
 {
     IsInitialized(false);
-    m_gridMesh->ReleaseResources();
+    m_terrainMesh->ReleaseResources();
     m_waveVertexBuffer = nullptr;
     m_waveIndexBuffer = nullptr;
     m_vertexShader = nullptr;

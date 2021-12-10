@@ -1,7 +1,7 @@
 #include "pch.h"
 
-#include "ColorShaderStructures.h"
 #include "GridMesh.h"
+#include "VertexStructures.h"
 
 using namespace DirectX;
 
@@ -9,6 +9,26 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
     m_deviceResources(deviceResources),
     m_indexCount(0)
 {
+}
+
+void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, std::function<XMFLOAT3(float, float)> normalFunction)
+{
+    ReleaseResources();
+
+    auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
+    auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
+    float halfWidth = 0.5f * gridWidth;
+    float halfDepth = 0.5f * gridDepth;
+
+    // The grid is built from an M x N matrix of vertices. 
+    uint32_t m = quadCountDepth + 1;
+    uint32_t n = quadCountHoriz + 1;
+
+    // Create vertices.
+    auto vertexCount = m * n;
+    std::vector<VertexPositionNormal> vertices(vertexCount);
+
+    // TODO: Implement the rest of the method.
 }
 
 /// <summary>

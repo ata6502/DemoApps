@@ -131,6 +131,7 @@
     </ClInclude>
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererFactory.h" />
+    <ClInclude Include="VertexStructures.h" />
     <ClInclude Include="WaveRenderer.h" />
     <ClInclude Include="Waves.h" />
   </ItemGroup>

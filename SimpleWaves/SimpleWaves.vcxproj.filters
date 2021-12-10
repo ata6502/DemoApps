@@ -80,6 +80,9 @@
     <ClInclude Include="LightsShaderStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="VertexStructures.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

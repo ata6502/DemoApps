@@ -38,7 +38,7 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
-    std::unique_ptr<GridMesh>               m_gridMesh;
+    std::unique_ptr<GridMesh>               m_terrainMesh;
     Waves                                   m_waves; // wave simulation
 };
 

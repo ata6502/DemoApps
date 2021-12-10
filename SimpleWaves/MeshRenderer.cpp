@@ -3,6 +3,7 @@
 #include "ColorShaderStructures.h"
 #include "MeshRenderer.h"
 #include "Utilities.h"
+#include "VertexStructures.h"
 
 using namespace DirectX;
 

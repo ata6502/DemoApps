@@ -1,11 +1,5 @@
 ﻿#pragma once
 
-struct VertexPositionNormal
-{
-    DirectX::XMFLOAT3 Position;
-    DirectX::XMFLOAT3 Normal;
-};
-
 struct DirectionalLight
 {
     DirectX::XMFLOAT4 Ambient;
