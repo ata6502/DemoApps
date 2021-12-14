@@ -76,7 +76,7 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
     // - each quad is duplicated for the top and the bottom face of the grid
     m_indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
 
-    std::vector<uint16_t> indices(m_indexCount);
+    std::vector<uint32_t> indices(m_indexCount);
     size_t k = 0;
 
     for (uint32_t i = 0; i < quadCountDepth; ++i)
@@ -154,7 +154,7 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
     indexBufferData.pSysMem = indices.data();
     indexBufferData.SysMemPitch = 0;
     indexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
+    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &indexBufferDesc,
@@ -267,7 +267,7 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
     // - each quad is duplicated for the top and the bottom face of the grid
     m_indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
 
-    std::vector<uint16_t> indices(m_indexCount);
+    std::vector<uint32_t> indices(m_indexCount);
     size_t k = 0;
 
     for (uint32_t i = 0; i < quadCountDepth; ++i)
@@ -345,7 +345,7 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
     indexBufferData.pSysMem = indices.data();
     indexBufferData.SysMemPitch = 0;
     indexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint16_t), D3D11_BIND_INDEX_BUFFER);
+    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
     winrt::check_hresult(
         m_deviceResources->GetD3DDevice()->CreateBuffer(
             &indexBufferDesc,
@@ -361,8 +361,8 @@ void GridMesh::SetBuffers(unsigned int stride)
     ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
-    // Each index is one 16-bit unsigned integer (short).
-    context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R16_UINT, 0);
+    // Each index is one 32-bit unsigned integer (short).
+    context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
 void GridMesh::Draw()
