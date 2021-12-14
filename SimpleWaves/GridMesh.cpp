@@ -11,6 +11,15 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
 {
 }
 
+/// <summary>
+/// Builds a grid mesh in the xz-plane. Flips triangles alternately in the mesh. 
+/// </summary>
+/// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
+/// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
+/// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
+/// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
+/// <param name="heightFunction">A function that determines the y-coordinate of grid's vertices.</param>
+/// <param name="normalFunction">A function that determines the normal vector for each triangle of the grid</param>
 void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, std::function<XMFLOAT3(float, float)> normalFunction)
 {
     ReleaseResources();
@@ -160,7 +169,7 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-/// <param name="heightFunction">The heightFunction makes the grid look like a terrain with hills and valleys.</param>
+/// <param name="heightFunction">A function that determines the y-coordinate of grid's vertices.</param>
 /// <param name="color">The color of the grid.</param>
 /// <param name="altColor">The color of the pattern on the grid.</param>
 void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, XMFLOAT4 color, XMFLOAT4 altColor)
