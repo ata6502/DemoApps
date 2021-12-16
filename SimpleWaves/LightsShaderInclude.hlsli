@@ -17,7 +17,6 @@ struct MaterialDesc
 cbuffer ConstantBufferNeverChanges : register(b0)
 {
     DirectionalLight Light;
-    MaterialDesc Material;
 };
 
 cbuffer ConstantBufferPerFrame : register(b1)
@@ -30,6 +29,7 @@ cbuffer ConstantBufferPerFrame : register(b1)
 cbuffer ConstantBufferPerObject : register(b2)
 {
     matrix World;
+    MaterialDesc Material;
 };
 
 // Per-vertex data used as input to the vertex shader.

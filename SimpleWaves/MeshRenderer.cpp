@@ -76,7 +76,12 @@ winrt::Windows::Foundation::IAsyncAction MeshRenderer::InitializeInBackground()
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [7] Create a rasterizer state.
+    // [7] Set the world matrix for the only object in the scene.
+    ConstantBufferPerObject constantBufferPerObjectData;
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
+
+    // [8] Create a rasterizer state.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
     rsDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -164,11 +169,4 @@ void MeshRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]]
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
-}
-
-void MeshRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
-{
-    ConstantBufferPerObject constantBufferPerObjectData;
-    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
-    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }

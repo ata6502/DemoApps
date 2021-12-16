@@ -156,8 +156,6 @@ void DemoMain::Render()
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
-    m_renderer->SetWorldMatrix(XMMatrixIdentity());
-
     m_renderer->Render();
 }
 
@@ -166,12 +164,17 @@ void DemoMain::ReleaseResources()
     m_renderer->ReleaseResources();
 }
 
-void DemoMain::SetRenderer(int32_t rendererIndex)
+winrt::Windows::Foundation::IAsyncAction DemoMain::SetRenderer(int32_t rendererIndex)
 {
     if (!m_renderer->IsInitialized())
         return;
 
     StopRenderLoop();
+
+    // TODO: wait until the RenderLoop finishes.
+    using namespace std::literals::chrono_literals;
+    co_await winrt::resume_after(100ms);
+
     ReleaseResources();
 
     auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);

@@ -2,6 +2,7 @@
 
 #include "DeviceResources.h"
 #include "GridMesh.h"
+#include "LightsShaderStructures.h"
 #include "RendererBase.h"
 #include "Waves.h"
 
@@ -19,7 +20,6 @@ public:
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
-    void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
@@ -36,6 +36,10 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferNeverChanges;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
+
+    // Materials.
+    MaterialDesc                            m_terrainMaterial;
+    MaterialDesc                            m_waveMaterial;
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_terrainMesh;

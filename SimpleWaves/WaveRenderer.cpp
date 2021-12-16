@@ -148,6 +148,15 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             &rsDesc,
             m_rasterizerState.put()));
 
+    // [10] Create materials
+    m_terrainMaterial.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    m_terrainMaterial.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 8.0f); // w = SpecularPower
+
+    m_waveMaterial.Ambient = XMFLOAT4(0.4f, 0.4f, 0.8f, 1.0f);
+    m_waveMaterial.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.8f, 1.0f);
+    m_waveMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
@@ -198,13 +207,6 @@ void WaveRenderer::FinalizeInitialization()
     light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
     constantBufferNeverChangesData.Light = light;
-
-    // Create the material.
-    MaterialDesc material;
-    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
-    constantBufferNeverChangesData.Material = material;
 
     // Copy data that never changes to the appropriate constant buffer.
     context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
@@ -272,13 +274,26 @@ void WaveRenderer::Render()
     context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
     context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    context->PSSetConstantBuffers(2, 1, &cbPerObjectPtr);
 
     // Set the rasterizer state.
     context->RSSetState(m_rasterizerState.get());
 
-    // Draw the grid.
+    ConstantBufferPerObject constantBufferPerObjectData;
+
+    // Set the material and the world matrix of the terrain.
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
+    constantBufferPerObjectData.Material = m_terrainMaterial;
+    context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
+
+    // Draw the terrain.
     m_terrainMesh->SetBuffers(sizeof(VertexPositionNormal));
     m_terrainMesh->Draw();
+
+    // Set the material and the world matrix of the waves.
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
+    constantBufferPerObjectData.Material = m_waveMaterial;
+    context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // Draw the waves.
     UINT stride = sizeof(VertexPositionNormal);
@@ -316,11 +331,4 @@ void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECT
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
-}
-
-void WaveRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
-{
-    ConstantBufferPerObject constantBufferPerObjectData;
-    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
-    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }

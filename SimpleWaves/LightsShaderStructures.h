@@ -19,7 +19,6 @@ struct MaterialDesc
 struct ConstantBufferNeverChanges
 {
     DirectionalLight Light;
-    MaterialDesc Material;
 };
 
 struct ConstantBufferPerFrame
@@ -31,4 +30,5 @@ struct ConstantBufferPerFrame
 struct ConstantBufferPerObject
 {
     DirectX::XMFLOAT4X4 World;
+    MaterialDesc Material;
 };

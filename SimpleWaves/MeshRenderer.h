@@ -18,7 +18,6 @@ public:
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
-    void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
