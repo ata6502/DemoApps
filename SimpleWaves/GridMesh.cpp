@@ -12,7 +12,7 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
 }
 
 /// <summary>
-/// Builds a grid mesh in the xz-plane. Flips triangles alternately in the mesh. 
+/// Builds a grid mesh in the xz-plane.
 /// </summary>
 /// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
@@ -86,64 +86,35 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
             // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
             // The bottom face of the grid has the same indices but in opposite order.
             //
-            //     a----b   alternated   a----b
-            //     |\   |                |   /|  
-            //     | \  |                |  / |
-            //     |  \ |                | /  |
-            //     |   \|                |/   |
-            //     c----d                c----d
-            //
-            // 1st row: /\/\/\ etc.
-            // 2nd row: \/\/\/ etc.
-            // 3rd row: /\/\/\ etc.
-            // (j+1) % 2 - alternates index order within a row
-            // (i+1+j) % 2 - alternates index order in every other row by starting from / or \
+            //     a----b
+            //     |\   |
+            //     | \  |
+            //     |  \ |
+            //     |   \|
+            //     c----d
             //
             uint32_t a = j + i * n;
             uint32_t b = j + 1 + i * n;
             uint32_t c = j + (i + 1) * n;
             uint32_t d = j + 1 + (i + 1) * n;
 
-            if ((i + 1 + j) % 2)
-            {
-                // top
-                indices[k] = a;
-                indices[k + 1] = b;
-                indices[k + 2] = d;
-                indices[k + 3] = a;
-                indices[k + 4] = d;
-                indices[k + 5] = c;
-                k += 6;
+            // top face
+            indices[k] = a;
+            indices[k + 1] = b;
+            indices[k + 2] = d;
+            indices[k + 3] = a;
+            indices[k + 4] = d;
+            indices[k + 5] = c;
+            k += 6;
 
-                // bottom
-                indices[k] = a;
-                indices[k + 1] = d;
-                indices[k + 2] = b;
-                indices[k + 3] = a;
-                indices[k + 4] = c;
-                indices[k + 5] = d;
-                k += 6;
-            }
-            else
-            {
-                // top
-                indices[k] = a;
-                indices[k + 1] = b;
-                indices[k + 2] = c;
-                indices[k + 3] = c;
-                indices[k + 4] = b;
-                indices[k + 5] = d;
-                k += 6;
-
-                // botom
-                indices[k] = a;
-                indices[k + 1] = c;
-                indices[k + 2] = b;
-                indices[k + 3] = c;
-                indices[k + 4] = d;
-                indices[k + 5] = b;
-                k += 6;
-            }
+            // bottom face
+            indices[k] = a;
+            indices[k + 1] = d;
+            indices[k + 2] = b;
+            indices[k + 3] = a;
+            indices[k + 4] = c;
+            indices[k + 5] = d;
+            k += 6;
         };
     }
 
