@@ -9,10 +9,10 @@ using namespace Windows::UI::Core;
 using namespace Windows::UI::Input;
 
 const float IndependentInput::MIN_INPUT_RADIUS = 5.0f;
-const float IndependentInput::MAX_INPUT_RADIUS = 100.0f;
-const float IndependentInput::DEFAULT_INPUT_RADIUS = 50.0f;
-const float IndependentInput::DEFAULT_INPUT_YAW = 1.5f * XM_PI;
-const float IndependentInput::DEFAULT_INPUT_PITCH = 0.3f * XM_PI;
+const float IndependentInput::MAX_INPUT_RADIUS = 140.0f;
+const float IndependentInput::DEFAULT_INPUT_RADIUS = 60.0f;
+const float IndependentInput::DEFAULT_INPUT_YAW = 1.4f * XM_PI;
+const float IndependentInput::DEFAULT_INPUT_PITCH = 0.31f * XM_PI;
 
 IndependentInput::IndependentInput() :
     m_radius(DEFAULT_INPUT_RADIUS),
