@@ -164,16 +164,14 @@ void DemoMain::ReleaseResources()
     m_renderer->ReleaseResources();
 }
 
-winrt::Windows::Foundation::IAsyncAction DemoMain::SetRenderer(int32_t rendererIndex)
+void DemoMain::SetRenderer(int32_t rendererIndex)
 {
     if (!m_renderer->IsInitialized())
         return;
 
     StopRenderLoop();
 
-    // TODO: wait until the RenderLoop finishes.
-    using namespace std::literals::chrono_literals;
-    co_await winrt::resume_after(100ms);
+    critical_section::scoped_lock lock(m_criticalSection);
 
     ReleaseResources();
 

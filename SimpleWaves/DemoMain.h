@@ -26,7 +26,7 @@ public:
     void Suspend();
     void Resume();
 
-    winrt::Windows::Foundation::IAsyncAction SetRenderer(int32_t rendererIndex);
+    void SetRenderer(int32_t rendererIndex);
 
     // IDeviceNotify
     virtual void OnDeviceLost();
