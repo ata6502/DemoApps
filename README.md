@@ -6,7 +6,7 @@ and XAML. So far, there are four demos in the repository:
 
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
 * `TexturedCube` - A cube with materials and textures, lit by directional lights.
-* `SimpleWaves` - A wireframe grid with a height function.
+* `SimpleWaves` - A terrain and waves.
 * `SimpleScene` - A scene built from meshes.
 
 ## Hello World
