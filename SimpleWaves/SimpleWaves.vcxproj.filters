@@ -136,7 +136,7 @@
     <None Include="ColorShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="LightsFunctions.hlsli">
+    <None Include="LightSources.hlsli">
       <Filter>Shaders</Filter>
     </None>
     <None Include="LightsShaderInclude.hlsli">

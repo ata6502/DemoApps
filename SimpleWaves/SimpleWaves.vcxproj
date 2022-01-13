@@ -190,7 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ColorShaderInclude.hlsli" />
-    <None Include="LightsFunctions.hlsli" />
+    <None Include="LightSources.hlsli" />
     <None Include="LightsShaderInclude.hlsli" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />

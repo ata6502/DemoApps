@@ -1,27 +1,28 @@
 #include "LightsShaderInclude.hlsli"
+#include "LightSources.hlsli"
 
 float4 main(PixelShaderInput input) : SV_TARGET
 {
-    float3 L = -Light.Direction; // the light vector
+    // Normalize the input normal vector as interpolation may have unnormalize it.
+    input.normal = normalize(input.normal);
 
-    // Apply the formula for diffuse, ambient, and specular components of color.
-    float4 A = Light.Ambient * Material.Ambient;
-    float kd = max(dot(L, input.normal), 0.0f);
-    float4 D = Light.Diffuse * Material.Diffuse;
+    // toEyeW is the view vector: a unit vector from the surface point P to the eye position E.
+    float3 toEyeW = normalize(EyePosition - input.posW); 
 
-    float ks = 0.0f;
-    // Flatten to avoid dynamic branching.
-    [flatten]
-    if (dot(L, input.normal) > 0.0f)
-    {
-        float3 v = normalize(EyePosition - input.posW); // the view vector - the unit vector from the surface point P to the eye position E
-        float3 r = reflect(-L, input.normal); // reflection vector; reflect accepts two args: the incident vector and the normal
-        float p = Material.Specular.w; // specular power
-        ks = pow(max(dot(v, r), 0.0f), p);
-    }
-    float4 S = Light.Specular * float4(Material.Specular.xyz, 1.0f); // replace SpecularPower component (stored in w) with 1.0
+    // Initialize the scene light components. 
+    float4 A = float4(0.0f, 0.0f, 0.0f, 0.0f); // ambient component
+    float4 D = float4(0.0f, 0.0f, 0.0f, 0.0f); // diffuse component
+    float4 S = float4(0.0f, 0.0f, 0.0f, 0.0f); // specular component
 
-    float4 color = A + kd * D + ks * S;
+    // Declare light components used to calculate light for each source.
+    float4 a, d, s;
+
+    // Sum the light contribution from each light source.
+    ComputeDirectionalLight(input.normal, toEyeW, a, d, s);
+    A += a; D += d; S += s;
+
+    float4 color = A + D + S;
 
     return color;
 }
+
