@@ -1,9 +1,22 @@
-struct DirectionalLight
+struct DirectionalLightDesc
 {
     float4 Ambient;
     float4 Diffuse;
     float4 Specular;
     float3 Direction;
+    float Pad;
+};
+
+struct PointLightDesc
+{
+    float4 Ambient;
+    float4 Diffuse;
+    float4 Specular;
+
+    float3 Position;
+    float Range;
+
+    float3 Attenuation;
     float Pad;
 };
 
@@ -16,12 +29,13 @@ struct MaterialDesc
 
 cbuffer ConstantBufferNeverChanges : register(b0)
 {
-    DirectionalLight Light;
+    DirectionalLightDesc DirectionalLight;
 };
 
 cbuffer ConstantBufferPerFrame : register(b1)
 {
     matrix ViewProj;
+    PointLightDesc PointLight;
     float3 EyePosition;
     float Pad;
 };

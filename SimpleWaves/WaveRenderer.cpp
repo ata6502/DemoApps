@@ -157,6 +157,13 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     m_waveMaterial.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.8f, 1.0f);
     m_waveMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
 
+    // [11] Create the point light source.
+    m_pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+    m_pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+    m_pointLight.Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+    m_pointLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
+    m_pointLight.Range = 25.0f;
+
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
@@ -201,12 +208,12 @@ void WaveRenderer::FinalizeInitialization()
     ConstantBufferNeverChanges constantBufferNeverChangesData;
 
     // Create the light.
-    DirectionalLight light;
+    DirectionalLightDesc light;
     light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
     light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
-    constantBufferNeverChangesData.Light = light;
+    constantBufferNeverChangesData.DirectionalLight = light;
 
     // Copy data that never changes to the appropriate constant buffer.
     context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
@@ -251,6 +258,11 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
     }
 
     context->Unmap(m_waveVertexBuffer.get(), 0);
+
+    // Update the point light by circling it over the terrain.
+    m_pointLight.Position.x = 70.0f * cosf(0.2f * totalSeconds);
+    m_pointLight.Position.z = 70.0f * sinf(0.2f * totalSeconds);
+    m_pointLight.Position.y = 7.0f; // Luna: MathHelper::Max(GetHillHeight(m_pointLight.Position.x, m_pointLight.Position.z), -3.0f) + 10.0f;
 }
 
 void WaveRenderer::Render()
@@ -326,9 +338,12 @@ void WaveRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 
 void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
-    ConstantBufferPerFrame constantBufferPerFrameData;
-    XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
+    XMStoreFloat4x4(&m_constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
-    XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
-    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
+    XMStoreFloat3(&m_constantBufferPerFrameData.EyePosition, eyePosition);
+
+    // Copy the point light description to the per frame constant buffer.
+    m_constantBufferPerFrameData.PointLight = m_pointLight;
+
+    m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
 }

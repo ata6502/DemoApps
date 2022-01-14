@@ -18,7 +18,10 @@ float4 main(PixelShaderInput input) : SV_TARGET
     float4 a, d, s;
 
     // Sum the light contribution from each light source.
-    ComputeDirectionalLight(input.normal, toEyeW, a, d, s);
+    ComputeDirectionalLight(Material, DirectionalLight, input.normal, toEyeW, a, d, s);
+    A += a; D += d; S += s;
+
+    ComputePointLight(Material, PointLight, input.posW, input.normal, toEyeW, a, d, s);
     A += a; D += d; S += s;
 
     float4 color = A + D + S;

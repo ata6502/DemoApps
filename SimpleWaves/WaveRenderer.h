@@ -36,6 +36,7 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferNeverChanges;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
+    ConstantBufferPerFrame                  m_constantBufferPerFrameData;
 
     // Materials.
     MaterialDesc                            m_terrainMaterial;
@@ -44,5 +45,8 @@ private:
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_terrainMesh;
     Waves                                   m_waves; // wave simulation
+
+    // Keep the description of point light as a data member as we need to change its position every frame.
+    PointLightDesc m_pointLight;
 };
 
