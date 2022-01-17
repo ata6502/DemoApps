@@ -111,7 +111,7 @@ void MeshRenderer::FinalizeInitialization()
 
 }
 
-void MeshRenderer::Update([[maybe_unused]] float totalSeconds, [[maybe_unused]] float elapsedSeconds)
+void MeshRenderer::Update([[maybe_unused]] float totalSeconds, [[maybe_unused]] float elapsedSeconds, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] DirectX::FXMVECTOR lookingAtPosition)
 {
 
 }

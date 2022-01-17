@@ -87,4 +87,55 @@ void ComputePointLight(
     specularColor *= att;
 }
 
+void ComputeSpotLight(
+    MaterialDesc material, SpotLightDesc light, float3 position, float3 normal, float3 toEye,
+    out float4 ambientColor, out float4 diffuseColor, out float4 specularColor)
+{
+    // Initialize outputs.
+    ambientColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    diffuseColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    specularColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // The light vector points from the surface to the light source.
+    float3 L = light.Position - position; // 'position' is a point on the surface
+
+        // The distance from surface to light source.
+    float d = length(L);
+
+    // Range test.
+    if (d > light.Range)
+        return;
+
+    // Normalize the light vector.
+    L /= d;
+
+    // Calculate the ambient component.
+    ambientColor = material.Ambient * light.Ambient;
+
+    // Calculate the diffuse factor.
+    float diffuseFactor = dot(L, normal);
+
+    // Flatten to avoid dynamic branching.
+    [flatten]
+    if (diffuseFactor > 0.0f)
+    {
+        float3 r = reflect(-L, normal); // reflection vector
+        float p = material.Specular.w; // specular power
+        float specFactor = pow(max(dot(r, toEye), 0.0f), p);
+
+        diffuseColor = diffuseFactor * material.Diffuse * light.Diffuse;
+        specularColor = specFactor * material.Specular * light.Specular;
+    }
+
+    // Compute kspot(f) = max(cos(f),0)^s = max(-L dot d,0)^s where d is the light direction.
+    float spot = pow(max(dot(-L, light.Direction), 0.0f), light.Spot);
+
+    // Scale by spotlight factor and attenuate.
+    float att = spot / dot(light.Attenuation, float3(1.0f, d, d * d)); // att = kspot / (a0 + a1*d + a2*d^2)
+
+    // Apply equation 7.5
+    ambientColor *= spot;  // ambient  = kspot * A
+    diffuseColor *= att;   // diffuse  = kspot * kdiff * D / (a0 + a1*d + a2*d^2)
+    specularColor *= att;  // specular = kspot * kspec * S / (a0 + a1*d + a2*d^2)
+}
 

@@ -11,7 +11,7 @@ public:
     ~MeshRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
-    void Update(float totalSeconds, float elapsedSeconds);
+    void Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition);
     void Render();
     void ReleaseResources();
 

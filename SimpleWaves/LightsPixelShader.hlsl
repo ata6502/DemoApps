@@ -24,6 +24,9 @@ float4 main(PixelShaderInput input) : SV_TARGET
     ComputePointLight(Material, PointLight, input.posW, input.normal, toEyeW, a, d, s);
     A += a; D += d; S += s;
 
+    ComputeSpotLight(Material, SpotLight, input.posW, input.normal, toEyeW, a, d, s);
+    A += a; D += d; S += s;
+
     float4 color = A + D + S;
 
     return color;

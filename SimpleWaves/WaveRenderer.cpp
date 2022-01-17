@@ -164,6 +164,14 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     m_pointLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
     m_pointLight.Range = 25.0f;
 
+    // [12] Create the spot light source.
+    m_spotLight.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+    m_spotLight.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+    m_spotLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    m_spotLight.Attenuation = XMFLOAT3(1.0f, 0.0f, 0.0f);
+    m_spotLight.Spot = 96.0f;
+    m_spotLight.Range = 10000.0f;
+
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
@@ -207,7 +215,7 @@ void WaveRenderer::FinalizeInitialization()
     // Create a data structure for data that never changes.
     ConstantBufferNeverChanges constantBufferNeverChangesData;
 
-    // Create the light.
+    // Create the directional light.
     DirectionalLightDesc light;
     light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
     light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
@@ -220,7 +228,7 @@ void WaveRenderer::FinalizeInitialization()
 }
 
 // Animate waves.
-void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
+void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition)
 {
     // Every quarter second, generate a random wave.
     static float t_base = 0.0f;
@@ -263,6 +271,11 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds)
     m_pointLight.Position.x = 70.0f * cosf(0.2f * totalSeconds);
     m_pointLight.Position.z = 70.0f * sinf(0.2f * totalSeconds);
     m_pointLight.Position.y = 7.0f; // Luna: MathHelper::Max(GetHillHeight(m_pointLight.Position.x, m_pointLight.Position.z), -3.0f) + 10.0f;
+
+    // Update the spot light by taking the camera position and aiming in the same direction the camera is looking.  
+    // This way, it looks like we are holding a flashlight.
+    XMStoreFloat3(&m_spotLight.Position, eyePosition);
+    XMStoreFloat3(&m_spotLight.Direction, XMVector3Normalize(lookingAtPosition - eyePosition));
 }
 
 void WaveRenderer::Render()
@@ -344,6 +357,9 @@ void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECT
 
     // Copy the point light description to the per frame constant buffer.
     m_constantBufferPerFrameData.PointLight = m_pointLight;
+
+    // Copy the spot light description to the per frame constant buffer.
+    m_constantBufferPerFrameData.SpotLight = m_spotLight;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
 }

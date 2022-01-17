@@ -133,8 +133,10 @@ void DemoMain::Update()
 {
     XMVECTOR eye = m_input->GetPosition();
     auto viewMatrix = m_camera->GetViewMatrix(eye);
+    XMVECTOR at = m_camera->GetLookingAtPosition();
+
     m_renderer->SetViewMatrix(viewMatrix, eye, m_timer.GetTotalSeconds());
-    m_renderer->Update(m_timer.GetTotalSeconds(), m_timer.GetElapsedSeconds());
+    m_renderer->Update(m_timer.GetTotalSeconds(), m_timer.GetElapsedSeconds(), eye, at);
 }
 
 /// <summary>

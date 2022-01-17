@@ -13,7 +13,7 @@ public:
     ~WaveRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
-    void Update(float totalSeconds, float elapsedSeconds);
+    void Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition);
     void Render();
     void ReleaseResources();
 
@@ -46,7 +46,10 @@ private:
     std::unique_ptr<GridMesh>               m_terrainMesh;
     Waves                                   m_waves; // wave simulation
 
-    // Keep the description of point light as a data member as we need to change its position every frame.
+    // Keep the description of a point light source as a data member as we need to change its position every frame.
     PointLightDesc m_pointLight;
+
+    // Keep the description of a spot light source as a data member as we need to change its position and direction every frame.
+    SpotLightDesc m_spotLight;
 };
 

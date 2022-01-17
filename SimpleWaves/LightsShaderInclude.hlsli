@@ -20,6 +20,22 @@ struct PointLightDesc
     float Pad;
 };
 
+struct SpotLightDesc
+{
+    float4 Ambient;
+    float4 Diffuse;
+    float4 Specular;
+
+    float3 Position;
+    float Range;
+
+    float3 Direction;
+    float Spot;
+
+    float3 Attenuation;
+    float Pad;
+};
+
 struct MaterialDesc
 {
     float4 Ambient;
@@ -36,6 +52,7 @@ cbuffer ConstantBufferPerFrame : register(b1)
 {
     matrix ViewProj;
     PointLightDesc PointLight;
+    SpotLightDesc SpotLight;
     float3 EyePosition;
     float Pad;
 };

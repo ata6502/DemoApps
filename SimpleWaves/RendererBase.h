@@ -7,7 +7,7 @@ public:
     virtual ~RendererBase() {}
 
     virtual winrt::Windows::Foundation::IAsyncAction InitializeInBackground() = 0;
-    virtual void Update(float totalSeconds, float elapsedSeconds) = 0;
+    virtual void Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition) = 0;
     virtual void Render() = 0;
     virtual void ReleaseResources() = 0;
 
