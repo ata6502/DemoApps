@@ -149,13 +149,13 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             m_rasterizerState.put()));
 
     // [10] Create materials
-    m_terrainMaterial.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    m_terrainMaterial.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 8.0f); // w = SpecularPower
+    m_terrainMaterial.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+    m_terrainMaterial.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+    m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
 
-    m_waveMaterial.Ambient = XMFLOAT4(0.4f, 0.4f, 0.8f, 1.0f);
-    m_waveMaterial.Diffuse = XMFLOAT4(0.5f, 0.5f, 0.8f, 1.0f);
-    m_waveMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    m_waveMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
+    m_waveMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
+    m_waveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 96.0f); // w = SpecularPower
 
     // [11] Create the point light source.
     m_pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
@@ -174,9 +174,10 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
-    auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
+    auto heightFunction = [](float x, float z)->float { return 0.3f * z * sinf(0.1f * x) + 0.3f * x * cosf(0.1f * z); };
 
     // The normal function calculates normals using partial derivatives of the height function.
+    // Refer to [Luna] 7.13.3 Normal Computation (p.275) for details.
     auto normalFunction = [](float x, float z)->XMFLOAT3
     {
         // n = (-df/dx, 1, -df/dz)

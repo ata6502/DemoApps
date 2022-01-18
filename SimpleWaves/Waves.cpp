@@ -157,6 +157,8 @@ void Waves::Update(float dt)
                 XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&mNormals[i * mNumCols + j]));
                 XMStoreFloat3(&mNormals[i * mNumCols + j], n);
 
+                // Tangent vectors at each vertex point can be approximated using 
+                // a finite difference scheme [Lengyel].
                 mTangentX[i * mNumCols + j] = XMFLOAT3(2.0f * mSpatialStep, r - l, 0.0f);
                 XMVECTOR T = XMVector3Normalize(XMLoadFloat3(&mTangentX[i * mNumCols + j]));
                 XMStoreFloat3(&mTangentX[i * mNumCols + j], T);
