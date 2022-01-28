@@ -35,16 +35,16 @@ cbuffer ConstantBufferPerObject : register(b2)
 // Per-vertex data used as input to the vertex shader.
 struct VertexShaderInput
 {
-    float3 posL : POSITION; // a position in local coordinates
-    float3 normal : NORMAL;
-    float2 tex : TEXCOORD;
+    float3 PosL : POSITION; // a position in local coordinates
+    float3 Normal : NORMAL;
+    float2 Tex : TEXCOORD;
 };
 
 struct PixelShaderInput
 {
-    float4 posH : SV_POSITION;  // a position in homogenous coordinates
-    float3 posW : POSITION; // a position in world space
-    float3 normal : NORMAL;
-    float2 tex : TEXCOORD;
+    float4 PosH : SV_POSITION;  // a position in homogenous coordinates
+    float3 PosW : POSITION; // a position in world space
+    float3 Normal : NORMAL;
+    float2 Tex : TEXCOORD;
 };
 

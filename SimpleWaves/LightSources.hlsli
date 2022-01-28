@@ -127,15 +127,15 @@ void ComputeSpotLight(
         specularColor = specFactor * material.Specular * light.Specular;
     }
 
-    // Compute kspot(f) = max(cos(f),0)^s = max(-L dot d,0)^s where d is the light direction.
+    // Compute the intensity falloff: kspot(f) = max(cos(f),0)^s = max(-L dot d,0)^s where d is the light direction.
     float spot = pow(max(dot(-L, light.Direction), 0.0f), light.Spot);
 
     // Scale by spotlight factor and attenuate.
     float att = spot / dot(light.Attenuation, float3(1.0f, d, d * d)); // att = kspot / (a0 + a1*d + a2*d^2)
 
-    // Apply equation 7.5
-    ambientColor *= spot;  // ambient  = kspot * A
-    diffuseColor *= att;   // diffuse  = kspot * kdiff * D / (a0 + a1*d + a2*d^2)
-    specularColor *= att;  // specular = kspot * kspec * S / (a0 + a1*d + a2*d^2)
+    // Apply the spot light equation [Luna] 7.5
+    ambientColor *= spot;  // ambient  = kspot * ambient
+    diffuseColor *= att;   // diffuse  = kspot * diffuseFactor * diffuse / (a0 + a1*d + a2*d^2)
+    specularColor *= att;  // specular = kspot * specFactor * specular / (a0 + a1*d + a2*d^2)
 }
 
