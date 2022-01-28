@@ -45,7 +45,8 @@ The `SimpleWaves` app:
 * Applies a height function to a grid to create "hills and valleys".
 * Utilizes a dynamic vertex buffer to animate waves. The buffer is populated using the `ID3D11DeviceContext2::Map` method.
 * Includes a `Waves` class from [Luna] that performs calculations of waves. The code is based on [Lengyel].
-* `WaveRenderer` uses two light sources: a directional light, a point light, and a spot light.
+* `WaveRenderer` uses three light sources: a fixed directional light, a point light that  circles about the terrain, 
+and a spot light that moves with the camera and aims in the direction the camera is looking.
 
 This app could be implemented on the GPU using rendering to texture or the compute shader as well as vertex texture fetch. 
 For simplicity, we compute wave simulation on the CPU and update vertices using a dynamic vertex buffer.
