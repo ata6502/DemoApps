@@ -51,5 +51,9 @@ private:
 
     // Keep the description of a spot light source as a data member as we need to change its position and direction every frame.
     SpotLightDesc m_spotLight;
+
+    // Helper functions.
+    DirectX::XMFLOAT3 const GetHillNormal(float x, float z);
+    float const GetHillHeight(float x, float z);
 };
 

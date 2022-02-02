@@ -174,22 +174,16 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
-    auto heightFunction = [](float x, float z)->float { return 0.3f * z * sinf(0.1f * x) + 0.3f * x * cosf(0.1f * z); };
+    auto heightFunction = [this](float x, float z)->float 
+    { 
+        return this->GetHillHeight(x, z);
+    };
 
     // The normal function calculates normals using partial derivatives of the height function.
     // Refer to [Luna] 7.13.3 Normal Computation (p.275) for details.
-    auto normalFunction = [](float x, float z)->XMFLOAT3
+    auto normalFunction = [this](float x, float z)->XMFLOAT3
     {
-        // n = (-df/dx, 1, -df/dz)
-        XMFLOAT3 n(
-            -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z),
-            1.0f,
-            -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z));
-
-        XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
-        XMStoreFloat3(&n, unitNormal);
-
-        return n;
+        return this->GetHillNormal(x, z);
     };
 
     // Create a grid mesh with two colors: blue and red.
@@ -197,6 +191,25 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
+}
+
+float const WaveRenderer::GetHillHeight(float x, float z)
+{
+    return 0.3f * z * sinf(0.1f * x) + 0.3f * x * cosf(0.1f * z);
+}
+
+DirectX::XMFLOAT3 const WaveRenderer::GetHillNormal(float x, float z)
+{
+    // n = (-df/dx, 1, -df/dz)
+    XMFLOAT3 n(
+        -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z),
+        1.0f,
+        -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z));
+
+    XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
+    XMStoreFloat3(&n, unitNormal);
+
+    return n;
 }
 
 /// <summary>
@@ -271,7 +284,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXM
     // Update the point light by circling it over the terrain.
     m_pointLight.Position.x = 70.0f * cosf(0.2f * totalSeconds);
     m_pointLight.Position.z = 70.0f * sinf(0.2f * totalSeconds);
-    m_pointLight.Position.y = 7.0f; // Luna: MathHelper::Max(GetHillHeight(m_pointLight.Position.x, m_pointLight.Position.z), -3.0f) + 10.0f;
+    m_pointLight.Position.y = std::max(GetHillHeight(m_pointLight.Position.x, m_pointLight.Position.z), -3.0f) + 10.0f;
 
     // Update the spot light by taking the camera position and aiming in the same direction the camera is looking.  
     // This way, it looks like we are holding a flashlight.
