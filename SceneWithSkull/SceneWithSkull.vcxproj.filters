@@ -16,7 +16,7 @@
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="SceneRenderer.cpp">
+    <ClCompile Include="ColorRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
@@ -31,6 +31,15 @@
     <ClCompile Include="..\Shared\Utilities.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="MeshGeneratorLighting.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererFactory.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -38,7 +47,7 @@
     <ClInclude Include="IndependentInput.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="SceneRenderer.h">
+    <ClInclude Include="ColorRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
@@ -49,6 +58,18 @@
     </ClInclude>
     <ClInclude Include="MeshGenerator.h">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshGeneratorLighting.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererBase.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFactory.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,8 +134,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Filter>Renderers</Filter>
-    </ApplicationDefinition>
+    <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
 </Project>

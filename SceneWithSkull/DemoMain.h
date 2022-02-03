@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
-#include "SceneRenderer.h"
+#include "RendererBase.h"
 #include "Timer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -26,6 +26,8 @@ public:
     void Suspend();
     void Resume();
 
+    void SetRenderer(int32_t rendererIndex);
+
     void ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
@@ -47,7 +49,7 @@ private:
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;
     std::unique_ptr<Camera>                  m_camera;
-    std::unique_ptr<SceneRenderer>           m_renderer;
+    std::unique_ptr<RendererBase>            m_renderer;
     bool                                     m_scissorTestEnabled;
 };
 

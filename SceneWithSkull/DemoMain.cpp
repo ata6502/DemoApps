@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "DemoMain.h"
+#include "RendererFactory.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -16,7 +17,9 @@ DemoMain::DemoMain() :
 
     m_input = std::make_unique<IndependentInput>();
     m_camera = std::make_unique<Camera>();
-    m_renderer = std::make_unique<SceneRenderer>(m_deviceResources);
+
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Color, m_deviceResources); // TODO: set TextureRenderer as default
+    m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_timer.Reset();
 }
@@ -181,4 +184,23 @@ void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
 void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
 {
     m_renderer->SetScissorTestTopBottomMargin(marginPercent);
+}
+
+void DemoMain::SetRenderer(int32_t rendererIndex)
+{
+    if (!m_renderer->IsInitialized())
+        return;
+
+    StopRenderLoop();
+
+    critical_section::scoped_lock lock(m_criticalSection);
+
+    ReleaseResources();
+
+    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
+    m_renderer.reset();
+    m_renderer.reset(renderer);
+
+    CreateWindowSizeDependentResources();
+    StartRenderLoop();
 }

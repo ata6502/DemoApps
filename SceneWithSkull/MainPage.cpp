@@ -13,7 +13,8 @@ using namespace Concurrency;
 namespace winrt::SceneWithSkull::implementation
 {
     MainPage::MainPage() :
-        m_controlPanelVisible(false)
+        m_controlPanelVisible(false),
+        m_rendererInitialized(false)
     {
         InitializeComponent();
 
@@ -101,6 +102,19 @@ namespace winrt::SceneWithSkull::implementation
         auto resourceKey = winrt::box_value(m_controlPanelVisible ? L"ShowControlPanelStoryboard" : L"HideControlPanelStoryboard");
         auto storyboard = winrt::unbox_value<Storyboard>(this->Resources().Lookup(resourceKey));
         storyboard.Begin();
+    }
+
+    void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+    {
+        if (!m_rendererInitialized)
+        {
+            m_rendererInitialized = true;
+            return;
+        }
+
+        auto listBox = sender.as<ListBox>();
+        auto selectedIndex = listBox.SelectedIndex();
+        m_main->SetRenderer(selectedIndex);
     }
 
     void MainPage::ScissorTestToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)

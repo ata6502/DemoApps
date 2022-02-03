@@ -11,6 +11,7 @@ namespace winrt::SceneWithSkull::implementation
 
         // Controls' event handlers.
         void ContentControl_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Input::TappedRoutedEventArgs const& args);
+        void RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
         void ScissorTestToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args);
         void LeftRightMarginSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
         void TopBottomMarginSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
@@ -33,6 +34,7 @@ namespace winrt::SceneWithSkull::implementation
 
         std::unique_ptr<DemoMain> m_main;
         bool m_controlPanelVisible;
+        bool m_rendererInitialized;
     };
 }
 

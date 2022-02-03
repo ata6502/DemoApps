@@ -120,6 +120,7 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="IndependentInput.h" />
     <ClInclude Include="MeshGenerator.h" />
+    <ClInclude Include="MeshGeneratorLighting.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -127,7 +128,10 @@
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="SceneRenderer.h" />
+    <ClInclude Include="RendererBase.h" />
+    <ClInclude Include="ColorRenderer.h" />
+    <ClInclude Include="RendererFactory.h" />
+    <ClInclude Include="TextureRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -158,6 +162,7 @@
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
+    <ClCompile Include="MeshGeneratorLighting.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -168,7 +173,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="ColorRenderer.cpp" />
+    <ClCompile Include="RendererFactory.cpp" />
+    <ClCompile Include="TextureRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">

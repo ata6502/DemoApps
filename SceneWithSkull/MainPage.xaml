@@ -73,7 +73,19 @@
                     <TranslateTransform X="-220" />
                 </ScrollViewer.RenderTransform>
 
-                <StackPanel Margin="12,8,8,0">
+                <StackPanel Margin="12,8,12,8">
+                    <ListBox x:Name="RendererListBox"
+                             Background="White"
+                             Margin="0"
+                             BorderBrush="Black"
+                             BorderThickness="1"
+                             SelectionChanged="RendererListBox_SelectionChanged">
+                        <ListBox.Items>
+                            <ListBoxItem IsSelected="True">Color Renderer</ListBoxItem>
+                            <ListBoxItem>Texture Renderer</ListBoxItem>
+                        </ListBox.Items>
+                    </ListBox>
+                    
                     <StackPanel Orientation="Horizontal"
                                 Margin="0,8,8,0"
                                 VerticalAlignment="Top">

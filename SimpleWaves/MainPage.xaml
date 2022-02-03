@@ -73,10 +73,9 @@
                     <TranslateTransform X="-220" />
                 </ScrollViewer.RenderTransform>
 
-                <StackPanel>
+                <StackPanel Margin="12,8,12,8">
                     <ListBox x:Name="RendererListBox"
                              Background="White"
-                             Margin="12,8,12,8"
                              BorderBrush="Black"
                              BorderThickness="1"
                              SelectionChanged="RendererListBox_SelectionChanged">
@@ -85,8 +84,8 @@
                             <ListBoxItem>Mesh Renderer</ListBoxItem>
                         </ListBox.Items>
                     </ListBox>
-
                 </StackPanel>
+                
             </ScrollViewer>
         </Grid>
     </SwapChainPanel>

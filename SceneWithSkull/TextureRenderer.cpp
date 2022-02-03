@@ -1,17 +1,16 @@
 #include "pch.h"
 
 #include "ColorShaderStructures.h"
-#include "SceneRenderer.h"
+#include "TextureRenderer.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
-    m_initialized(false),
     m_outputSize()
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
@@ -22,7 +21,7 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
+winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
@@ -108,14 +107,14 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::InitializeInBackground()
     DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.
-    m_initialized = true;
+    IsInitialized(true);
 }
 
-void SceneRenderer::FinalizeInitialization()
+void TextureRenderer::FinalizeInitialization()
 {
 }
 
-void SceneRenderer::Render()
+void TextureRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -145,9 +144,9 @@ void SceneRenderer::Render()
     }
 }
 
-void SceneRenderer::ReleaseResources()
+void TextureRenderer::ReleaseResources()
 {
-    m_initialized = false;
+    IsInitialized(false);
     m_meshGenerator->ReleaseBuffers();
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
@@ -157,12 +156,12 @@ void SceneRenderer::ReleaseResources()
     m_constantBufferPerObject = nullptr;
 }
 
-void SceneRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+void TextureRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void SceneRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
+void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
@@ -170,20 +169,20 @@ void SceneRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
+void TextureRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 {
     ConstantBufferPerObject constantBufferPerObjectData;
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
 
-void SceneRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
+void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 {
     m_outputSize = outputSize;
     SetScissorTestRectangle();
 }
 
-void SceneRenderer::CreateMeshes()
+void TextureRenderer::CreateMeshes()
 {
     m_meshGenerator->CreateCylinder("cylinder", 0.2f, 0.1f, 1.0f, 16, 2);
     m_meshGenerator->CreateCube("cube");
@@ -195,7 +194,7 @@ void SceneRenderer::CreateMeshes()
     m_meshGenerator->CreateBuffers();
 }
 
-void SceneRenderer::DefineSceneObjects()
+void TextureRenderer::DefineSceneObjects()
 {
     ObjectInfo info;
 
@@ -213,28 +212,8 @@ void SceneRenderer::DefineSceneObjects()
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.3f, 0.18f, 1.3f) * XMMatrixRotationZ(XM_PI) * XMMatrixTranslation(0.0f, 1.09f, 0.0f));
     m_objects.push_back(info);
 
-    info.MeshName = "geosphere";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-    m_objects.push_back(info);
-
     info.MeshName = "pyramid";
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 1.4f, 0.0f));
-    m_objects.push_back(info);
-
-    info.MeshName = "sphere";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.0f, 0.19f, 0.0f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.3f, 0.19f, 0.0f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.6f, 0.19f, 0.0f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.15f, 0.19f, -0.2f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.45f, 0.19f, 0.2f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.15f, 0.19f, 0.2f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(-1.45f, 0.19f, -0.2f));
     m_objects.push_back(info);
 
     info.MeshName = "grid";
@@ -246,7 +225,7 @@ void SceneRenderer::DefineSceneObjects()
 /// Sends an array of screen rectangles (in this example, there is only one rectangle in the array)
 /// to the Direct3D scissor test. The scissor test discards all pixels outside the scissor rectangles.
 /// </summary>
-void SceneRenderer::EnableScissorTest(bool enabled)
+void TextureRenderer::EnableScissorTest(bool enabled)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -257,19 +236,19 @@ void SceneRenderer::EnableScissorTest(bool enabled)
         context->RSSetState(m_rasterizerStateScissorTestDisabled.get());
 }
 
-void SceneRenderer::SetScissorTestLeftRightMargin(float marginPercent)
+void TextureRenderer::SetScissorTestLeftRightMargin(float marginPercent)
 {
     m_leftRightMarginPercent = marginPercent;
     SetScissorTestRectangle();
 }
 
-void SceneRenderer::SetScissorTestTopBottomMargin(float marginPercent)
+void TextureRenderer::SetScissorTestTopBottomMargin(float marginPercent)
 {
     m_topBottomMarginPercent = marginPercent;
     SetScissorTestRectangle();
 }
 
-void SceneRenderer::SetScissorTestRectangle()
+void TextureRenderer::SetScissorTestRectangle()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 

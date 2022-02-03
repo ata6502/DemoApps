@@ -2,17 +2,16 @@
 
 #include "DeviceResources.h"
 #include "MeshGenerator.h"
+#include "RendererBase.h"
 
-class SceneRenderer
+class ColorRenderer : public RendererBase
 {
 public:
-    SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();
     void ReleaseResources();
-
-    bool IsInitialized() const { return m_initialized; }
 
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
@@ -47,7 +46,6 @@ private:
 
     winrt::Windows::Foundation::Size        m_outputSize;
     DirectX::XMFLOAT4X4                     m_projMatrix;
-    bool                                    m_initialized;
     std::unique_ptr<MeshGenerator>          m_meshGenerator;
     std::vector<ObjectInfo>                 m_objects;
     float                                   m_leftRightMarginPercent;
