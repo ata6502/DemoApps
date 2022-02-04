@@ -3,6 +3,7 @@
 #include "ColorRenderer.h"
 #include "ColorShaderStructures.h"
 #include "Utilities.h"
+#include "VertexStructures.h"
 
 using namespace DirectX;
 
@@ -139,7 +140,7 @@ void ColorRenderer::Render()
     // Render the scene.
     for (auto& obj : m_objects)
     {
-        SetWorldMatrix(XMLoadFloat4x4(&obj.WorldMatrix));
+        SetObjectData(XMLoadFloat4x4(&obj.WorldMatrix));
         m_meshGenerator->DrawMesh(obj.MeshName);
     }
 }
@@ -169,7 +170,7 @@ void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void ColorRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
+void ColorRenderer::SetObjectData(DirectX::FXMMATRIX worldMatrix)
 {
     ConstantBufferPerObject constantBufferPerObjectData;
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));

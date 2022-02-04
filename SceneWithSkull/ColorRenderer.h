@@ -16,12 +16,14 @@ public:
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
-    void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
     void SetOutputSize(winrt::Windows::Foundation::Size outputSize);
 
     void EnableScissorTest(bool enabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
+
+protected:
+    void SetObjectData(DirectX::FXMMATRIX worldMatrix);
 
 private:
     struct ObjectInfo

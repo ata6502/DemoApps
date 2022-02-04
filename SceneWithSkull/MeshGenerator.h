@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ColorShaderStructures.h"
 #include "DeviceResources.h"
+#include "VertexStructures.h"
 
 class MeshGenerator
 {

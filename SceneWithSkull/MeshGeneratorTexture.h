@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ColorShaderStructures.h"
 #include "DeviceResources.h"
+#include "VertexStructures.h"
 
-class MeshGeneratorLighting
+class MeshGeneratorTexture
 {
 public:
-    MeshGeneratorLighting(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     void CreateCube(std::string name);
 
@@ -35,7 +35,7 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer;
     winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
 
-    std::vector<VertexPositionColor>        m_vertices;
+    std::vector<VertexPositionNormal>        m_vertices;
     std::vector<uint32_t>                   m_indices;
     std::map<std::string, MeshInfo>         m_meshes;
 

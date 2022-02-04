@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeviceResources.h"
-#include "MeshGenerator.h"
+#include "MeshGeneratorTexture.h"
 #include "RendererBase.h"
 
 class TextureRenderer : public RendererBase
@@ -16,12 +16,14 @@ public:
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
-    void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
     void SetOutputSize(winrt::Windows::Foundation::Size outputSize);
 
     void EnableScissorTest(bool enabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
+
+protected:
+    void SetObjectData(DirectX::FXMMATRIX worldMatrix);
 
 private:
     struct ObjectInfo
@@ -46,7 +48,7 @@ private:
 
     winrt::Windows::Foundation::Size        m_outputSize;
     DirectX::XMFLOAT4X4                     m_projMatrix;
-    std::unique_ptr<MeshGenerator>          m_meshGenerator;
+    std::unique_ptr<MeshGeneratorTexture>   m_meshGenerator;
     std::vector<ObjectInfo>                 m_objects;
     float                                   m_leftRightMarginPercent;
     float                                   m_topBottomMarginPercent;

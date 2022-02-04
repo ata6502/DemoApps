@@ -1,8 +1,9 @@
 #include "pch.h"
 
-#include "ColorShaderStructures.h"
+#include "LightsShaderStructures.h"
 #include "TextureRenderer.h"
 #include "Utilities.h"
+#include "VertexStructures.h"
 
 using namespace DirectX;
 
@@ -15,7 +16,7 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
-    m_meshGenerator = std::make_unique<MeshGenerator>(deviceResources);
+    m_meshGenerator = std::make_unique<MeshGeneratorTexture>(deviceResources);
 
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -26,8 +27,8 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorVertexShader.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"ColorPixelShader.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsVertexShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -41,7 +42,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -110,8 +111,33 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     IsInitialized(true);
 }
 
+/// <summary>
+/// Device context dependent initialization.
+/// </summary>
 void TextureRenderer::FinalizeInitialization()
 {
+    auto device{ m_deviceResources->GetD3DDevice() };
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    // Create a constant buffer for data that never changes.
+    auto byteWidth = (sizeof(ConstantBufferNeverChanges) + 15) / 16 * 16;
+    CD3D11_BUFFER_DESC constantBufferDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
+    winrt::check_hresult(
+        device->CreateBuffer(&constantBufferDesc, nullptr, m_constantBufferNeverChanges.put()));
+
+    // Create a data structure for data that never changes.
+    ConstantBufferNeverChanges constantBufferNeverChangesData;
+
+    // Create the directional light.
+    DirectionalLightDesc light;
+    light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
+    light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
+    constantBufferNeverChangesData.DirectionalLight = light;
+
+    // Copy data that never changes to the appropriate constant buffer.
+    context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
 }
 
 void TextureRenderer::Render()
@@ -128,18 +154,21 @@ void TextureRenderer::Render()
     context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 
     // Get pointers to constant buffers.
+    ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
     ID3D11Buffer* cbPerFramePtr{ m_constantBufferPerFrame.get() };
     ID3D11Buffer* cbPerObjectPtr{ m_constantBufferPerObject.get() };
 
     // Send the constant buffers to the graphics device.
-    context->VSSetConstantBuffers(0, 1, &cbPerFramePtr);
-    context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
-    context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
+    context->VSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    context->VSSetConstantBuffers(2, 1, &cbPerObjectPtr);
+    context->PSSetConstantBuffers(0, 1, &cbNeverChangesPtr);
+    context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
+    context->PSSetConstantBuffers(2, 1, &cbPerObjectPtr);
 
     // Render the scene.
     for (auto& obj : m_objects)
     {
-        SetWorldMatrix(XMLoadFloat4x4(&obj.WorldMatrix));
+        SetObjectData(XMLoadFloat4x4(&obj.WorldMatrix));
         m_meshGenerator->DrawMesh(obj.MeshName);
     }
 }
@@ -169,10 +198,18 @@ void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unuse
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void TextureRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
+void TextureRenderer::SetObjectData(DirectX::FXMMATRIX worldMatrix)
 {
     ConstantBufferPerObject constantBufferPerObjectData;
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
+
+    // TODO: Create the material per object.
+    MaterialDesc material;
+    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    constantBufferPerObjectData.Material = material;
+
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
 
@@ -184,12 +221,7 @@ void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 
 void TextureRenderer::CreateMeshes()
 {
-    m_meshGenerator->CreateCylinder("cylinder", 0.2f, 0.1f, 1.0f, 16, 2);
     m_meshGenerator->CreateCube("cube");
-    m_meshGenerator->CreateGeosphere("geosphere", 1.0f, 3);
-    m_meshGenerator->CreatePyramid("pyramid");
-    m_meshGenerator->CreateSphere("sphere", 1.0f, 20, 10);
-    m_meshGenerator->CreateGrid("grid", 4, 3, 4, 4);
 
     m_meshGenerator->CreateBuffers();
 }
@@ -198,26 +230,8 @@ void TextureRenderer::DefineSceneObjects()
 {
     ObjectInfo info;
 
-    info.MeshName = "cylinder";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.5f, 0.5f, -0.5f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-0.5f, 0.5f, -0.5f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.5f, 0.5f, 0.5f));
-    m_objects.push_back(info);
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-0.5f, 0.5f, 0.5f));
-    m_objects.push_back(info);
-
     info.MeshName = "cube";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.3f, 0.18f, 1.3f) * XMMatrixRotationZ(XM_PI) * XMMatrixTranslation(0.0f, 1.09f, 0.0f));
-    m_objects.push_back(info);
-
-    info.MeshName = "pyramid";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 1.4f, 0.0f));
-    m_objects.push_back(info);
-
-    info.MeshName = "grid";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(0.0f, -0.01f, 0.0f));
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
     m_objects.push_back(info);
 }
 

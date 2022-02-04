@@ -157,8 +157,6 @@ void DemoMain::Render()
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
-    m_renderer->SetWorldMatrix(XMMatrixIdentity());
-
     m_renderer->Render();
 }
 

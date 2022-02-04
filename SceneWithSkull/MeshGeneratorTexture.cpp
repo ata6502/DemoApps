@@ -1,11 +1,11 @@
 #include "pch.h"
 
-#include "MeshGeneratorLighting.h"
+#include "MeshGeneratorTexture.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-MeshGeneratorLighting::MeshGeneratorLighting(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+MeshGeneratorTexture::MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources)
 {
 }
@@ -13,7 +13,7 @@ MeshGeneratorLighting::MeshGeneratorLighting(std::shared_ptr<DX::DeviceResources
 /// <summary>
 /// Creates a unit cube i.e., a cube whose sides are 1 unit long.
 /// </summary>
-void MeshGeneratorLighting::CreateCube(std::string name)
+void MeshGeneratorTexture::CreateCube(std::string name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -24,14 +24,15 @@ void MeshGeneratorLighting::CreateCube(std::string name)
     auto i = info.BaseVertexLocation;
     m_vertices.resize(i + 8); // the cube has 8 vertices
 
-    m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) };
+    float n = 1.0f / sqrtf(3.0f); // all components of coordinates of the normals have the value n
+    m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-n, -n, -n) };
+    m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(-n, -n,  n) };
+    m_vertices[i++] = { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(-n,  n, -n) };
+    m_vertices[i++] = { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(-n,  n,  n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(n, -n, -n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(n, -n,  n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(n,  n, -n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(n,  n,  n) };
 
     ASSERT(m_vertices.size() == i);
 
@@ -69,7 +70,7 @@ void MeshGeneratorLighting::CreateCube(std::string name)
 /// 
 /// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
 /// </summary>
-void MeshGeneratorLighting::CreatePyramid(std::string name)
+void MeshGeneratorTexture::CreatePyramid(std::string name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -107,7 +108,7 @@ void MeshGeneratorLighting::CreatePyramid(std::string name)
 }
 */
 
-void MeshGeneratorLighting::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
+void MeshGeneratorTexture::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
 {
     m_indices.resize(startIndexLocation + indexCount);
 
@@ -136,7 +137,7 @@ void MeshGeneratorLighting::CopyIndices(std::vector<uint32_t> const& indices, ui
 /// <param name="cylinderHeight">The cylider's height</param>
 /// <param name="sliceCount">The number of slices. A slice is one triangle in the top or the bottom cap.</param>
 /// <param name="stackCount">The number of stacks. A stack is one vertical segment of the cylinder.</param>
-void MeshGeneratorLighting::CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGeneratorTexture::CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -172,7 +173,7 @@ void MeshGeneratorLighting::CreateCylinder(std::string name, float bottomRadius,
             float x = r * cosf(j * theta);
             float z = r * sinf(j * theta);
 
-            VertexPositionColor v;
+            VertexPositionNormal v;
             v.Position = XMFLOAT3(x, y, z);
 
             // Alternate color for each stack.
@@ -217,14 +218,14 @@ void MeshGeneratorLighting::CreateCylinder(std::string name, float bottomRadius,
     m_meshes[name] = info;
 }
 
-void MeshGeneratorLighting::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount)
+void MeshGeneratorTexture::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount)
 {
     uint32_t baseIndex = (uint32_t)m_vertices.size() - baseVertexLocation;
 
     float y = 0.5f * cylinderHeight; // the y-coordinate of the top cap
     float theta = XM_2PI / sliceCount;
 
-    VertexPositionColor v;
+    VertexPositionNormal v;
     v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
     // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
@@ -254,14 +255,14 @@ void MeshGeneratorLighting::BuildCylinderTopCap(uint32_t baseVertexLocation, flo
     }
 }
 
-void MeshGeneratorLighting::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount)
+void MeshGeneratorTexture::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount)
 {
     uint32_t baseIndex = (uint32_t)m_vertices.size() - baseVertexLocation;
 
     float y = -0.5f * cylinderHeight; // the y-coordinate of the bottom cap
     float theta = XM_2PI / sliceCount;
 
-    VertexPositionColor v;
+    VertexPositionNormal v;
     v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
     // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
@@ -300,7 +301,7 @@ void MeshGeneratorLighting::BuildCylinderBottomCap(uint32_t baseVertexLocation, 
 /// <param name="radius">The sphere's radius</param>
 /// <param name="sliceCount">The number of slices</param>
 /// <param name="stackCount">The number of stacks</param>
-void MeshGeneratorLighting::CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount)
+void MeshGeneratorTexture::CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -309,8 +310,8 @@ void MeshGeneratorLighting::CreateSphere(std::string name, float radius, uint32_
     info.StartIndexLocation = m_indices.size();
 
     // Create the sphere's poles.
-    VertexPositionColor topVertex{ { 0.0f, radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
-    VertexPositionColor bottomVertex{ { 0.0f, -radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+    VertexPositionNormal topVertex{ { 0.0f, radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+    VertexPositionNormal bottomVertex{ { 0.0f, -radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
 
     // Add the north pole as the first vertex.
     m_vertices.push_back(topVertex);
@@ -327,7 +328,7 @@ void MeshGeneratorLighting::CreateSphere(std::string name, float radius, uint32_
         {
             float theta = j * thetaStep;
 
-            VertexPositionColor v;
+            VertexPositionNormal v;
 
             // Convert spherical coordinates to Cartesian coordinates.
             v.Position.x = radius * sinf(phi) * cosf(theta);
@@ -413,7 +414,7 @@ void MeshGeneratorLighting::CreateSphere(std::string name, float radius, uint32_
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
 /// <param name="subdivisionCount"></param>
-void MeshGeneratorLighting::CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount)
+void MeshGeneratorTexture::CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -426,7 +427,7 @@ void MeshGeneratorLighting::CreateGeosphere(std::string name, float radius, uint
 
     // Define geometry of in icosahedron with 12 vertices and 60 indices.
     // The icosahedron is the starting point to generate the geosphere.
-    std::vector<VertexPositionColor> vertices(12);
+    std::vector<VertexPositionNormal> vertices(12);
     std::vector<uint32_t> indices(60);
 
     const float X = 0.525731f;
@@ -486,10 +487,10 @@ void MeshGeneratorLighting::CreateGeosphere(std::string name, float radius, uint
     m_meshes[name] = info;
 }
 
-void MeshGeneratorLighting::Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices)
+void MeshGeneratorTexture::Subdivide(std::vector<VertexPositionNormal>& vertices, std::vector<uint32_t>& indices)
 {
     // Save a copy of the input geometry.
-    std::vector<VertexPositionColor> verticesCopy(vertices);
+    std::vector<VertexPositionNormal> verticesCopy(vertices);
     std::vector<uint32_t> indicesCopy(indices);
 
     // Clear the original vectors. We will re-populate them with new vertices and indices.
@@ -509,12 +510,12 @@ void MeshGeneratorLighting::Subdivide(std::vector<VertexPositionColor>& vertices
     auto triangleCount = indicesCopy.size() / 3;
     for (uint32_t i = 0; i < triangleCount; ++i)
     {
-        VertexPositionColor v0 = verticesCopy[indicesCopy[i * 3 + 0]];
-        VertexPositionColor v1 = verticesCopy[indicesCopy[i * 3 + 1]];
-        VertexPositionColor v2 = verticesCopy[indicesCopy[i * 3 + 2]];
+        VertexPositionNormal v0 = verticesCopy[indicesCopy[i * 3 + 0]];
+        VertexPositionNormal v1 = verticesCopy[indicesCopy[i * 3 + 1]];
+        VertexPositionNormal v2 = verticesCopy[indicesCopy[i * 3 + 2]];
 
         // Calculate the triangle midpoints.
-        VertexPositionColor m0, m1, m2;
+        VertexPositionNormal m0, m1, m2;
 
         m0.Position = XMFLOAT3(
             0.5f * (v0.Position.x + v1.Position.x),
@@ -564,7 +565,7 @@ void MeshGeneratorLighting::Subdivide(std::vector<VertexPositionColor>& vertices
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-void MeshGeneratorLighting::CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+void MeshGeneratorTexture::CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -677,14 +678,14 @@ void MeshGeneratorLighting::CreateGrid(std::string name, float gridWidth, float 
 }
 */
 
-void MeshGeneratorLighting::CreateBuffers()
+void MeshGeneratorTexture::CreateBuffers()
 {
     // Create an immutable vertex buffer and load data.
     m_vertexBuffer.attach(
         Utilities::CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
             D3D11_BIND_VERTEX_BUFFER,
-            m_vertices.size() * sizeof(VertexPositionColor),
+            m_vertices.size() * sizeof(VertexPositionNormal),
             m_vertices.data()));
 
     // Create an immutable index buffer and load indices to the buffer.
@@ -696,12 +697,12 @@ void MeshGeneratorLighting::CreateBuffers()
             m_indices.data()));
 }
 
-void MeshGeneratorLighting::SetBuffers()
+void MeshGeneratorTexture::SetBuffers()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    // Each vertex is one instance of the VertexPositionColor struct.
-    UINT stride = sizeof(VertexPositionColor);
+    // Each vertex is one instance of the VertexPositionNormal struct.
+    UINT stride = sizeof(VertexPositionNormal);
     UINT offset = 0;
     ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
@@ -710,7 +711,7 @@ void MeshGeneratorLighting::SetBuffers()
     context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-void MeshGeneratorLighting::DrawMesh(std::string name)
+void MeshGeneratorTexture::DrawMesh(std::string name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
     const auto& info = m_meshes[name];
@@ -719,7 +720,7 @@ void MeshGeneratorLighting::DrawMesh(std::string name)
     context->DrawIndexed(info.IndexCount, info.StartIndexLocation, info.BaseVertexLocation);
 }
 
-void MeshGeneratorLighting::ReleaseBuffers()
+void MeshGeneratorTexture::ReleaseBuffers()
 {
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;

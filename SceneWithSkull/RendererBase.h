@@ -15,7 +15,6 @@ public:
     virtual void FinalizeInitialization() = 0;
     virtual void SetProjMatrix(DirectX::FXMMATRIX projMatrix) = 0;
     virtual void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds) = 0;
-    virtual void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix) = 0;
     virtual void SetOutputSize(winrt::Windows::Foundation::Size outputSize) = 0;
 
     virtual void EnableScissorTest(bool enabled) = 0;
@@ -24,6 +23,7 @@ public:
 
 protected:
     void IsInitialized(bool isInitialized) { m_initialized = isInitialized; }
+    virtual void SetObjectData(DirectX::FXMMATRIX worldMatrix) = 0;
 
 private:
     bool m_initialized;
