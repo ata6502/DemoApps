@@ -168,7 +168,7 @@ void TextureRenderer::Render()
     // Render the scene.
     for (auto& obj : m_objects)
     {
-        SetObjectData(XMLoadFloat4x4(&obj.WorldMatrix));
+        SetObjectData(obj);
         m_meshGenerator->DrawMesh(obj.MeshName);
     }
 }
@@ -198,17 +198,11 @@ void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unuse
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void TextureRenderer::SetObjectData(DirectX::FXMMATRIX worldMatrix)
+void TextureRenderer::SetObjectData(ObjectInfo const& obj)
 {
     ConstantBufferPerObject constantBufferPerObjectData;
-    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
-
-    // TODO: Create the material per object.
-    MaterialDesc material;
-    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
-    constantBufferPerObjectData.Material = material;
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMLoadFloat4x4(&obj.WorldMatrix)));
+    constantBufferPerObjectData.Material = obj.Material;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
@@ -221,16 +215,22 @@ void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 
 void TextureRenderer::CreateMeshes()
 {
-    m_meshGenerator->CreateCube("cube");
+    m_meshGenerator->CreatePyramid("pyramid");
 
     m_meshGenerator->CreateBuffers();
 }
 
 void TextureRenderer::DefineSceneObjects()
 {
+    MaterialDesc material;
+    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+
     ObjectInfo info;
 
-    info.MeshName = "cube";
+    info.MeshName = "pyramid";
+    info.Material = material;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
     m_objects.push_back(info);
 }

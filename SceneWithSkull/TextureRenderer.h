@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "LightsShaderStructures.h"
 #include "MeshGeneratorTexture.h"
 #include "RendererBase.h"
 
@@ -22,13 +23,11 @@ public:
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
 
-protected:
-    void SetObjectData(DirectX::FXMMATRIX worldMatrix);
-
 private:
     struct ObjectInfo
     {
         std::string MeshName;
+        MaterialDesc Material;
         DirectX::XMFLOAT4X4 WorldMatrix;
     };
 
@@ -53,6 +52,7 @@ private:
     float                                   m_leftRightMarginPercent;
     float                                   m_topBottomMarginPercent;
 
+    void SetObjectData(ObjectInfo const& obj);
     void CreateMeshes();
     void DefineSceneObjects();
     void SetScissorTestRectangle();

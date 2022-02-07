@@ -22,9 +22,6 @@ public:
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
 
-protected:
-    void SetObjectData(DirectX::FXMMATRIX worldMatrix);
-
 private:
     struct ObjectInfo
     {
@@ -53,6 +50,7 @@ private:
     float                                   m_leftRightMarginPercent;
     float                                   m_topBottomMarginPercent;
 
+    void SetObjectData(DirectX::FXMMATRIX worldMatrix);
     void CreateMeshes();
     void DefineSceneObjects();
     void SetScissorTestRectangle();

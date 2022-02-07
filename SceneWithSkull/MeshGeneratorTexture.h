@@ -9,9 +9,9 @@ public:
     MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     void CreateCube(std::string name);
+    void CreatePyramid(std::string name);
 
     // TODO: Create other primitives.
-    //void CreatePyramid(std::string name);
     //void CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     //void CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount);
     //void CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount);

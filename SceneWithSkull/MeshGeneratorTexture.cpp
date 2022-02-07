@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <cmath>
 
 #include "MeshGeneratorTexture.h"
 #include "Utilities.h"
@@ -63,8 +64,27 @@ void MeshGeneratorTexture::CreateCube(std::string name)
     m_meshes[name] = info;
 }
 
-// TODO: Create other primitives.
-/*
+// TODO: Move ComputeNormal and VectorToFloat3 to helper functions.
+// Computes a face normal of a triangle P1P2P3.
+inline DirectX::XMVECTOR ComputeNormal(const DirectX::FXMVECTOR& p0, const DirectX::FXMVECTOR& p1, const DirectX::FXMVECTOR& p2)
+{
+    using namespace DirectX;
+
+    XMVECTOR u = p1 - p0;
+    XMVECTOR v = p2 - p0;
+    return XMVector3Normalize(XMVector3Cross(u, v));
+}
+
+// Converts XMVECTOR to XMFLOAT3
+inline DirectX::XMFLOAT3 VectorToFloat3(const DirectX::FXMVECTOR& v)
+{
+    using namespace DirectX;
+
+    XMFLOAT3 f;
+    XMStoreFloat3(&f, v);
+    return f;
+}
+
 /// <summary>
 /// Creates a pyramid. The pyramid's base is a unit square.
 /// 
@@ -81,12 +101,14 @@ void MeshGeneratorTexture::CreatePyramid(std::string name)
     auto i = info.BaseVertexLocation;
     m_vertices.resize(i + 5); // the pyramid has 5 vertices
 
+    // Define pyramid's vertices.
     const float l = 0.5f;
-    m_vertices[i++] = { XMFLOAT3(0.0f, l, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) };
+    float a = sqrt(2.0f);
+    m_vertices[i++] = { XMFLOAT3(0.0f, l, 0.0f), XMFLOAT3(0.0f, 0.1f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3( a, -l,  a) };
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(-a, -l,  a) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(-a, -l, -a) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3( a, -l, -a) };
 
     ASSERT(m_vertices.size() == i);
 
@@ -106,7 +128,6 @@ void MeshGeneratorTexture::CreatePyramid(std::string name)
 
     m_meshes[name] = info;
 }
-*/
 
 void MeshGeneratorTexture::CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount)
 {
@@ -116,6 +137,7 @@ void MeshGeneratorTexture::CopyIndices(std::vector<uint32_t> const& indices, uin
         m_indices[startIndexLocation + i] = indices[i];
 }
 
+// TODO: Create other primitives.
 /*
 /// <summary>
 /// Based on [Luna]

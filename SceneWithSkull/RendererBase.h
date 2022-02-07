@@ -23,7 +23,6 @@ public:
 
 protected:
     void IsInitialized(bool isInitialized) { m_initialized = isInitialized; }
-    virtual void SetObjectData(DirectX::FXMMATRIX worldMatrix) = 0;
 
 private:
     bool m_initialized;
