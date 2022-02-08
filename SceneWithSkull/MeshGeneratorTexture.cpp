@@ -23,17 +23,17 @@ void MeshGeneratorTexture::CreateCube(std::string name)
     info.StartIndexLocation = m_indices.size();
 
     auto i = info.BaseVertexLocation;
-    m_vertices.resize(i + 8); // the cube has 8 vertices
+    m_vertices.resize(i + 8); // a cube has 8 vertices
 
     float n = 1.0f / sqrtf(3.0f); // all components of coordinates of the normals have the value n
     m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-n, -n, -n) };
     m_vertices[i++] = { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(-n, -n,  n) };
     m_vertices[i++] = { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(-n,  n, -n) };
     m_vertices[i++] = { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(-n,  n,  n) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3(n, -n, -n) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3(n, -n,  n) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3(n,  n, -n) };
-    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3(n,  n,  n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f, -0.5f), XMFLOAT3( n, -n, -n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f, -0.5f,  0.5f), XMFLOAT3( n, -n,  n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f, -0.5f), XMFLOAT3( n,  n, -n) };
+    m_vertices[i++] = { XMFLOAT3( 0.5f,  0.5f,  0.5f), XMFLOAT3( n,  n,  n) };
 
     ASSERT(m_vertices.size() == i);
 
@@ -56,6 +56,94 @@ void MeshGeneratorTexture::CreateCube(std::string name)
 
         1, 7, 3, // +z
         1, 5, 7,
+    };
+
+    info.IndexCount = indices.size();
+    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
+
+    m_meshes[name] = info;
+}
+
+/// <summary>
+/// Creates a unit cube with additional vertices to achieve different lighting.
+/// The lighting is "flat" meaning that each face of the cube is lit uniformly.
+/// </summary>
+void MeshGeneratorTexture::CreateCube2(std::string name)
+{
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size();
+    info.StartIndexLocation = m_indices.size();
+
+    auto i = info.BaseVertexLocation;
+    m_vertices.resize(i + 24); // a cube with additonal vertices has 24 vertices
+
+    float l = 0.5f, n = 1.0f;
+
+    // front face
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, 0, -n) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(0, 0, -n) };
+    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(0, 0, -n) };
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(0, 0, -n) };
+
+    // back face
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(0, 0, n) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(0, 0, n) };
+    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(0, 0, n) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(0, 0, n) };
+
+    // top face
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(0, n, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(0, n, 0) };
+    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(0, n, 0) };
+    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(0, n, 0) };
+
+    // bottom face
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, -n, 0) };
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(0, -n, 0) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(0, -n, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(0, -n, 0) };
+
+    // left face
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(-n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(-n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(-n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(-n, 0, 0) };
+
+    // right face
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(n, 0, 0) };
+
+    ASSERT(m_vertices.size() == i);
+
+    std::vector<uint32_t> indices =
+    {
+        // front face
+        0, 1, 2,
+        0, 2, 3,
+
+        // back face
+        4, 5, 6,
+        4, 6, 7,
+
+        // top face
+        8, 9, 10,
+        8, 10, 11,
+
+        // bottom face
+        12, 13, 14,
+        12, 14, 15,
+
+        // left face
+        16, 17, 18,
+        16, 18, 19,
+
+        // right face
+        20, 21, 22,
+        20, 22, 23,
     };
 
     info.IndexCount = indices.size();

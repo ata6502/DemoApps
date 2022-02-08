@@ -9,6 +9,7 @@ public:
     MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     void CreateCube(std::string name);
+    void CreateCube2(std::string name); // a cube with additional vertices
     void CreatePyramid(std::string name);
 
     // TODO: Create other primitives.
