@@ -11,6 +11,7 @@ public:
     void CreateCube(std::string name);
     void CreateCube2(std::string name); // a cube with additional vertices
     void CreatePyramid(std::string name);
+    void CreatePyramid2(std::string name); // a pyramid with additional vertices
 
     // TODO: Create other primitives.
     //void CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);

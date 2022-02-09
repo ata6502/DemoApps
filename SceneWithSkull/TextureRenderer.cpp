@@ -215,8 +215,8 @@ void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 
 void TextureRenderer::CreateMeshes()
 {
-    m_meshGenerator->CreateCube("cube");
-    m_meshGenerator->CreateCube2("cube2");
+    m_meshGenerator->CreatePyramid("pyramid");
+    m_meshGenerator->CreatePyramid2("pyramid2");
 
     m_meshGenerator->CreateBuffers();
 }
@@ -230,12 +230,12 @@ void TextureRenderer::DefineSceneObjects()
 
     ObjectInfo info;
 
-    info.MeshName = "cube";
+    info.MeshName = "pyramid";
     info.Material = material;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-1.0f, 0.0f, 0.0f));
     m_objects.push_back(info);
 
-    info.MeshName = "cube2";
+    info.MeshName = "pyramid2";
     info.Material = material;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixRotationZ(XM_PIDIV4) * XMMatrixRotationY(XM_PIDIV4) * XMMatrixTranslation(1.0f, 0.0f, 0.0f));
     m_objects.push_back(info);
