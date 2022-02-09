@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\DirectMathHelper.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />

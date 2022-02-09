@@ -77,6 +77,9 @@
     <ClInclude Include="VertexStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\DirectMathHelper.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
