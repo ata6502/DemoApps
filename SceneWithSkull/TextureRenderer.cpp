@@ -215,36 +215,70 @@ void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 
 void TextureRenderer::CreateMeshes()
 {
-    m_meshGenerator->CreateCylinder("cylinder", 0.4f, 0.2f, 1, 15, 5);
-    m_meshGenerator->CreateGeosphere("sphere", 1.0f, 3);
-    m_meshGenerator->CreateGrid("grid", 4, 2, 10, 10);
+    m_meshGenerator->CreateGrid("grid", 20.0f, 30.0f, 60, 40);
+    m_meshGenerator->CreateGeosphere("sphere", 0.5f, 3);
+    m_meshGenerator->CreateCube("cube");
+    m_meshGenerator->CreateCylinder("cylinder", 0.5f, 0.3f, 3.0f, 20, 10);
 
     m_meshGenerator->CreateBuffers();
 }
 
 void TextureRenderer::DefineSceneObjects()
 {
-    MaterialDesc material;
-    material.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    // Prepare materials.
+    MaterialDesc material1;
+    material1.Ambient = XMFLOAT4(0.2f, 0.5f, 0.8f, 1.0f);
+    material1.Diffuse = XMFLOAT4(0.2f, 0.5f, 0.8f, 1.0f);
+    material1.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+
+    MaterialDesc material2;
+    material2.Ambient = XMFLOAT4(0.8f, 0.2f, 0.8f, 1.0f);
+    material2.Diffuse = XMFLOAT4(0.8f, 0.0f, 0.8f, 1.0f);
+    material2.Specular = XMFLOAT4(0.2f, 0.0f, 0.2f, 16.0f); // w = SpecularPower
+
+    MaterialDesc material3;
+    material3.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material3.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    material3.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 32.0f); // w = SpecularPower
 
     ObjectInfo info;
 
-    info.MeshName = "cylinder";
-    info.Material = material;
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-1.0f, 0.0f, 0.0f));
+    info.MeshName = "grid";
+    info.Material = material3;
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
     m_objects.push_back(info);
 
     info.MeshName = "sphere";
-    info.Material = material;
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixRotationZ(XM_PIDIV4) * XMMatrixRotationY(XM_PIDIV4) * XMMatrixTranslation(1.0f, 0.0f, 0.0f));
+    info.Material = material3;
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixTranslation(0.0f, 2.0f, 0.0f));
     m_objects.push_back(info);
 
-    info.MeshName = "grid";
-    info.Material = material;
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
+    info.MeshName = "cube";
+    info.Material = material2;
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
     m_objects.push_back(info);
+
+    // Create 5 rows of 2 cylinders and 2 spheres per row.
+    for (int i = 0; i < 5; ++i)
+    {
+        info.MeshName = "cylinder";
+        info.Material = material1;
+
+        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i * 5.0f));
+        m_objects.push_back(info);
+
+        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(5.0f, 1.5f, -10.0f + i * 5.0f));
+        m_objects.push_back(info);
+
+        info.MeshName = "sphere";
+        info.Material = material3;
+
+        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f));
+        m_objects.push_back(info);
+
+        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(5.0f, 3.5f, -10.0f + i * 5.0f));
+        m_objects.push_back(info);
+    }
 }
 
 /// <summary>
