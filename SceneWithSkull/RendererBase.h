@@ -16,6 +16,7 @@ public:
     virtual void SetProjMatrix(DirectX::FXMMATRIX projMatrix) = 0;
     virtual void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds) = 0;
     virtual void SetOutputSize(winrt::Windows::Foundation::Size outputSize) = 0;
+    virtual float GetDistanceToCamera() = 0;
 
     virtual void EnableScissorTest(bool enabled) = 0;
     virtual void SetScissorTestLeftRightMargin(float marginPercent) = 0;

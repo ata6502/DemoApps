@@ -7,6 +7,8 @@
 
 using namespace DirectX;
 
+const float TextureRenderer::DISTANCE_TO_CAMERA = 18.0f;
+
 TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_constantBufferPerFrame(nullptr),
@@ -211,6 +213,11 @@ void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 {
     m_outputSize = outputSize;
     SetScissorTestRectangle();
+}
+
+float TextureRenderer::GetDistanceToCamera()
+{
+    return DISTANCE_TO_CAMERA;
 }
 
 void TextureRenderer::CreateMeshes()

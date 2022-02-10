@@ -62,6 +62,11 @@ void IndependentInput::StopProcessEvents()
     m_coreInput.Dispatcher().StopProcessEvents();
 }
 
+void IndependentInput::SetRadius(float radius)
+{
+    m_radius = radius;
+}
+
 void IndependentInput::OnPointerPressed([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Core::PointerEventArgs const& args)
 {
     if (m_mouseInUse == false &&

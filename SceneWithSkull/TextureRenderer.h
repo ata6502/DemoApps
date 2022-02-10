@@ -18,12 +18,15 @@ public:
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     void SetOutputSize(winrt::Windows::Foundation::Size outputSize);
+    float GetDistanceToCamera();
 
     void EnableScissorTest(bool enabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
 
 private:
+    static const float DISTANCE_TO_CAMERA;
+
     struct ObjectInfo
     {
         std::string MeshName;

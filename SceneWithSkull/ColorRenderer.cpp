@@ -7,6 +7,8 @@
 
 using namespace DirectX;
 
+const float ColorRenderer::DISTANCE_TO_CAMERA = 3.0f;
+
 ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_constantBufferPerFrame(nullptr),
@@ -181,6 +183,11 @@ void ColorRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 {
     m_outputSize = outputSize;
     SetScissorTestRectangle();
+}
+
+float ColorRenderer::GetDistanceToCamera()
+{
+    return DISTANCE_TO_CAMERA;
 }
 
 void ColorRenderer::CreateMeshes()
