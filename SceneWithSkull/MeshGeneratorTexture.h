@@ -12,12 +12,10 @@ public:
     void CreateCube2(std::string name); // a cube with additional vertices
     void CreatePyramid(std::string name);
     void CreatePyramid2(std::string name); // a pyramid with additional vertices
-
-    // TODO: Create other primitives.
-    //void CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
-    //void CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount);
-    //void CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount);
-    //void CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
+    void CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
+    void CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount);
+    void CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount);
+    void CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
 
     void CreateBuffers();
     void SetBuffers();
@@ -37,14 +35,13 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer;
     winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
 
-    std::vector<VertexPositionNormal>        m_vertices;
+    std::vector<VertexPositionNormal>       m_vertices;
     std::vector<uint32_t>                   m_indices;
     std::map<std::string, MeshInfo>         m_meshes;
 
-    // TODO: Create other primitives.
-    //void BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount);
-    //void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount);
-    //void Subdivide(std::vector<VertexPositionColor>& vertices, std::vector<uint32_t>& indices);
+    void BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount);
+    void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount);
+    void Subdivide(std::vector<VertexPositionNormal>& vertices, std::vector<uint32_t>& indices);
     void CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount);
 };
 

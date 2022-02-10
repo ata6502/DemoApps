@@ -162,7 +162,6 @@ void MeshGenerator::CreateCylinder(std::string name, float bottomRadius, float t
 
         // Create vertices for the i-th stack. Note that we duplicate the first vertex as 
         // the last one by using <= rather than < 
-        // TODO: This is necessary for correct texture rendering.
         for (uint32_t j = 0; j <= sliceCount; ++j)
         {
             float x = r * cosf(j * theta);
@@ -223,7 +222,7 @@ void MeshGenerator::BuildCylinderTopCap(uint32_t baseVertexLocation, float topRa
     VertexPositionColor v;
     v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
-    // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
+    // Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = topRadius * cosf(i * theta);
@@ -260,7 +259,7 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
     VertexPositionColor v;
     v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
-    // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
+    // Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = bottomRadius * cosf(i * theta);

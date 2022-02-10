@@ -284,8 +284,6 @@ void MeshGeneratorTexture::CopyIndices(std::vector<uint32_t> const& indices, uin
         m_indices[startIndexLocation + i] = indices[i];
 }
 
-// TODO: Create other primitives.
-/*
 /// <summary>
 /// Based on [Luna]
 /// 
@@ -336,20 +334,55 @@ void MeshGeneratorTexture::CreateCylinder(std::string name, float bottomRadius, 
 
         // Create vertices for the i-th stack. Note that we duplicate the first vertex as 
         // the last one by using <= rather than < 
-        // TODO: This is necessary for correct texture rendering.
+        // This is necessary for correct texture rendering.
         for (uint32_t j = 0; j <= sliceCount; ++j)
         {
-            float x = r * cosf(j * theta);
-            float z = r * sinf(j * theta);
+            float c = cosf(j * theta);
+            float s = sinf(j * theta);
 
             VertexPositionNormal v;
-            v.Position = XMFLOAT3(x, y, z);
+            v.Position = XMFLOAT3(r * c, y, r * s);
 
-            // Alternate color for each stack.
-            if (i % 2)
-                v.Color = XMFLOAT4(1.0f, 0.2f, 0.0f, 1.0f);
-            else
-                v.Color = XMFLOAT4(0.219f, 0.254f, 0.717f, 1.0f);
+            // Computing Tangent Space Basis Vectors for an Arbitrary Mesh 
+            // "Foundations of Game Engine Development, Volume 2: Rendering"
+
+            // Cylinder can be parameterized as follows, where v [0,1] parameter 
+            // goes in the same direction as the v tex-coord so that 
+            // the bitangent goes in the same direction as the v tex-coord.
+            //
+            // Let r0 be the bottom radius and let r1 be the top radius.
+            //
+            //  y(v) = h - hv             (from top to bottom: y(v) [h,0])
+            //  r(v) = r1 + (r0-r1)v      (from top radius to bottom radius: r(v) [r1,r0])
+            //
+            //  x(t, v) = r(v)*cos(t)
+            //  y(t, v) = h - hv
+            //  z(t, v) = r(v)*sin(t)
+            // 
+            //  tangent
+            //  -------
+            //  dx/dt = -r(v)*sin(t)
+            //  dy/dt = 0
+            //  dz/dt = +r(v)*cos(t)
+            //
+            //  bitangent
+            //  ---------
+            //  dx/dv = (r0-r1)*cos(t)
+            //  dy/dv = -h
+            //  dz/dv = (r0-r1)*sin(t)
+ 
+            // Calculate a unit length tangent.
+            XMFLOAT3 tangent = XMFLOAT3(-s, 0.0f, c);
+
+            // Calculate a bitangent.
+            float dr = bottomRadius - topRadius;
+            XMFLOAT3 bitangent(dr * c, -cylinderHeight, dr * s);
+
+            // Vectors t, b, n are mutually perpendicular. Use cross product to find normal: n = t x b
+            XMVECTOR t = XMLoadFloat3(&tangent);
+            XMVECTOR b = XMLoadFloat3(&bitangent);
+            XMVECTOR n = XMVector3Normalize(XMVector3Cross(t, b));
+            XMStoreFloat3(&v.Normal, n);
 
             m_vertices.push_back(v);
         }
@@ -395,7 +428,6 @@ void MeshGeneratorTexture::BuildCylinderTopCap(uint32_t baseVertexLocation, floa
     float theta = XM_2PI / sliceCount;
 
     VertexPositionNormal v;
-    v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
     // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
@@ -404,13 +436,14 @@ void MeshGeneratorTexture::BuildCylinderTopCap(uint32_t baseVertexLocation, floa
         float z = topRadius * sinf(i * theta);
 
         v.Position = XMFLOAT3(x, y, z);
+        v.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
         m_vertices.push_back(v);
 
     }
 
     // The center vertex of the top cap.
     v.Position = XMFLOAT3(0.0f, y, 0.0f);
-    v.Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    v.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
     m_vertices.push_back(v);
 
     // The index of the center vertex.
@@ -432,7 +465,6 @@ void MeshGeneratorTexture::BuildCylinderBottomCap(uint32_t baseVertexLocation, f
     float theta = XM_2PI / sliceCount;
 
     VertexPositionNormal v;
-    v.Color = XMFLOAT4(0.0f, 0.5f, 1.0f, 1.0f);
 
     // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
@@ -441,12 +473,13 @@ void MeshGeneratorTexture::BuildCylinderBottomCap(uint32_t baseVertexLocation, f
         float z = bottomRadius * sinf(i * theta);
 
         v.Position = XMFLOAT3(x, y, z);
+        v.Normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
         m_vertices.push_back(v);
     }
 
     // The center vertex of the bottom cap.
     v.Position = XMFLOAT3(0.0f, y, 0.0f);
-    v.Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    v.Normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
     m_vertices.push_back(v);
 
     // The index of the center vertex.
@@ -479,8 +512,8 @@ void MeshGeneratorTexture::CreateSphere(std::string name, float radius, uint32_t
     info.StartIndexLocation = m_indices.size();
 
     // Create the sphere's poles.
-    VertexPositionNormal topVertex{ { 0.0f, radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
-    VertexPositionNormal bottomVertex{ { 0.0f, -radius, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } };
+    VertexPositionNormal topVertex{ { 0.0f, radius, 0.0f }, { 0.0f, 1.0f, 0.0f } };
+    VertexPositionNormal bottomVertex{ { 0.0f, -radius, 0.0f }, {0.0f, -1.0f, 0.0f } };
 
     // Add the north pole as the first vertex.
     m_vertices.push_back(topVertex);
@@ -504,11 +537,9 @@ void MeshGeneratorTexture::CreateSphere(std::string name, float radius, uint32_t
             v.Position.y = radius * cosf(phi);
             v.Position.z = radius * sinf(phi) * sinf(theta);
 
-            // Alternate color for each stack.
-            if (i % 2)
-                v.Color = XMFLOAT4(1.0f, 0.9f, 0.0f, 1.0f);
-            else
-                v.Color = XMFLOAT4(0.0f, 0.1f, 1.0f, 1.0f);
+            // Compute normal vector.
+            XMVECTOR p = XMLoadFloat3(&v.Position);
+            XMStoreFloat3(&v.Normal, XMVector3Normalize(p));
 
             m_vertices.push_back(v);
         }
@@ -638,11 +669,25 @@ void MeshGeneratorTexture::CreateGeosphere(std::string name, float radius, uint1
         XMVECTOR p = radius * n;
 
         XMStoreFloat3(&vertices[i].Position, p);
+        XMStoreFloat3(&vertices[i].Normal, n);
 
-        if (i % 4)
-            vertices[i].Color = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-        else
-            vertices[i].Color = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+        // TODO: Derive texture coordinates from spherical coordinates.
+        //float theta = MathHelper::AngleFromXY(
+        //meshData.Vertices[i].Position.x,
+        //meshData.Vertices[i].Position.z);
+
+        //float phi = acosf(meshData.Vertices[i].Position.y / radius);
+
+        //meshData.Vertices[i].TexC.x = theta / XM_2PI;
+        //meshData.Vertices[i].TexC.y = phi / XM_PI;
+
+        //// Partial derivative of P with respect to theta
+        //meshData.Vertices[i].TangentU.x = -radius*sinf(phi)*sinf(theta);
+        //meshData.Vertices[i].TangentU.y = 0.0f;
+        //meshData.Vertices[i].TangentU.z = +radius*sinf(phi)*cosf(theta);
+
+        //XMVECTOR T = XMLoadFloat3(&meshData.Vertices[i].TangentU);
+        //XMStoreFloat3(&meshData.Vertices[i].TangentU, XMVector3Normalize(T));
     }
 
     // Add the geosphere vertices and indices to the buffers.
@@ -784,7 +829,7 @@ void MeshGeneratorTexture::CreateGrid(std::string name, float gridWidth, float g
             auto k = i * n + j;
 
             m_vertices[info.BaseVertexLocation + k].Position = XMFLOAT3(x, 0, z);
-            m_vertices[info.BaseVertexLocation + k].Color = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+            m_vertices[info.BaseVertexLocation + k].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
             x += dx;
         };
@@ -845,7 +890,6 @@ void MeshGeneratorTexture::CreateGrid(std::string name, float gridWidth, float g
 
     m_meshes[name] = info;
 }
-*/
 
 void MeshGeneratorTexture::CreateBuffers()
 {
