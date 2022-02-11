@@ -56,7 +56,7 @@ private:
     float                                   m_topBottomMarginPercent;
 
     void SetObjectData(ObjectInfo const& obj);
-    void CreateMeshes();
+    winrt::Windows::Foundation::IAsyncAction CreateMeshes();
     void DefineSceneObjects();
     void SetScissorTestRectangle();
 };

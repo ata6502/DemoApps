@@ -891,6 +891,124 @@ void MeshGeneratorTexture::CreateGrid(std::string name, float gridWidth, float g
     m_meshes[name] = info;
 }
 
+// Assumptions (for performance reasons): 
+// - 250 - max characters per line
+// - 10 - max tokens per line
+static int const MAX_CHARS_PER_LINE = 250;
+static int const MAX_TOKENS_PER_LINE = 10;
+
+winrt::Windows::Foundation::IAsyncAction MeshGeneratorTexture::CreateModelAsync(std::string const& name, winrt::hstring const& filename)
+{
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
+    using namespace winrt;
+    using namespace Windows::ApplicationModel;
+    using namespace Windows::Storage;
+
+    // Read lines from the input file.
+    auto folder = Package::Current().InstalledLocation();
+    StorageFile file{ co_await folder.GetFileAsync(filename) };
+    auto lines = co_await FileIO::ReadLinesAsync(file);
+
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size(); // initial vertex count
+    info.StartIndexLocation = m_indices.size(); // initial index count
+
+    bool readVertices = false, readIndices = false;
+    uint32_t baseVertex = info.BaseVertexLocation;
+    uint32_t baseIndex = info.StartIndexLocation;
+
+    std::vector<std::wstring> tokens;
+    tokens.resize(MAX_TOKENS_PER_LINE);
+
+    for (uint32_t i = 0; i < lines.Size(); ++i)
+    {
+        hstring line = lines.GetAt(i);
+        GetTokes(line.c_str(), tokens);
+
+        if (tokens[0] == L"VertexCount:")
+        {
+            int vertexCount = std::stoi(tokens[1]);
+            m_vertices.resize((uint32_t)m_vertices.size() + vertexCount);
+        }
+
+        if (tokens[0] == L"TriangleCount:")
+        {
+            int triangleCount = std::stoi(tokens[1]);
+            m_indices.resize((uint32_t)m_indices.size() + triangleCount * 3);
+        }
+
+        if (tokens[0] == L"VertexList") readVertices = true;
+        if (tokens[0] == L"}" && readVertices) readVertices = false;
+        if (tokens[0] == L"TriangleList") readIndices = true;
+        if (tokens[0] == L"}" && readIndices) readIndices = false;
+
+        if (readVertices)
+        {
+            if (tokens[0] != L"{" && tokens[0] != L"}" && tokens[0] != L"VertexList")
+            {
+                float px = std::stof(tokens[0]);
+                float py = std::stof(tokens[1]);
+                float pz = std::stof(tokens[2]);
+                float nx = std::stof(tokens[3]);
+                float ny = std::stof(tokens[4]);
+                float nz = std::stof(tokens[5]);
+
+                m_vertices[baseVertex++] = { XMFLOAT3(px, py, pz), XMFLOAT3(nx, ny, nz) };
+            }
+        }
+
+        if (readIndices)
+        {
+            if (tokens[0] != L"{" && tokens[0] != L"}" && tokens[0] != L"TriangleList")
+            {
+                uint32_t x = std::stoi(tokens[0]);
+                uint32_t y = std::stoi(tokens[1]);
+                uint32_t z = std::stoi(tokens[2]);
+
+                m_indices[baseIndex++] = x;
+                m_indices[baseIndex++] = y;
+                m_indices[baseIndex++] = z;
+            }
+        }
+    }
+
+    info.IndexCount = m_indices.size() - info.StartIndexLocation;
+
+    m_meshes[name] = info;
+}
+
+// Splits a string into tokens.
+void MeshGeneratorTexture::GetTokes(const wchar_t* ps, std::vector<std::wstring>& tokens)
+{
+    static wchar_t p[MAX_CHARS_PER_LINE];
+    unsigned l = 0;
+    int k = 0;
+
+    for (unsigned j = 0; ps[j] != 0; ++j)
+    {
+        if (ps[j] != ' ')
+        {
+            if (ps[j] != '\t')
+            {
+                p[k] = ps[j];
+                ++k;
+            }
+        }
+        else
+        {
+            p[k] = 0;
+            tokens[l] = p;
+            ++l;
+            k = 0;
+        }
+    }
+
+    p[k] = 0;
+    tokens[l] = p;
+    l = 0;
+}
+
 void MeshGeneratorTexture::CreateBuffers()
 {
     // Create an immutable vertex buffer and load data.

@@ -126,6 +126,9 @@
     <Filter Include="Shared">
       <UniqueIdentifier>{5d9ced02-8b0f-49ad-89ae-dfa32f7f9919}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{0a48a3cd-b8e3-4743-9a55-6030a42a6aff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
@@ -156,5 +159,10 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Data\skull.txt">
+      <Filter>Data</Filter>
+    </Text>
   </ItemGroup>
 </Project>

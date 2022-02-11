@@ -104,7 +104,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
         device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestDisabled.put()));
 
     // [8] Create meshes using the MeshGenerator.
-    CreateMeshes();
+    co_await CreateMeshes();
 
     // [9] Define the scene.
     DefineSceneObjects();
@@ -220,12 +220,13 @@ float TextureRenderer::GetDistanceToCamera()
     return DISTANCE_TO_CAMERA;
 }
 
-void TextureRenderer::CreateMeshes()
+winrt::Windows::Foundation::IAsyncAction TextureRenderer::CreateMeshes()
 {
     m_meshGenerator->CreateGrid("grid", 20.0f, 30.0f, 60, 40);
     m_meshGenerator->CreateGeosphere("sphere", 0.5f, 3);
     m_meshGenerator->CreateCube("cube");
     m_meshGenerator->CreateCylinder("cylinder", 0.5f, 0.3f, 3.0f, 20, 10);
+    co_await m_meshGenerator->CreateModelAsync("skull", L"Data\\skull.txt");
 
     m_meshGenerator->CreateBuffers();
 }
@@ -263,6 +264,11 @@ void TextureRenderer::DefineSceneObjects()
     info.MeshName = "cube";
     info.Material = material2;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+    m_objects.push_back(info);
+
+    info.MeshName = "skull";
+    info.Material = material3;
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 0.5f, -5.0f));
     m_objects.push_back(info);
 
     // Create 5 rows of 2 cylinders and 2 spheres per row.

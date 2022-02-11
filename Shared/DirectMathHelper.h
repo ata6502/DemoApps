@@ -21,7 +21,9 @@ inline DirectX::XMFLOAT3 VectorToFloat3(const DirectX::FXMVECTOR& v)
 }
 
 #if defined(_DEBUG)
-// Example: DX::DebugTrace(L"num = %4.2f\n", num);
+// Examples: 
+// DebugTrace(L"num = %4.2f\n", num);
+// DebugTrace(L"%s\n", str.c_str());
 inline void DebugTrace(const wchar_t* format, ...)
 {
     // Generate the message string.

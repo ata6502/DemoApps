@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "DeviceResources.h"
 #include "VertexStructures.h"
 
@@ -8,6 +10,7 @@ class MeshGeneratorTexture
 public:
     MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
+    // TODO: use std::string const&
     void CreateCube(std::string name);
     void CreateCube2(std::string name); // a cube with additional vertices
     void CreatePyramid(std::string name);
@@ -16,6 +19,7 @@ public:
     void CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount);
     void CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount);
     void CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
+    winrt::Windows::Foundation::IAsyncAction CreateModelAsync(std::string const& name, winrt::hstring const& filename);
 
     void CreateBuffers();
     void SetBuffers();
@@ -43,5 +47,6 @@ private:
     void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount);
     void Subdivide(std::vector<VertexPositionNormal>& vertices, std::vector<uint32_t>& indices);
     void CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount);
+    void GetTokes(const wchar_t* ps, std::vector<std::wstring>& tokens);
 };
 
