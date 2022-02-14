@@ -21,6 +21,7 @@ DemoMain::DemoMain() :
     auto renderer = RendererFactory::CreateRenderer(RendererType::Color, m_deviceResources); // TODO: set TextureRenderer as default
     m_renderer = std::unique_ptr<RendererBase>(renderer);
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
+    m_input->SetPitch(m_renderer->GetCameraPitch());
 
     m_timer.Reset();
 }
@@ -201,6 +202,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
     m_renderer.reset();
     m_renderer.reset(renderer);
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
+    m_input->SetPitch(m_renderer->GetCameraPitch());
 
     CreateWindowSizeDependentResources();
     StartRenderLoop();

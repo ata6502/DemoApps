@@ -67,6 +67,11 @@ void IndependentInput::SetRadius(float radius)
     m_radius = radius;
 }
 
+void IndependentInput::SetPitch(float pitch)
+{
+    m_pitch = pitch;
+}
+
 void IndependentInput::OnPointerPressed([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Core::PointerEventArgs const& args)
 {
     if (m_mouseInUse == false &&

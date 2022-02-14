@@ -20,6 +20,7 @@ public:
     void Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float elapsedSeconds);
     void SetOutputSize(winrt::Windows::Foundation::Size outputSize);
     float GetDistanceToCamera();
+    float GetCameraPitch();
 
     void EnableScissorTest(bool enabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
@@ -27,6 +28,7 @@ public:
 
 private:
     static const float DISTANCE_TO_CAMERA;
+    static const float CAMERA_PITCH;
 
     struct ObjectInfo
     {

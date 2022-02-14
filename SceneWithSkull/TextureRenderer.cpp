@@ -8,7 +8,8 @@
 
 using namespace DirectX;
 
-const float TextureRenderer::DISTANCE_TO_CAMERA = 18.0f;
+const float TextureRenderer::DISTANCE_TO_CAMERA = 20.0f;
+const float TextureRenderer::CAMERA_PITCH = 0.37f * XM_PI;
 
 TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
@@ -230,6 +231,11 @@ void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 float TextureRenderer::GetDistanceToCamera()
 {
     return DISTANCE_TO_CAMERA;
+}
+
+float TextureRenderer::GetCameraPitch()
+{
+    return CAMERA_PITCH;
 }
 
 winrt::Windows::Foundation::IAsyncAction TextureRenderer::CreateMeshes()

@@ -8,6 +8,7 @@ public:
     void Initialize(winrt::Windows::UI::Xaml::Controls::SwapChainPanel const& panel);
     void StopProcessEvents();
     void SetRadius(float radius);
+    void SetPitch(float pitch);
 
     // Convert spherical coordinates to Cartesian coordinates.
     DirectX::XMVECTOR GetPosition() const
