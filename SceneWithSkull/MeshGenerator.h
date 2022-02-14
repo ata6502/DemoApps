@@ -8,16 +8,16 @@ class MeshGenerator
 public:
     MeshGenerator(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    void CreateCube(std::string name);
-    void CreatePyramid(std::string name);
-    void CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
-    void CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount);
-    void CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount);
-    void CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
+    void CreateCube(std::string const& name);
+    void CreatePyramid(std::string const& name);
+    void CreateCylinder(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
+    void CreateSphere(std::string const& name, float radius, uint32_t sliceCount, uint32_t stackCount);
+    void CreateGeosphere(std::string const& name, float radius, uint16_t subdivisionCount);
+    void CreateGrid(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
 
     void CreateBuffers();
     void SetBuffers();
-    void DrawMesh(std::string name);
+    void DrawMesh(std::string const& name);
     void ReleaseBuffers();
 
 private:

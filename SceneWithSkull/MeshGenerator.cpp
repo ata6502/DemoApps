@@ -13,7 +13,7 @@ MeshGenerator::MeshGenerator(std::shared_ptr<DX::DeviceResources> const& deviceR
 /// <summary>
 /// Creates a unit cube i.e., a cube whose sides are 1 unit long.
 /// </summary>
-void MeshGenerator::CreateCube(std::string name)
+void MeshGenerator::CreateCube(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -67,7 +67,7 @@ void MeshGenerator::CreateCube(std::string name)
 /// 
 /// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
 /// </summary>
-void MeshGenerator::CreatePyramid(std::string name)
+void MeshGenerator::CreatePyramid(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -132,7 +132,7 @@ void MeshGenerator::CopyIndices(std::vector<uint32_t> const& indices, uint32_t s
 /// <param name="cylinderHeight">The cylider's height</param>
 /// <param name="sliceCount">The number of slices. A slice is one triangle in the top or the bottom cap.</param>
 /// <param name="stackCount">The number of stacks. A stack is one vertical segment of the cylinder.</param>
-void MeshGenerator::CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::CreateCylinder(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -295,7 +295,7 @@ void MeshGenerator::BuildCylinderBottomCap(uint32_t baseVertexLocation, float bo
 /// <param name="radius">The sphere's radius</param>
 /// <param name="sliceCount">The number of slices</param>
 /// <param name="stackCount">The number of stacks</param>
-void MeshGenerator::CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount)
+void MeshGenerator::CreateSphere(std::string const& name, float radius, uint32_t sliceCount, uint32_t stackCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -408,7 +408,7 @@ void MeshGenerator::CreateSphere(std::string name, float radius, uint32_t sliceC
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
 /// <param name="subdivisionCount"></param>
-void MeshGenerator::CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount)
+void MeshGenerator::CreateGeosphere(std::string const& name, float radius, uint16_t subdivisionCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -559,7 +559,7 @@ void MeshGenerator::Subdivide(std::vector<VertexPositionColor>& vertices, std::v
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-void MeshGenerator::CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+void MeshGenerator::CreateGrid(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -704,7 +704,7 @@ void MeshGenerator::SetBuffers()
     context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-void MeshGenerator::DrawMesh(std::string name)
+void MeshGenerator::DrawMesh(std::string const& name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
     const auto& info = m_meshes[name];

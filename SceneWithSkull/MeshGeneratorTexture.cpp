@@ -15,7 +15,7 @@ MeshGeneratorTexture::MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> 
 /// <summary>
 /// Creates a unit cube i.e., a cube whose sides are 1 unit long.
 /// </summary>
-void MeshGeneratorTexture::CreateCube(std::string name)
+void MeshGeneratorTexture::CreateCube(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -69,7 +69,7 @@ void MeshGeneratorTexture::CreateCube(std::string name)
 /// Creates a unit cube with additional vertices to achieve different lighting.
 /// The lighting is "flat" meaning that each face of the cube is lit uniformly.
 /// </summary>
-void MeshGeneratorTexture::CreateCube2(std::string name)
+void MeshGeneratorTexture::CreateCube2(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -157,7 +157,7 @@ void MeshGeneratorTexture::CreateCube2(std::string name)
 /// Creates a pyramid. The pyramid's base is a unit square.
 /// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
 /// </summary>
-void MeshGeneratorTexture::CreatePyramid(std::string name)
+void MeshGeneratorTexture::CreatePyramid(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -200,7 +200,7 @@ void MeshGeneratorTexture::CreatePyramid(std::string name)
 /// Creates a pyramid with additional vertices to achieve different lighting.
 /// The lighting is "flat" meaning that each face of the pyramid is lit uniformly.
 /// </summary>
-void MeshGeneratorTexture::CreatePyramid2(std::string name)
+void MeshGeneratorTexture::CreatePyramid2(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -304,7 +304,7 @@ void MeshGeneratorTexture::CopyIndices(std::vector<uint32_t> const& indices, uin
 /// <param name="cylinderHeight">The cylider's height</param>
 /// <param name="sliceCount">The number of slices. A slice is one triangle in the top or the bottom cap.</param>
 /// <param name="stackCount">The number of stacks. A stack is one vertical segment of the cylinder.</param>
-void MeshGeneratorTexture::CreateCylinder(std::string name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void MeshGeneratorTexture::CreateCylinder(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -503,7 +503,7 @@ void MeshGeneratorTexture::BuildCylinderBottomCap(uint32_t baseVertexLocation, f
 /// <param name="radius">The sphere's radius</param>
 /// <param name="sliceCount">The number of slices</param>
 /// <param name="stackCount">The number of stacks</param>
-void MeshGeneratorTexture::CreateSphere(std::string name, float radius, uint32_t sliceCount, uint32_t stackCount)
+void MeshGeneratorTexture::CreateSphere(std::string const& name, float radius, uint32_t sliceCount, uint32_t stackCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -614,7 +614,7 @@ void MeshGeneratorTexture::CreateSphere(std::string name, float radius, uint32_t
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
 /// <param name="subdivisionCount"></param>
-void MeshGeneratorTexture::CreateGeosphere(std::string name, float radius, uint16_t subdivisionCount)
+void MeshGeneratorTexture::CreateGeosphere(std::string const& name, float radius, uint16_t subdivisionCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -779,7 +779,7 @@ void MeshGeneratorTexture::Subdivide(std::vector<VertexPositionNormal>& vertices
 /// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
 /// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
 /// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-void MeshGeneratorTexture::CreateGrid(std::string name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+void MeshGeneratorTexture::CreateGrid(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -1042,7 +1042,7 @@ void MeshGeneratorTexture::SetBuffers()
     context->IASetIndexBuffer(m_indexBuffer.get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
-void MeshGeneratorTexture::DrawMesh(std::string name)
+void MeshGeneratorTexture::DrawMesh(std::string const& name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
     const auto& info = m_meshes[name];
