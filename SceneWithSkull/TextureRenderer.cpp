@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <string>
 
 #include "LightsShaderStructures.h"
 #include "TextureRenderer.h"
@@ -14,6 +15,7 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
+    m_rotation(0.0f),
     m_outputSize()
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
@@ -170,8 +172,8 @@ void TextureRenderer::Render()
     // Render the scene.
     for (auto& obj : m_objects)
     {
-        SetObjectData(obj);
-        m_meshGenerator->DrawMesh(obj.MeshName);
+        SetObjectData(obj.first, obj.second);
+        m_meshGenerator->DrawMesh(obj.second.MeshName);
     }
 }
 
@@ -192,19 +194,29 @@ void TextureRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
+void TextureRenderer::Update(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, float elapsedSeconds)
 {
+    m_rotation = (m_rotation + elapsedSeconds);
+    if (m_rotation > XM_2PI)
+        m_rotation = fmod(m_rotation, XM_2PI);
+
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 
-void TextureRenderer::SetObjectData(ObjectInfo const& obj)
+void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& info)
 {
     ConstantBufferPerObject constantBufferPerObjectData;
-    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMLoadFloat4x4(&obj.WorldMatrix)));
-    constantBufferPerObjectData.Material = obj.Material;
+
+    auto worldMatrix = XMLoadFloat4x4(&info.WorldMatrix);
+
+    if (name == "Ellipsoid")
+        worldMatrix = worldMatrix * XMMatrixRotationY(m_rotation) * XMMatrixTranslation(0.0f, 3.0f, 0.0f);
+
+    XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
+    constantBufferPerObjectData.Material = info.Material;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
@@ -223,7 +235,7 @@ float TextureRenderer::GetDistanceToCamera()
 winrt::Windows::Foundation::IAsyncAction TextureRenderer::CreateMeshes()
 {
     m_meshGenerator->CreateGrid("grid", 20.0f, 30.0f, 60, 40);
-    m_meshGenerator->CreateGeosphere("sphere", 0.5f, 3);
+    m_meshGenerator->CreateGeosphere("sphere", 1.0f, 3);
     m_meshGenerator->CreateCube("cube");
     m_meshGenerator->CreateCylinder("cylinder", 0.5f, 0.3f, 3.0f, 20, 10);
     co_await m_meshGenerator->CreateModelAsync("skull", L"Data\\skull.txt");
@@ -237,60 +249,66 @@ void TextureRenderer::DefineSceneObjects()
     MaterialDesc material1;
     material1.Ambient = XMFLOAT4(0.2f, 0.5f, 0.8f, 1.0f);
     material1.Diffuse = XMFLOAT4(0.2f, 0.5f, 0.8f, 1.0f);
-    material1.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    material1.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
 
     MaterialDesc material2;
     material2.Ambient = XMFLOAT4(0.8f, 0.2f, 0.8f, 1.0f);
     material2.Diffuse = XMFLOAT4(0.8f, 0.0f, 0.8f, 1.0f);
-    material2.Specular = XMFLOAT4(0.2f, 0.0f, 0.2f, 16.0f); // w = SpecularPower
+    material2.Specular = XMFLOAT4(0.2f, 0.0f, 0.2f, 16.0f);
 
     MaterialDesc material3;
     material3.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     material3.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material3.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 32.0f); // w = SpecularPower
+    material3.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 32.0f);
+
+    MaterialDesc materialSkull;
+    materialSkull.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    materialSkull.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    materialSkull.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f);
 
     ObjectInfo info;
 
     info.MeshName = "grid";
     info.Material = material3;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
-    m_objects.push_back(info);
+    m_objects["Floor"] = info;
 
     info.MeshName = "sphere";
     info.Material = material3;
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 2.0f, 2.0f) * XMMatrixTranslation(0.0f, 2.0f, 0.0f));
-    m_objects.push_back(info);
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.0f, 2.0f, 2.0f)); // updated dynamically
+    m_objects["Ellipsoid"] = info;
 
     info.MeshName = "cube";
     info.Material = material2;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-    m_objects.push_back(info);
+    m_objects["EllipsoidStand"] = info;
 
     info.MeshName = "skull";
-    info.Material = material3;
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 0.5f, -5.0f));
-    m_objects.push_back(info);
+    info.Material = materialSkull;
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 3.0f, 5.0f));
+    m_objects["Skull"] = info;
 
     // Create 5 rows of 2 cylinders and 2 spheres per row.
     for (int i = 0; i < 5; ++i)
     {
         info.MeshName = "cylinder";
         info.Material = material1;
+        auto n = std::to_string(i + 1);
 
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i * 5.0f));
-        m_objects.push_back(info);
+        m_objects["ColumnLeft" + n] = info;
 
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(5.0f, 1.5f, -10.0f + i * 5.0f));
-        m_objects.push_back(info);
+        m_objects["ColumnRight" + n] = info;
 
         info.MeshName = "sphere";
         info.Material = material3;
 
-        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f));
-        m_objects.push_back(info);
+        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f));
+        m_objects["BallLeft" + n] = info;
 
-        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(5.0f, 3.5f, -10.0f + i * 5.0f));
-        m_objects.push_back(info);
+        XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(5.0f, 3.5f, -10.0f + i * 5.0f));
+        m_objects["BallRight" + n] = info;
     }
 }
 

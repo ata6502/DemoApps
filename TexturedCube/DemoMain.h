@@ -48,7 +48,6 @@ private:
 
     // Cube rotation.
     float                                    m_rotation;
-    float                                    m_rotationSpeed;
     bool                                     m_rotationEnabled;
 };
 

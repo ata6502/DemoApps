@@ -12,7 +12,7 @@ DemoMain::DemoMain() :
     m_constantBufferData(),
     m_indexCount(0),
     m_initialized(false),
-    m_rotationSpeed(XM_PIDIV2), // set rotation speed to pi/2 which is 90 degrees per second
+    m_rotationSpeed(XM_PIDIV2), // set rotation speed to pi/2 which is 90 degrees per second; this value is not used in this demo
     m_rotation(0.0f)
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();

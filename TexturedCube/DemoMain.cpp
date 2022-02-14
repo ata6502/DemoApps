@@ -11,7 +11,6 @@ using namespace DirectX;
 
 DemoMain::DemoMain() :
     m_rotation(0.0f),
-    m_rotationSpeed(XM_PIDIV2),
     m_rotationEnabled(false)
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
