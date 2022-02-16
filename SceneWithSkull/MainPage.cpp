@@ -115,6 +115,11 @@ namespace winrt::SceneWithSkull::implementation
         auto listBox = sender.as<ListBox>();
         auto selectedIndex = listBox.SelectedIndex();
         m_main->SetRenderer(selectedIndex);
+
+        if (m_main->IsScissorTestSupported())
+            ScissorTestPanel().Visibility(Visibility::Visible);
+        else
+            ScissorTestPanel().Visibility(Visibility::Collapsed);
     }
 
     void MainPage::ScissorTestToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)

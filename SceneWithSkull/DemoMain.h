@@ -28,7 +28,7 @@ public:
 
     void SetRenderer(int32_t rendererIndex);
 
-    bool ScissorTestSupported() const { return m_isScissorTestSupported; }
+    bool IsScissorTestSupported() const { return m_isScissorTestSupported; }
     void ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
