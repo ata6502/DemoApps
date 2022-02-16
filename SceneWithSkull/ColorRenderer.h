@@ -1,10 +1,11 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "IScissorTestRenderer.h"
 #include "MeshGenerator.h"
 #include "RendererBase.h"
 
-class ColorRenderer : public RendererBase
+class ColorRenderer : public RendererBase, public IScissorTestRenderer
 {
 public:
     ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
@@ -20,6 +21,7 @@ public:
     float GetDistanceToCamera();
     float GetCameraPitch();
 
+    // IScissorTestRenderer implementation.
     void EnableScissorTest(bool enabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);

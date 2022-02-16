@@ -22,10 +22,6 @@ public:
     float GetDistanceToCamera();
     float GetCameraPitch();
 
-    void EnableScissorTest(bool enabled);
-    void SetScissorTestLeftRightMargin(float marginPercent);
-    void SetScissorTestTopBottomMargin(float marginPercent);
-
 private:
     static const float DISTANCE_TO_CAMERA;
     static const float CAMERA_PITCH;
@@ -51,7 +47,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferPerObject;
 
-    winrt::Windows::Foundation::Size       m_outputSize;
     DirectX::XMFLOAT4X4                    m_projMatrix;
     std::unique_ptr<MeshGeneratorTexture>  m_meshGenerator;
     std::map<std::string, ObjectInfo>      m_objects;
@@ -62,6 +57,5 @@ private:
     void SetObjectData(std::string const& name, ObjectInfo const& info);
     winrt::Windows::Foundation::IAsyncAction CreateMeshes();
     void DefineSceneObjects();
-    void SetScissorTestRectangle();
 };
 

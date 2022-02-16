@@ -16,8 +16,7 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
-    m_rotation(0.0f),
-    m_outputSize()
+    m_rotation(0.0f)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -222,10 +221,8 @@ void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& i
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
 
-void TextureRenderer::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
+void TextureRenderer::SetOutputSize([[maybe_unused]] winrt::Windows::Foundation::Size outputSize)
 {
-    m_outputSize = outputSize;
-    SetScissorTestRectangle();
 }
 
 float TextureRenderer::GetDistanceToCamera()
@@ -316,48 +313,4 @@ void TextureRenderer::DefineSceneObjects()
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(5.0f, 3.5f, -10.0f + i * 5.0f));
         m_objects["BallRight" + n] = info;
     }
-}
-
-/// <summary>
-/// Sends an array of screen rectangles (in this example, there is only one rectangle in the array)
-/// to the Direct3D scissor test. The scissor test discards all pixels outside the scissor rectangles.
-/// </summary>
-void TextureRenderer::EnableScissorTest(bool enabled)
-{
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
-
-    // Set the rasterizer state.
-    if (enabled)
-        context->RSSetState(m_rasterizerStateScissorTestEnabled.get());
-    else 
-        context->RSSetState(m_rasterizerStateScissorTestDisabled.get());
-}
-
-void TextureRenderer::SetScissorTestLeftRightMargin(float marginPercent)
-{
-    m_leftRightMarginPercent = marginPercent;
-    SetScissorTestRectangle();
-}
-
-void TextureRenderer::SetScissorTestTopBottomMargin(float marginPercent)
-{
-    m_topBottomMarginPercent = marginPercent;
-    SetScissorTestRectangle();
-}
-
-void TextureRenderer::SetScissorTestRectangle()
-{
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
-
-    auto leftRightMargin = static_cast<long>((m_leftRightMarginPercent / 100.0f) * m_outputSize.Width);
-    auto topBottomMargin = static_cast<long>((m_topBottomMarginPercent / 100.0f) * m_outputSize.Width);
-
-    // Set the scissor test rectangle.
-    D3D11_RECT rects = { 
-        leftRightMargin, 
-        topBottomMargin, 
-        static_cast<long>(m_outputSize.Width) - leftRightMargin, 
-        static_cast<long>(m_outputSize.Height) - topBottomMargin };
-
-    context->RSSetScissorRects(1, &rects);
 }

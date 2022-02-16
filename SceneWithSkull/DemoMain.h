@@ -28,6 +28,7 @@ public:
 
     void SetRenderer(int32_t rendererIndex);
 
+    bool ScissorTestSupported() const { return m_isScissorTestSupported; }
     void ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
@@ -50,6 +51,7 @@ private:
     std::unique_ptr<IndependentInput>        m_input;
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
-    bool                                     m_scissorTestEnabled;
+    bool                                     m_isScissorTestEnabled;
+    bool                                     m_isScissorTestSupported;
 };
 

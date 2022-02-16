@@ -10,7 +10,7 @@ using namespace Concurrency;
 using namespace DirectX;
 
 DemoMain::DemoMain() :
-    m_scissorTestEnabled(false)
+    m_isScissorTestEnabled(false)
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -22,6 +22,8 @@ DemoMain::DemoMain() :
     m_renderer = std::unique_ptr<RendererBase>(renderer);
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());
+
+    m_isScissorTestSupported = RendererFactory::GetScissorTestRenderer(m_renderer.get()) != nullptr;
 
     m_timer.Reset();
 }
@@ -170,21 +172,34 @@ void DemoMain::ReleaseResources()
 
 void DemoMain::ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent)
 { 
-    m_scissorTestEnabled = !m_scissorTestEnabled;
+    if (!m_isScissorTestSupported)
+        return;
+
+    m_isScissorTestEnabled = !m_isScissorTestEnabled;
 
     SetScissorTestLeftRightMargin(leftRightMarginPercent);
     SetScissorTestTopBottomMargin(topBottomMarginPercent);
-    m_renderer->EnableScissorTest(m_scissorTestEnabled);
+
+    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
 }
 
 void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
 {
-    m_renderer->SetScissorTestLeftRightMargin(marginPercent);
+    if (!m_isScissorTestSupported)
+        return;
+
+    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    scissorTestRenderer->SetScissorTestLeftRightMargin(marginPercent);
 }
 
 void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
 {
-    m_renderer->SetScissorTestTopBottomMargin(marginPercent);
+    if (!m_isScissorTestSupported)
+        return;
+
+    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    scissorTestRenderer->SetScissorTestTopBottomMargin(marginPercent);
 }
 
 void DemoMain::SetRenderer(int32_t rendererIndex)
@@ -203,6 +218,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
     m_renderer.reset(renderer);
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());
+    m_isScissorTestSupported = RendererFactory::GetScissorTestRenderer(m_renderer.get()) != nullptr;
 
     CreateWindowSizeDependentResources();
     StartRenderLoop();

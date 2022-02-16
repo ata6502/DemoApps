@@ -120,6 +120,7 @@
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="IndependentInput.h" />
+    <ClInclude Include="IScissorTestRenderer.h" />
     <ClInclude Include="LightsShaderStructures.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="MeshGeneratorTexture.h" />

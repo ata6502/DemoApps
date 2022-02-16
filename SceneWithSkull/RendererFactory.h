@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IScissorTestRenderer.h"
 #include "RendererBase.h"
 
 enum class RendererType
@@ -12,5 +13,6 @@ class RendererFactory
 {
 public:
     static RendererBase* CreateRenderer(RendererType rendererType, std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    static IScissorTestRenderer* GetScissorTestRenderer(RendererBase* renderer);
 };
 
