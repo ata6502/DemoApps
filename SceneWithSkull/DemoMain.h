@@ -32,6 +32,7 @@ public:
     void ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
+    void EnableScissorTest(bool isScissorTestEnabled);
 
     // IDeviceNotify
     virtual void OnDeviceLost();

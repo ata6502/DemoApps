@@ -114,10 +114,27 @@ namespace winrt::SceneWithSkull::implementation
 
         auto listBox = sender.as<ListBox>();
         auto selectedIndex = listBox.SelectedIndex();
+
         m_main->SetRenderer(selectedIndex);
 
         if (m_main->IsScissorTestSupported())
+        {
             ScissorTestPanel().Visibility(Visibility::Visible);
+
+            // TODO: Remove redundant code.
+            auto isScissorTestEnabled = ScissorTestToggle().IsOn();
+
+            LeftRightMarginSlider().IsEnabled(isScissorTestEnabled);
+            TopBottomMarginSlider().IsEnabled(isScissorTestEnabled);
+
+            auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
+            auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
+
+            m_main->SetScissorTestLeftRightMargin(leftRightMarginPercent);
+            m_main->SetScissorTestTopBottomMargin(topBottomMarginPercent);
+
+            m_main->EnableScissorTest(isScissorTestEnabled);
+        }
         else
             ScissorTestPanel().Visibility(Visibility::Collapsed);
     }
@@ -126,10 +143,10 @@ namespace winrt::SceneWithSkull::implementation
     {
         critical_section::scoped_lock lock(m_main->GetCriticalSection());
 
-        auto isOn = sender.as<ToggleSwitch>().IsOn();
+        auto isScissorTestEnabled = sender.as<ToggleSwitch>().IsOn();
 
-        LeftRightMarginSlider().IsEnabled(isOn);
-        TopBottomMarginSlider().IsEnabled(isOn);
+        LeftRightMarginSlider().IsEnabled(isScissorTestEnabled);
+        TopBottomMarginSlider().IsEnabled(isScissorTestEnabled);
 
         auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
         auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
