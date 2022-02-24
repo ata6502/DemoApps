@@ -188,7 +188,10 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
     m_input->SetPitch(m_renderer->GetCameraPitch());
 
     CreateWindowSizeDependentResources();
-    m_scissorTest->EnableScissorTest(m_renderer->IsScissorTestSupported());
+
+    // TODO: Simplify logic
+    m_scissorTest->EnableScissorTest(
+        m_scissorTest->IsScissorTestEnabled() && m_renderer->IsScissorTestSupported());
 
     StartRenderLoop();
 }

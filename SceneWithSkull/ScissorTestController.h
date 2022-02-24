@@ -7,6 +7,7 @@ class ScissorTestController
 public:
     ScissorTestController::ScissorTestController(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
+    bool IsScissorTestEnabled() const { return m_isScissorTestEnabled; }
     void SetOutputSize(winrt::Windows::Foundation::Size outputSize);
     void EnableScissorTest(bool enabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
@@ -22,6 +23,7 @@ private:
     winrt::Windows::Foundation::Size        m_outputSize;
     float                                   m_leftRightMarginPercent;
     float                                   m_topBottomMarginPercent;
+    bool                                    m_isScissorTestEnabled;
 
     void Initialize();
     void SetScissorTestRectangle();

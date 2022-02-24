@@ -3,7 +3,8 @@
 
 ScissorTestController::ScissorTestController(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
-    m_outputSize()
+    m_outputSize(),
+    m_isScissorTestEnabled(false)
 { 
     Initialize();
 }
@@ -50,8 +51,10 @@ void ScissorTestController::EnableScissorTest(bool enabled)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
+    m_isScissorTestEnabled = enabled;
+
     // Set the rasterizer state.
-    if (enabled)
+    if (m_isScissorTestEnabled)
         context->RSSetState(m_rasterizerStateScissorTestEnabled.get());
     else
         context->RSSetState(m_rasterizerStateScissorTestDisabled.get());

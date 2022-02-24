@@ -122,16 +122,16 @@ namespace winrt::SceneWithSkull::implementation
             ScissorTestPanel().Visibility(Visibility::Visible);
 
             // TODO: Remove redundant code.
-            auto isScissorTestEnabled = ScissorTestToggle().IsOn();
+            //auto isScissorTestEnabled = ScissorTestToggle().IsOn();
 
-            LeftRightMarginSlider().IsEnabled(isScissorTestEnabled);
-            TopBottomMarginSlider().IsEnabled(isScissorTestEnabled);
+            //LeftRightMarginSlider().IsEnabled(isScissorTestEnabled);
+            //TopBottomMarginSlider().IsEnabled(isScissorTestEnabled);
 
-            auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
-            auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
+            //auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
+            //auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
 
-            m_main->SetScissorTestLeftRightMargin(leftRightMarginPercent);
-            m_main->SetScissorTestTopBottomMargin(topBottomMarginPercent);
+            //m_main->SetScissorTestLeftRightMargin(leftRightMarginPercent);
+            //m_main->SetScissorTestTopBottomMargin(topBottomMarginPercent);
         }
         else
             ScissorTestPanel().Visibility(Visibility::Collapsed);
