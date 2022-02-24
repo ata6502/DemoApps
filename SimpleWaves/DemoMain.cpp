@@ -178,9 +178,6 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
     ReleaseResources();
 
     auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
-
-    // TODO: Wait until the renderer is initialized.
-
     m_renderer.reset();
     m_renderer.reset(renderer);
 

@@ -40,7 +40,6 @@ void ScissorTestController::Initialize()
 void ScissorTestController::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
 {
     m_outputSize = outputSize;
-    SetScissorTestRectangle();
 }
 
 /// <summary>

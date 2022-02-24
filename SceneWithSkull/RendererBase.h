@@ -17,6 +17,7 @@ public:
     virtual void Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float elapsedSeconds) = 0;
     virtual float GetDistanceToCamera() = 0;
     virtual float GetCameraPitch() = 0;
+    virtual bool IsScissorTestSupported() = 0;
 
 protected:
     void IsInitialized(bool isInitialized) { m_initialized = isInitialized; }

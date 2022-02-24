@@ -20,6 +20,7 @@ public:
     void Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float elapsedSeconds);
     float GetDistanceToCamera();
     float GetCameraPitch();
+    bool IsScissorTestSupported() { return false; }
 
 private:
     static const float DISTANCE_TO_CAMERA;

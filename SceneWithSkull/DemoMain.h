@@ -4,6 +4,7 @@
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "RendererBase.h"
+#include "ScissorTestController.h"
 #include "Timer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -28,11 +29,11 @@ public:
 
     void SetRenderer(int32_t rendererIndex);
 
-    bool IsScissorTestSupported() const { return m_isScissorTestSupported; }
-    void ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent);
+    // Scissor test management.
+    bool IsScissorTestSupported();
+    void ToggleScissorTest(bool isScissorTestEnabled, float leftRightMarginPercent, float topBottomMarginPercent);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
-    void EnableScissorTest(bool isScissorTestEnabled);
 
     // IDeviceNotify
     virtual void OnDeviceLost();
@@ -52,7 +53,6 @@ private:
     std::unique_ptr<IndependentInput>        m_input;
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
-    bool                                     m_isScissorTestEnabled;
-    bool                                     m_isScissorTestSupported;
+    std::unique_ptr<ScissorTestController>   m_scissorTest;
 };
 

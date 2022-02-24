@@ -9,8 +9,7 @@ using namespace Windows::System::Threading;
 using namespace Concurrency;
 using namespace DirectX;
 
-DemoMain::DemoMain() :
-    m_isScissorTestEnabled(false)
+DemoMain::DemoMain()
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -23,8 +22,7 @@ DemoMain::DemoMain() :
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());
 
-    // TODO: isScissorTestSupported 
-    //m_isScissorTestSupported = RendererFactory::GetScissorTestRenderer(m_renderer.get()) != nullptr;
+    m_scissorTest = std::make_unique<ScissorTestController>(m_deviceResources);
 
     m_timer.Reset();
 }
@@ -44,9 +42,7 @@ void DemoMain::CreateWindowSizeDependentResources()
     Size outputSize = m_deviceResources->GetOutputSize();
     auto projMatrix = m_camera->GetProjMatrix(outputSize);
     m_renderer->SetProjMatrix(projMatrix);
-
-    // TODO: SetOutputSize
-    //m_renderer->SetOutputSize(outputSize);
+    m_scissorTest->SetOutputSize(outputSize);
 }
 
 void DemoMain::StartRenderLoop()
@@ -173,51 +169,6 @@ void DemoMain::ReleaseResources()
     m_renderer->ReleaseResources();
 }
 
-void DemoMain::ToggleScissorTest(float leftRightMarginPercent, float topBottomMarginPercent)
-{ 
-    if (!m_isScissorTestSupported)
-        return;
-
-    m_isScissorTestEnabled = !m_isScissorTestEnabled;
-
-    SetScissorTestLeftRightMargin(leftRightMarginPercent);
-    SetScissorTestTopBottomMargin(topBottomMarginPercent);
-
-    // TODO: GetScissorTestRenderer
-    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    //scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
-}
-
-void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
-{
-    if (!m_isScissorTestSupported)
-        return;
-
-    // TODO: GetScissorTestRenderer
-    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    //scissorTestRenderer->SetScissorTestLeftRightMargin(marginPercent);
-}
-
-void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
-{
-    if (!m_isScissorTestSupported)
-        return;
-
-    // TODO: GetScissorTestRenderer
-    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    //scissorTestRenderer->SetScissorTestTopBottomMargin(marginPercent);
-}
-
-void DemoMain::EnableScissorTest(bool isScissorTestEnabled)
-{
-    if (!m_isScissorTestSupported)
-        return;
-
-    // TODO: GetScissorTestRenderer
-    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    //scissorTestRenderer->EnableScissorTest(isScissorTestEnabled);
-}
-
 void DemoMain::SetRenderer(int32_t rendererIndex)
 {
     if (!m_renderer->IsInitialized())
@@ -227,31 +178,43 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     critical_section::scoped_lock lock(m_criticalSection);
 
-    // TODO: GetScissorTestRenderer
-    // Disable the scissor test if it is supported by the current renderer.
-    //if (m_isScissorTestSupported)
-    //{
-    //    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    //    scissorTestRenderer->EnableScissorTest(false);
-    //}
-
     ReleaseResources();
 
     auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
-
-    // TODO: Wait until the renderer is initialized. co_await?
-
     m_renderer.reset();
     m_renderer.reset(renderer);
+
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());
 
-    // TODO: GetScissorTestRenderer
-    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    //m_isScissorTestSupported = scissorTestRenderer != nullptr;
-    //if (m_isScissorTestSupported)
-    //    scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
-
     CreateWindowSizeDependentResources();
+    m_scissorTest->EnableScissorTest(m_renderer->IsScissorTestSupported());
+
     StartRenderLoop();
 }
+
+#pragma region Scissor test managment
+
+bool DemoMain::IsScissorTestSupported()
+{
+    return m_renderer->IsScissorTestSupported();
+}
+
+void DemoMain::ToggleScissorTest(bool isScissorTestEnabled, float leftRightMarginPercent, float topBottomMarginPercent)
+{
+    SetScissorTestLeftRightMargin(leftRightMarginPercent);
+    SetScissorTestTopBottomMargin(topBottomMarginPercent);
+
+    m_scissorTest->EnableScissorTest(isScissorTestEnabled);
+}
+
+void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
+{
+    m_scissorTest->SetScissorTestLeftRightMargin(marginPercent);
+}
+
+void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
+{
+    m_scissorTest->SetScissorTestTopBottomMargin(marginPercent);
+}
+#pragma endregion
