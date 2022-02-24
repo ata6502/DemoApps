@@ -40,6 +40,9 @@
     <ClCompile Include="RendererFactory.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="ScissorTestController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -80,8 +83,8 @@
     <ClInclude Include="..\Shared\DirectMathHelper.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="IScissorTestRenderer.h">
-      <Filter>Renderers</Filter>
+    <ClInclude Include="ScissorTestController.h">
+      <Filter>Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +134,9 @@
     </Filter>
     <Filter Include="Data">
       <UniqueIdentifier>{0a48a3cd-b8e3-4743-9a55-6030a42a6aff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controllers">
+      <UniqueIdentifier>{d1826610-39b6-4d12-b380-c870490c2920}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

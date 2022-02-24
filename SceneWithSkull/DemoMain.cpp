@@ -23,7 +23,8 @@ DemoMain::DemoMain() :
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());
 
-    m_isScissorTestSupported = RendererFactory::GetScissorTestRenderer(m_renderer.get()) != nullptr;
+    // TODO: isScissorTestSupported 
+    //m_isScissorTestSupported = RendererFactory::GetScissorTestRenderer(m_renderer.get()) != nullptr;
 
     m_timer.Reset();
 }
@@ -43,7 +44,9 @@ void DemoMain::CreateWindowSizeDependentResources()
     Size outputSize = m_deviceResources->GetOutputSize();
     auto projMatrix = m_camera->GetProjMatrix(outputSize);
     m_renderer->SetProjMatrix(projMatrix);
-    m_renderer->SetOutputSize(outputSize);
+
+    // TODO: SetOutputSize
+    //m_renderer->SetOutputSize(outputSize);
 }
 
 void DemoMain::StartRenderLoop()
@@ -180,8 +183,9 @@ void DemoMain::ToggleScissorTest(float leftRightMarginPercent, float topBottomMa
     SetScissorTestLeftRightMargin(leftRightMarginPercent);
     SetScissorTestTopBottomMargin(topBottomMarginPercent);
 
-    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
+    // TODO: GetScissorTestRenderer
+    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    //scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
 }
 
 void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
@@ -189,8 +193,9 @@ void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
     if (!m_isScissorTestSupported)
         return;
 
-    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    scissorTestRenderer->SetScissorTestLeftRightMargin(marginPercent);
+    // TODO: GetScissorTestRenderer
+    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    //scissorTestRenderer->SetScissorTestLeftRightMargin(marginPercent);
 }
 
 void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
@@ -198,8 +203,9 @@ void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
     if (!m_isScissorTestSupported)
         return;
 
-    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    scissorTestRenderer->SetScissorTestTopBottomMargin(marginPercent);
+    // TODO: GetScissorTestRenderer
+    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    //scissorTestRenderer->SetScissorTestTopBottomMargin(marginPercent);
 }
 
 void DemoMain::EnableScissorTest(bool isScissorTestEnabled)
@@ -207,8 +213,9 @@ void DemoMain::EnableScissorTest(bool isScissorTestEnabled)
     if (!m_isScissorTestSupported)
         return;
 
-    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    scissorTestRenderer->EnableScissorTest(isScissorTestEnabled);
+    // TODO: GetScissorTestRenderer
+    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    //scissorTestRenderer->EnableScissorTest(isScissorTestEnabled);
 }
 
 void DemoMain::SetRenderer(int32_t rendererIndex)
@@ -220,12 +227,13 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     critical_section::scoped_lock lock(m_criticalSection);
 
+    // TODO: GetScissorTestRenderer
     // Disable the scissor test if it is supported by the current renderer.
-    if (m_isScissorTestSupported)
-    {
-        auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-        scissorTestRenderer->EnableScissorTest(false);
-    }
+    //if (m_isScissorTestSupported)
+    //{
+    //    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    //    scissorTestRenderer->EnableScissorTest(false);
+    //}
 
     ReleaseResources();
 
@@ -238,10 +246,11 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());
 
-    auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
-    m_isScissorTestSupported = scissorTestRenderer != nullptr;
-    if (m_isScissorTestSupported)
-        scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
+    // TODO: GetScissorTestRenderer
+    //auto scissorTestRenderer = RendererFactory::GetScissorTestRenderer(m_renderer.get());
+    //m_isScissorTestSupported = scissorTestRenderer != nullptr;
+    //if (m_isScissorTestSupported)
+    //    scissorTestRenderer->EnableScissorTest(m_isScissorTestEnabled);
 
     CreateWindowSizeDependentResources();
     StartRenderLoop();

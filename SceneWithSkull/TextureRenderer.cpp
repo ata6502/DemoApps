@@ -221,10 +221,6 @@ void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& i
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 }
 
-void TextureRenderer::SetOutputSize([[maybe_unused]] winrt::Windows::Foundation::Size outputSize)
-{
-}
-
 float TextureRenderer::GetDistanceToCamera()
 {
     return DISTANCE_TO_CAMERA;

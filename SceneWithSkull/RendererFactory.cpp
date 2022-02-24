@@ -17,8 +17,3 @@ RendererBase* RendererFactory::CreateRenderer(RendererType rendererType, std::sh
     }
 }
 
-IScissorTestRenderer* RendererFactory::GetScissorTestRenderer (RendererBase* renderer)
-{
-    return dynamic_cast<IScissorTestRenderer*>(renderer);
-}
-

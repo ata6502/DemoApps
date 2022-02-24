@@ -15,7 +15,6 @@ public:
     virtual void FinalizeInitialization() = 0;
     virtual void SetProjMatrix(DirectX::FXMMATRIX projMatrix) = 0;
     virtual void Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float elapsedSeconds) = 0;
-    virtual void SetOutputSize(winrt::Windows::Foundation::Size outputSize) = 0;
     virtual float GetDistanceToCamera() = 0;
     virtual float GetCameraPitch() = 0;
 
