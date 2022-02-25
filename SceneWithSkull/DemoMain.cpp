@@ -189,9 +189,10 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     CreateWindowSizeDependentResources();
 
-    // TODO: Simplify logic
-    m_scissorTest->EnableScissorTest(
-        m_scissorTest->IsScissorTestEnabled() && m_renderer->IsScissorTestSupported());
+    if (m_renderer->IsScissorTestSupported())
+        m_scissorTest->RefreshScissorTestState();
+    else
+        m_scissorTest->DisableScissorTest();
 
     StartRenderLoop();
 }
@@ -203,12 +204,10 @@ bool DemoMain::IsScissorTestSupported()
     return m_renderer->IsScissorTestSupported();
 }
 
-void DemoMain::ToggleScissorTest(bool isScissorTestEnabled, float leftRightMarginPercent, float topBottomMarginPercent)
+void DemoMain::ToggleScissorTest(bool isScissorTestEnabled)
 {
-    SetScissorTestLeftRightMargin(leftRightMarginPercent);
-    SetScissorTestTopBottomMargin(topBottomMarginPercent);
-
-    m_scissorTest->EnableScissorTest(isScissorTestEnabled);
+    m_scissorTest->StoreScissorTestState(isScissorTestEnabled);
+    m_scissorTest->RefreshScissorTestState();
 }
 
 void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)

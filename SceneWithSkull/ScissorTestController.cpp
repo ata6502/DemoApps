@@ -3,8 +3,8 @@
 
 ScissorTestController::ScissorTestController(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
-    m_outputSize(),
-    m_isScissorTestEnabled(false)
+    m_isScissorTestEnabled(false),
+    m_outputSize()
 { 
     Initialize();
 }
@@ -38,26 +38,35 @@ void ScissorTestController::Initialize()
         device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestDisabled.put()));
 }
 
-void ScissorTestController::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
+void ScissorTestController::StoreScissorTestState(bool enabled)
 {
-    m_outputSize = outputSize;
+    m_isScissorTestEnabled = enabled;
 }
 
 /// <summary>
 /// Sends an array of screen rectangles (in this example, there is only one rectangle in the array)
 /// to the Direct3D scissor test. The scissor test discards all pixels outside the scissor rectangles.
 /// </summary>
-void ScissorTestController::EnableScissorTest(bool enabled)
+void ScissorTestController::RefreshScissorTestState()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
-
-    m_isScissorTestEnabled = enabled;
 
     // Set the rasterizer state.
     if (m_isScissorTestEnabled)
         context->RSSetState(m_rasterizerStateScissorTestEnabled.get());
     else
         context->RSSetState(m_rasterizerStateScissorTestDisabled.get());
+}
+
+void ScissorTestController::DisableScissorTest()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+    context->RSSetState(m_rasterizerStateScissorTestDisabled.get());
+}
+
+void ScissorTestController::SetOutputSize(winrt::Windows::Foundation::Size outputSize)
+{
+    m_outputSize = outputSize;
 }
 
 void ScissorTestController::SetScissorTestLeftRightMargin(float marginPercent)

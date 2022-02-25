@@ -118,21 +118,7 @@ namespace winrt::SceneWithSkull::implementation
         m_main->SetRenderer(selectedIndex);
 
         if (m_main->IsScissorTestSupported())
-        {
             ScissorTestPanel().Visibility(Visibility::Visible);
-
-            // TODO: Remove redundant code.
-            //auto isScissorTestEnabled = ScissorTestToggle().IsOn();
-
-            //LeftRightMarginSlider().IsEnabled(isScissorTestEnabled);
-            //TopBottomMarginSlider().IsEnabled(isScissorTestEnabled);
-
-            //auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
-            //auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
-
-            //m_main->SetScissorTestLeftRightMargin(leftRightMarginPercent);
-            //m_main->SetScissorTestTopBottomMargin(topBottomMarginPercent);
-        }
         else
             ScissorTestPanel().Visibility(Visibility::Collapsed);
     }
@@ -149,7 +135,10 @@ namespace winrt::SceneWithSkull::implementation
         auto leftRightMarginPercent = static_cast<float>(LeftRightMarginSlider().Value());
         auto topBottomMarginPercent = static_cast<float>(TopBottomMarginSlider().Value());
 
-        m_main->ToggleScissorTest(isScissorTestEnabled, leftRightMarginPercent, topBottomMarginPercent);
+        m_main->SetScissorTestLeftRightMargin(leftRightMarginPercent);
+        m_main->SetScissorTestTopBottomMargin(topBottomMarginPercent);
+
+        m_main->ToggleScissorTest(isScissorTestEnabled);
     }
 
     void MainPage::LeftRightMarginSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)

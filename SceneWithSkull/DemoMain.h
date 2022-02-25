@@ -31,7 +31,7 @@ public:
 
     // Scissor test management.
     bool IsScissorTestSupported();
-    void ToggleScissorTest(bool isScissorTestEnabled, float leftRightMarginPercent, float topBottomMarginPercent);
+    void ToggleScissorTest(bool isScissorTestEnabled);
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
 
