@@ -18,7 +18,7 @@ struct MaterialDesc
 
 struct ConstantBufferNeverChanges
 {
-    DirectionalLightDesc DirectionalLight;
+    DirectionalLightDesc DirectionalLightArray[3];
 };
 
 struct ConstantBufferPerFrame

@@ -16,7 +16,7 @@ struct MaterialDesc
 
 cbuffer ConstantBufferNeverChanges : register(b0)
 {
-    DirectionalLightDesc DirectionalLight;
+    DirectionalLightDesc DirectionalLightArray[3];
 };
 
 cbuffer ConstantBufferPerFrame : register(b1)

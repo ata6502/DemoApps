@@ -32,7 +32,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
 
     // [1] Load shader bytecode.
     auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsVertexShader.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsPixelShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsPixelShaderThreeLights.cso"); // TODO: Load all three pixel shaders
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -132,15 +132,34 @@ void TextureRenderer::FinalizeInitialization()
     // Create a data structure for data that never changes.
     ConstantBufferNeverChanges constantBufferNeverChangesData;
 
-    // Create the directional light.
-    DirectionalLightDesc light;
-    light.Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-    light.Diffuse = XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f);
-    light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-    light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
-    constantBufferNeverChangesData.DirectionalLight = light;
+    // Create the directional lights.
 
-    // Copy data that never changes to the appropriate constant buffer.
+    // The three directional lights are:
+    // - a primary light source
+    // - a secondary fill light
+    // - a back light.
+    DirectionalLightDesc lights[3];
+
+    lights[0].Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    lights[0].Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    lights[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    lights[0].Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
+
+    lights[1].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+    lights[1].Diffuse = XMFLOAT4(0.20f, 0.20f, 0.20f, 1.0f);
+    lights[1].Specular = XMFLOAT4(0.25f, 0.25f, 0.25f, 1.0f);
+    lights[1].Direction = XMFLOAT3(-0.57735f, -0.57735f, 0.57735f);
+
+    lights[2].Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+    lights[2].Diffuse = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+    lights[2].Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+    lights[2].Direction = XMFLOAT3(0.0f, -0.707f, -0.707f);
+
+    constantBufferNeverChangesData.DirectionalLightArray[0] = lights[0];
+    constantBufferNeverChangesData.DirectionalLightArray[1] = lights[1];
+    constantBufferNeverChangesData.DirectionalLightArray[2] = lights[2];
+
+    // Copy directional lights to the constant buffer.
     context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
 }
 

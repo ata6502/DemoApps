@@ -1,6 +1,10 @@
 #include "LightsShaderInclude.hlsli"
 #include "LightSources.hlsli"
 
+#ifndef LIGHT_COUNT
+#define LIGHT_COUNT 0
+#endif
+
 float4 main(PixelShaderInput input) : SV_TARGET
 {
     // Normalize the input normal vector as interpolation may have unnormalize it.
@@ -14,12 +18,17 @@ float4 main(PixelShaderInput input) : SV_TARGET
     float4 D = float4(0.0f, 0.0f, 0.0f, 0.0f); // diffuse component
     float4 S = float4(0.0f, 0.0f, 0.0f, 0.0f); // specular component
 
-    // Declare light components used to calculate light for each source.
-    float4 a, d, s;
+    // Sum the light contribution from each light source.  
+    [unroll]
+    for (int i = 0; i < LIGHT_COUNT; ++i)
+    {
+        float4 a, d, s;
 
-    ComputeDirectionalLight(Material, DirectionalLight, input.Normal, toEyeW, a, d, s);
+        ComputeDirectionalLight(Material, DirectionalLightArray[i], input.Normal, toEyeW, a, d, s);
+        A += a; D += d; S += s;
+    }
 
-    float4 color = a + d + s;
+    float4 color = A + D + S;
     return color;
 }
 
