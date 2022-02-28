@@ -17,19 +17,9 @@ float4 main(PixelShaderInput input) : SV_TARGET
     // Declare light components used to calculate light for each source.
     float4 a, d, s;
 
-    // Sum the light contribution from each light source.
     ComputeDirectionalLight(Material, DirectionalLight, input.Normal, toEyeW, a, d, s);
-    A += a; D += d; S += s;
 
-    // TODO: Bring other light sources if needed.
-    //ComputePointLight(Material, PointLight, input.PosW, input.Normal, toEyeW, a, d, s);
-    //A += a; D += d; S += s;
-
-    //ComputeSpotLight(Material, SpotLight, input.PosW, input.Normal, toEyeW, a, d, s);
-    //A += a; D += d; S += s;
-
-    float4 color = A + D + S;
-
+    float4 color = a + d + s;
     return color;
 }
 
