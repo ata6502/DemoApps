@@ -125,17 +125,24 @@
                         <TextBlock Text="Three-light system" Margin="0,12,0,0" />
                         <StackPanel Margin="0,4,8,0"
                                     VerticalAlignment="Top">
-                            <RadioButton GroupName="Group1">
+                            <RadioButton GroupName="Group1" 
+                                         Tag="1"
+                                         Checked="ThreeLightSystemRadioButton_Checked"
+                                         IsChecked="True">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="One Light" Margin="8,0,0,0" />
                                 </StackPanel>
                             </RadioButton>
-                            <RadioButton GroupName="Group1">
+                            <RadioButton GroupName="Group1" 
+                                         Tag="2"
+                                         Checked="ThreeLightSystemRadioButton_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Two Lights" Margin="8,0,0,0" />
                                 </StackPanel>
                             </RadioButton>
-                            <RadioButton GroupName="Group1">
+                            <RadioButton GroupName="Group1" 
+                                         Tag="3"
+                                         Checked="ThreeLightSystemRadioButton_Checked">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Three Lights" Margin="8,0,0,0" />
                                 </StackPanel>

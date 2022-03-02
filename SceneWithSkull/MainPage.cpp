@@ -166,6 +166,17 @@ namespace winrt::SceneWithSkull::implementation
         m_main->SetScissorTestTopBottomMargin(marginPercent);
     }
 
+    void MainPage::ThreeLightSystemRadioButton_Checked(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        auto radioButton = sender.as<RadioButton>();
+        auto tag = unbox_value<hstring>(radioButton.Tag());
+        auto lightCount = std::stoi(tag.c_str());
+        m_main->SetLightCount(lightCount);
+    }
+
     void MainPage::InitializePanels()
     {
         if (m_main->IsScissorTestSupported())

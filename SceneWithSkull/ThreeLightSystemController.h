@@ -10,6 +10,7 @@ public:
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
     void Render();
     void ReleaseResources();
+    void SetLightCount(int lightCount);
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

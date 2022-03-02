@@ -38,6 +38,7 @@ public:
 
     // Three-light system management.
     bool IsThreeLightSystemSupported();
+    void SetLightCount(int lightCount);
 
     // IDeviceNotify
     virtual void OnDeviceLost();

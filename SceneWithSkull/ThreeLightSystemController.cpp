@@ -49,6 +49,13 @@ winrt::Windows::Foundation::IAsyncAction ThreeLightSystemController::InitializeI
     m_initialized = true;
 }
 
+void ThreeLightSystemController::SetLightCount(int lightCount)
+{
+    ASSERT(lightCount >= 1 && lightCount <= 3);
+
+    m_currentPixelShaderIndex = lightCount - 1;
+}
+
 void ThreeLightSystemController::Render()
 {
     if (!m_initialized)
