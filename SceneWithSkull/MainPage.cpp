@@ -18,6 +18,8 @@ namespace winrt::SceneWithSkull::implementation
     {
         InitializeComponent();
 
+        Loaded({ this, &MainPage::OnWindowLoaded });
+
         auto window = Window::Current().CoreWindow();
         window.VisibilityChanged({ this, &MainPage::OnVisibilityChanged });
 
@@ -32,6 +34,11 @@ namespace winrt::SceneWithSkull::implementation
         m_main = std::make_unique<DemoMain>();
         m_main->SetSwapChainPanel(DXSwapChainPanel());
         m_main->StartRenderLoop();
+    }
+
+    void MainPage::OnWindowLoaded([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        InitializePanels();
     }
 
     void MainPage::OnVisibilityChanged([[maybe_unused]] winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::VisibilityChangedEventArgs const& args)
@@ -116,11 +123,7 @@ namespace winrt::SceneWithSkull::implementation
         auto selectedIndex = listBox.SelectedIndex();
 
         m_main->SetRenderer(selectedIndex);
-
-        if (m_main->IsScissorTestSupported())
-            ScissorTestPanel().Visibility(Visibility::Visible);
-        else
-            ScissorTestPanel().Visibility(Visibility::Collapsed);
+        InitializePanels();
     }
 
     void MainPage::ScissorTestToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
@@ -161,5 +164,18 @@ namespace winrt::SceneWithSkull::implementation
 
         auto marginPercent = static_cast<float>(args.NewValue());
         m_main->SetScissorTestTopBottomMargin(marginPercent);
+    }
+
+    void MainPage::InitializePanels()
+    {
+        if (m_main->IsScissorTestSupported())
+            ScissorTestPanel().Visibility(Visibility::Visible);
+        else
+            ScissorTestPanel().Visibility(Visibility::Collapsed);
+
+        if (m_main->IsThreeLightSystemSupported())
+            ThreeLightSystemPanel().Visibility(Visibility::Visible);
+        else
+            ThreeLightSystemPanel().Visibility(Visibility::Collapsed);
     }
 }

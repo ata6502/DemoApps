@@ -36,6 +36,9 @@ public:
     void SetScissorTestLeftRightMargin(float marginPercent);
     void SetScissorTestTopBottomMargin(float marginPercent);
 
+    // Three-light system management.
+    bool IsThreeLightSystemSupported();
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();

@@ -120,6 +120,28 @@
                                 TickFrequency="10"
                                 ValueChanged="TopBottomMarginSlider_ValueChanged" />
                     </StackPanel>
+
+                    <StackPanel x:Name="ThreeLightSystemPanel">
+                        <TextBlock Text="Three-light system" Margin="0,12,0,0" />
+                        <StackPanel Margin="0,4,8,0"
+                                    VerticalAlignment="Top">
+                            <RadioButton GroupName="Group1">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="One Light" Margin="8,0,0,0" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton GroupName="Group1">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Two Lights" Margin="8,0,0,0" />
+                                </StackPanel>
+                            </RadioButton>
+                            <RadioButton GroupName="Group1">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Three Lights" Margin="8,0,0,0" />
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
                 
             </ScrollViewer>

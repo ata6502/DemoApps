@@ -204,7 +204,6 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 }
 
 #pragma region Scissor test managment
-
 bool DemoMain::IsScissorTestSupported()
 {
     return m_renderer->IsScissorTestSupported();
@@ -224,5 +223,12 @@ void DemoMain::SetScissorTestLeftRightMargin(float marginPercent)
 void DemoMain::SetScissorTestTopBottomMargin(float marginPercent)
 {
     m_scissorTest->SetScissorTestTopBottomMargin(marginPercent);
+}
+#pragma endregion
+
+#pragma region Three-light system management
+bool DemoMain::IsThreeLightSystemSupported()
+{
+    return m_renderer->IsThreeLightSystemSupported();
 }
 #pragma endregion
