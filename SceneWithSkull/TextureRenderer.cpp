@@ -30,9 +30,8 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
-    // [1] Load shader bytecode.
+    // [1] Load vertex shader bytecode.
     auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsVertexShader.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsPixelShaderThreeLights.cso"); // TODO: Load all three pixel shaders
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -58,15 +57,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             vertexShaderBytecode.Length(),
             m_inputLayout.put()));
 
-    // [5] Create the pixel shader.
-    winrt::check_hresult(
-        device->CreatePixelShader(
-            pixelShaderBytecode.data(),
-            pixelShaderBytecode.Length(),
-            nullptr,
-            m_pixelShader.put()));
-
-    // [6] Create constant buffers.
+    // [5] Create constant buffers.
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
     bd.Usage = D3D11_USAGE_DEFAULT;
@@ -81,7 +72,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [7] Create rasterizer states to enable or diable the scissor test using 
+    // [6] Create rasterizer states to enable or diable the scissor test using 
     // the D3D11_RASTERIZER_DESC::ScissorEnable flag.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
@@ -105,10 +96,10 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     winrt::check_hresult(
         device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestDisabled.put()));
 
-    // [8] Create meshes using the MeshGenerator.
+    // [7] Create meshes using the MeshGenerator.
     co_await CreateMeshes();
 
-    // [9] Define the scene.
+    // [8] Define the scene.
     DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.
@@ -174,7 +165,6 @@ void TextureRenderer::Render()
 
     // Attach shaders.
     context->VSSetShader(m_vertexShader.get(), nullptr, 0);
-    context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 
     // Get pointers to constant buffers.
     ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
@@ -202,7 +192,6 @@ void TextureRenderer::ReleaseResources()
     m_meshGenerator->ReleaseBuffers();
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
-    m_pixelShader = nullptr;
     m_constantBufferNeverChanges = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;

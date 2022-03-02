@@ -38,6 +38,12 @@ void ScissorTestController::Initialize()
         device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestDisabled.put()));
 }
 
+void ScissorTestController::ReleaseResources()
+{
+    m_rasterizerStateScissorTestEnabled = nullptr;
+    m_rasterizerStateScissorTestDisabled = nullptr;
+}
+
 void ScissorTestController::StoreScissorTestState(bool enabled)
 {
     m_isScissorTestEnabled = enabled;

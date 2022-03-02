@@ -7,6 +7,9 @@ class ScissorTestController
 public:
     ScissorTestController::ScissorTestController(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
+    void Initialize();
+    void ReleaseResources();
+
     void StoreScissorTestState(bool enabled);
     void RefreshScissorTestState();
     void DisableScissorTest();
@@ -26,7 +29,6 @@ private:
     float                                   m_leftRightMarginPercent;
     float                                   m_topBottomMarginPercent;
 
-    void Initialize();
     void SetScissorTestRectangle();
 };
 

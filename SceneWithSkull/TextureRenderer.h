@@ -21,6 +21,7 @@ public:
     float GetDistanceToCamera();
     float GetCameraPitch();
     bool IsScissorTestSupported() { return false; }
+    bool IsThreeLightSystemSupported() { return true; }
 
 private:
     static const float DISTANCE_TO_CAMERA;
@@ -38,7 +39,6 @@ private:
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>      m_inputLayout;
     winrt::com_ptr<ID3D11VertexShader>     m_vertexShader;
-    winrt::com_ptr<ID3D11PixelShader>      m_pixelShader;
     winrt::com_ptr<ID3D11RasterizerState2> m_rasterizerStateScissorTestEnabled;
     winrt::com_ptr<ID3D11RasterizerState2> m_rasterizerStateScissorTestDisabled;
 
@@ -51,8 +51,6 @@ private:
     std::unique_ptr<MeshGeneratorTexture>  m_meshGenerator;
     std::map<std::string, ObjectInfo>      m_objects;
     float                                  m_rotation;
-    float                                  m_leftRightMarginPercent;
-    float                                  m_topBottomMarginPercent;
 
     void SetObjectData(std::string const& name, ObjectInfo const& info);
     winrt::Windows::Foundation::IAsyncAction CreateMeshes();

@@ -135,6 +135,7 @@
     <ClInclude Include="RendererFactory.h" />
     <ClInclude Include="ScissorTestController.h" />
     <ClInclude Include="TextureRenderer.h" />
+    <ClInclude Include="ThreeLightSystemController.h" />
     <ClInclude Include="VertexStructures.h" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +182,7 @@
     <ClCompile Include="RendererFactory.cpp" />
     <ClCompile Include="ScissorTestController.cpp" />
     <ClCompile Include="TextureRenderer.cpp" />
+    <ClCompile Include="ThreeLightSystemController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">

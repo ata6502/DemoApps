@@ -23,6 +23,7 @@ DemoMain::DemoMain()
     m_input->SetPitch(m_renderer->GetCameraPitch());
 
     m_scissorTest = std::make_unique<ScissorTestController>(m_deviceResources);
+    m_threeLightSystem = std::make_unique<ThreeLightSystemController>(m_deviceResources);
 
     m_timer.Reset();
 }
@@ -130,6 +131,8 @@ void DemoMain::OnDeviceLost()
 void DemoMain::OnDeviceRestored()
 {
     m_renderer->InitializeInBackground();
+    m_scissorTest->Initialize();
+    m_threeLightSystem->InitializeInBackground();
     CreateWindowSizeDependentResources();
     StartRenderLoop();
 }
@@ -161,12 +164,15 @@ void DemoMain::Render()
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
+    m_threeLightSystem->Render();
     m_renderer->Render();
 }
 
 void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
+    m_scissorTest->ReleaseResources();
+    m_threeLightSystem->ReleaseResources();
 }
 
 void DemoMain::SetRenderer(int32_t rendererIndex)
@@ -178,7 +184,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     critical_section::scoped_lock lock(m_criticalSection);
 
-    ReleaseResources();
+    m_renderer->ReleaseResources();
 
     auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
     m_renderer.reset();

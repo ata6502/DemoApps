@@ -19,6 +19,7 @@ public:
     float GetDistanceToCamera();
     float GetCameraPitch();
     bool IsScissorTestSupported() { return true; }
+    bool IsThreeLightSystemSupported() { return false; }
 
 private:
     static const float DISTANCE_TO_CAMERA;

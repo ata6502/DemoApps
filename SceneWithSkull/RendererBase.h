@@ -18,6 +18,7 @@ public:
     virtual float GetDistanceToCamera() = 0;
     virtual float GetCameraPitch() = 0;
     virtual bool IsScissorTestSupported() = 0;
+    virtual bool IsThreeLightSystemSupported() = 0;
 
 protected:
     void IsInitialized(bool isInitialized) { m_initialized = isInitialized; }

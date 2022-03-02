@@ -43,6 +43,9 @@
     <ClCompile Include="ScissorTestController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="ThreeLightSystemController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -84,6 +87,9 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="ScissorTestController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreeLightSystemController.h">
       <Filter>Controllers</Filter>
     </ClInclude>
   </ItemGroup>

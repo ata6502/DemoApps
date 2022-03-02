@@ -5,6 +5,7 @@
 #include "IndependentInput.h"
 #include "RendererBase.h"
 #include "ScissorTestController.h"
+#include "ThreeLightSystemController.h"
 #include "Timer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -54,5 +55,6 @@ private:
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
     std::unique_ptr<ScissorTestController>   m_scissorTest;
+    std::unique_ptr<ThreeLightSystemController> m_threeLightSystem;
 };
 
