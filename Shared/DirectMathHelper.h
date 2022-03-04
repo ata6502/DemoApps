@@ -20,6 +20,21 @@ inline DirectX::XMFLOAT3 VectorToFloat3(const DirectX::FXMVECTOR& v)
     return f;
 }
 
+// Computes the inverse transpose matrix.
+static DirectX::XMMATRIX InverseTranspose(DirectX::CXMMATRIX M)
+{
+    using namespace DirectX;
+
+    // Zero out the translation row in the input matrix because 
+    // we apply an inverse-transpose matrix just to normals. 
+    // We don't want the inverse-transpose of the translation.
+    XMMATRIX A = M;
+    A.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+    XMVECTOR det = XMMatrixDeterminant(A);
+    return XMMatrixTranspose(XMMatrixInverse(&det, A));
+}
+
 #if defined(_DEBUG)
 // Examples: 
 // DebugTrace(L"num = %4.2f\n", num);

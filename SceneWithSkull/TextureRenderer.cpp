@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <string>
 
+#include "DirectMathHelper.h"
 #include "LightsShaderStructures.h"
 #include "TextureRenderer.h"
 #include "Utilities.h"
@@ -223,7 +224,11 @@ void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& i
     if (name == "Ellipsoid")
         worldMatrix = worldMatrix * XMMatrixRotationY(m_rotation) * XMMatrixTranslation(0.0f, 3.0f, 0.0f);
 
+    // Calculate the world inverse transpose matrix in order to properly transform normals in case there are any non-uniform or shear transformations.
+    auto worldInvTranspose = InverseTranspose(worldMatrix);
+
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
+    XMStoreFloat4x4(&constantBufferPerObjectData.WorldInvTranspose, XMMatrixTranspose(worldInvTranspose));
     constantBufferPerObjectData.Material = info.Material;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
@@ -253,20 +258,25 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::CreateMeshes()
 void TextureRenderer::DefineSceneObjects()
 {
     // Prepare materials.
-    MaterialDesc material1;
-    material1.Ambient = XMFLOAT4(0.2f, 0.5f, 0.8f, 1.0f);
-    material1.Diffuse = XMFLOAT4(0.2f, 0.5f, 0.8f, 1.0f);
-    material1.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+    MaterialDesc materialGrid;
+    materialGrid.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+    materialGrid.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+    materialGrid.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
 
-    MaterialDesc material2;
-    material2.Ambient = XMFLOAT4(0.8f, 0.2f, 0.8f, 1.0f);
-    material2.Diffuse = XMFLOAT4(0.8f, 0.0f, 0.8f, 1.0f);
-    material2.Specular = XMFLOAT4(0.2f, 0.0f, 0.2f, 16.0f);
+    MaterialDesc materialCylinder;
+    materialCylinder.Ambient = XMFLOAT4(0.7f, 0.85f, 0.7f, 1.0f);
+    materialCylinder.Diffuse = XMFLOAT4(0.7f, 0.85f, 0.7f, 1.0f);
+    materialCylinder.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f); // w = SpecularPower
 
-    MaterialDesc material3;
-    material3.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material3.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-    material3.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 32.0f);
+    MaterialDesc materialSphere;
+    materialSphere.Ambient = XMFLOAT4(0.1f, 0.2f, 0.3f, 1.0f);
+    materialSphere.Diffuse = XMFLOAT4(0.2f, 0.4f, 0.6f, 1.0f);
+    materialSphere.Specular = XMFLOAT4(0.9f, 0.9f, 0.9f, 16.0f); // w = SpecularPower
+
+    MaterialDesc materialBox;
+    materialBox.Ambient = XMFLOAT4(0.651f, 0.5f, 0.392f, 1.0f);
+    materialBox.Diffuse = XMFLOAT4(0.651f, 0.5f, 0.392f, 1.0f);
+    materialBox.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
 
     MaterialDesc materialSkull;
     materialSkull.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -276,17 +286,17 @@ void TextureRenderer::DefineSceneObjects()
     ObjectInfo info;
 
     info.MeshName = "grid";
-    info.Material = material3;
+    info.Material = materialGrid;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
     m_objects["Floor"] = info;
 
     info.MeshName = "sphere";
-    info.Material = material3;
+    info.Material = materialSphere;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.0f, 2.0f, 2.0f)); // updated dynamically
     m_objects["Ellipsoid"] = info;
 
     info.MeshName = "cube";
-    info.Material = material2;
+    info.Material = materialBox;
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
     m_objects["EllipsoidStand"] = info;
 
@@ -299,7 +309,7 @@ void TextureRenderer::DefineSceneObjects()
     for (int i = 0; i < 5; ++i)
     {
         info.MeshName = "cylinder";
-        info.Material = material1;
+        info.Material = materialCylinder;
         auto n = std::to_string(i + 1);
 
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i * 5.0f));
@@ -309,7 +319,7 @@ void TextureRenderer::DefineSceneObjects()
         m_objects["ColumnRight" + n] = info;
 
         info.MeshName = "sphere";
-        info.Material = material3;
+        info.Material = materialSphere;
 
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f));
         m_objects["BallLeft" + n] = info;

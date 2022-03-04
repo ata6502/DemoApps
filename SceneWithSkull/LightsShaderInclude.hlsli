@@ -29,6 +29,7 @@ cbuffer ConstantBufferPerFrame : register(b1)
 cbuffer ConstantBufferPerObject : register(b2)
 {
     matrix World;
+    matrix WorldInvTranspose;
     MaterialDesc Material;
 };
 
