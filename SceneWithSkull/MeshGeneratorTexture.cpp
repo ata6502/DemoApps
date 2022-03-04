@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include "DirectMathHelper.h"
+#include "MathHelper.h"
 #include "MeshGeneratorTexture.h"
 #include "Utilities.h"
 
@@ -13,7 +14,8 @@ MeshGeneratorTexture::MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> 
 }
 
 /// <summary>
-/// Creates a unit cube i.e., a cube whose sides are 1 unit long.
+/// Creates a unit cube with 24 vertices. This is sufficient to define 
+/// textures on each cube's face.
 /// </summary>
 void MeshGeneratorTexture::CreateCube(std::string const& name)
 {
@@ -24,99 +26,45 @@ void MeshGeneratorTexture::CreateCube(std::string const& name)
     info.StartIndexLocation = m_indices.size();
 
     auto i = info.BaseVertexLocation;
-    m_vertices.resize(i + 8); // a cube has 8 vertices
-
-    float l = 0.5f, n = 1.0f / sqrtf(3.0f); // all components of coordinates of the normals have the value n
-    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(-n, -n, -n) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(-n, -n,  n) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(-n,  n, -n) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(-n,  n,  n) };
-    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3( n, -n, -n) };
-    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3( n, -n,  n) };
-    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3( n,  n, -n) };
-    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3( n,  n,  n) };
-
-    ASSERT(m_vertices.size() == i);
-
-    std::vector<uint32_t> indices =
-    {
-        0, 1, 2, // -x
-        1, 3, 2,
-
-        4, 6, 5, // +x
-        5, 6, 7,
-
-        0, 5, 1, // -y
-        0, 4, 5,
-
-        2, 7, 6, // +y
-        2, 3, 7,
-
-        0, 6, 4, // -z
-        0, 2, 6,
-
-        1, 7, 3, // +z
-        1, 5, 7,
-    };
-
-    info.IndexCount = indices.size();
-    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
-
-    m_meshes[name] = info;
-}
-
-/// <summary>
-/// Creates a unit cube with additional vertices to achieve different lighting.
-/// The lighting is "flat" meaning that each face of the cube is lit uniformly.
-/// </summary>
-void MeshGeneratorTexture::CreateCube2(std::string const& name)
-{
-    ASSERT(m_meshes.find(name) == m_meshes.end());
-
-    MeshInfo info;
-    info.BaseVertexLocation = m_vertices.size();
-    info.StartIndexLocation = m_indices.size();
-
-    auto i = info.BaseVertexLocation;
-    m_vertices.resize(i + 24); // a cube with additonal vertices has 24 vertices
+    m_vertices.resize(i + 24);
 
     float l = 0.5f, n = 1.0f;
 
     // front face
-    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, 0, -n) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(0, 0, -n) };
-    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(0, 0, -n) };
-    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(0, 0, -n) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(0.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(1.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(0, 0, -n), XMFLOAT2(1.0f, 1.0f) };
 
     // back face
-    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(0, 0, n) };
-    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(0, 0, n) };
-    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(0, 0, n) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(0, 0, n) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(0, 0, n), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(0, 0, n), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(0, 0, n), XMFLOAT2(0.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(0, 0, n), XMFLOAT2(1.0f, 0.0f) };
 
     // top face
-    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(0, n, 0) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(0, n, 0) };
-    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(0, n, 0) };
-    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(0, n, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(0, n, 0), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(0, n, 0), XMFLOAT2(0.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(0, n, 0), XMFLOAT2(1.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(0, n, 0), XMFLOAT2(1.0f, 1.0f) };
 
     // bottom face
-    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, -n, 0) };
-    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(0, -n, 0) };
-    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(0, -n, 0) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(0, -n, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(0, -n, 0), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(0, -n, 0), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(0, -n, 0), XMFLOAT2(0.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(0, -n, 0), XMFLOAT2(1.0f, 0.0f) };
 
     // left face
-    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(-n, 0, 0) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(-n, 0, 0) };
-    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(-n, 0, 0) };
-    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(-n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(-n, 0, 0), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(-n, 0, 0), XMFLOAT2(0.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(-n, 0, 0), XMFLOAT2(1.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(-n, 0, 0), XMFLOAT2(1.0f, 1.0f) };
 
     // right face
-    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(n, 0, 0) };
-    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(n, 0, 0) };
-    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(n, 0, 0) };
-    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(n, 0, 0) };
+    m_vertices[i++] = { XMFLOAT3( l, -l, -l), XMFLOAT3(n, 0, 0), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { XMFLOAT3( l,  l, -l), XMFLOAT3(n, 0, 0), XMFLOAT2(0.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l,  l,  l), XMFLOAT3(n, 0, 0), XMFLOAT2(1.0f, 0.0f) };
+    m_vertices[i++] = { XMFLOAT3( l, -l,  l), XMFLOAT3(n, 0, 0), XMFLOAT2(1.0f, 1.0f) };
 
     ASSERT(m_vertices.size() == i);
 
@@ -154,10 +102,145 @@ void MeshGeneratorTexture::CreateCube2(std::string const& name)
 }
 
 /// <summary>
-/// Creates a pyramid. The pyramid's base is a unit square.
-/// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
+/// Creates a unit cube i.e., a cube whose sides are 1 unit long. The simple cube has 8 vertices
+/// which is not sufficient to define a texture on every face.
+/// </summary>
+void MeshGeneratorTexture::CreateSimpleCube(std::string const& name)
+{
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size();
+    info.StartIndexLocation = m_indices.size();
+
+    auto i = info.BaseVertexLocation;
+    m_vertices.resize(i + 8); // a cube has 8 vertices
+
+    float l = 0.5f, n = 1.0f / sqrtf(3.0f); // all coordinates of the normals have the value n
+    m_vertices[i++] = { XMFLOAT3(-l, -l, -l), XMFLOAT3(-n, -n, -n) };
+    m_vertices[i++] = { XMFLOAT3(-l, -l,  l), XMFLOAT3(-n, -n,  n) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l, -l), XMFLOAT3(-n,  n, -n) };
+    m_vertices[i++] = { XMFLOAT3(-l,  l,  l), XMFLOAT3(-n,  n,  n) };
+    m_vertices[i++] = { XMFLOAT3(l, -l, -l), XMFLOAT3(n, -n, -n) };
+    m_vertices[i++] = { XMFLOAT3(l, -l,  l), XMFLOAT3(n, -n,  n) };
+    m_vertices[i++] = { XMFLOAT3(l,  l, -l), XMFLOAT3(n,  n, -n) };
+    m_vertices[i++] = { XMFLOAT3(l,  l,  l), XMFLOAT3(n,  n,  n) };
+
+    ASSERT(m_vertices.size() == i);
+
+    std::vector<uint32_t> indices =
+    {
+        0, 1, 2, // -x
+        1, 3, 2,
+
+        4, 6, 5, // +x
+        5, 6, 7,
+
+        0, 5, 1, // -y
+        0, 4, 5,
+
+        2, 7, 6, // +y
+        2, 3, 7,
+
+        0, 6, 4, // -z
+        0, 2, 6,
+
+        1, 7, 3, // +z
+        1, 5, 7,
+    };
+
+    info.IndexCount = indices.size();
+    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
+
+    m_meshes[name] = info;
+}
+
+/// <summary>
+/// Creates a pyramid with 18 vertices. This is sufficient to define 
+/// textures on each pyramid's face.
 /// </summary>
 void MeshGeneratorTexture::CreatePyramid(std::string const& name)
+{
+    ASSERT(m_meshes.find(name) == m_meshes.end());
+
+    MeshInfo info;
+    info.BaseVertexLocation = m_vertices.size();
+    info.StartIndexLocation = m_indices.size();
+
+    auto i = info.BaseVertexLocation;
+    m_vertices.resize(i + 18); // a pyramid with additonal vertices has 18 vertices
+
+    // vertices
+    float l = 0.5f;
+    XMVECTOR v0 = { 0,  l,  0 };
+    XMVECTOR v1 = { -l, -l, -l };
+    XMVECTOR v2 = { l, -l, -l };
+    XMVECTOR v3 = { l, -l,  l };
+    XMVECTOR v4 = { -l, -l,  l };
+
+    // normals
+    XMVECTOR n0 = ComputeNormal(v0, v2, v1); // front
+    XMVECTOR n1 = ComputeNormal(v0, v3, v2); // right
+    XMVECTOR n2 = ComputeNormal(v0, v4, v3); // back
+    XMVECTOR n3 = ComputeNormal(v0, v1, v4); // left
+    XMVECTOR n4 = ComputeNormal(v1, v2, v3); // bottom
+    XMVECTOR n5 = ComputeNormal(v1, v3, v4); // bottom (should be the same as n4)
+
+    // front
+    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n0), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v2), VectorToFloat3(n0), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n0), XMFLOAT2(0.5f, 0.0f) };
+
+    // right
+    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n1), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n1), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v2), VectorToFloat3(n1), XMFLOAT2(0.5f, 0.0f) };
+
+    // back
+    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n2), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v4), VectorToFloat3(n2), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n2), XMFLOAT2(0.5f, 0.0f) };
+
+    // left
+    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n3), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n3), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v4), VectorToFloat3(n3), XMFLOAT2(0.5f, 0.0f) };
+
+    // bottom - one half (bottom is a rectangle composed of two triangles)
+    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n4), XMFLOAT2(1.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v2), VectorToFloat3(n4), XMFLOAT2(0.0f, 1.0f) };
+    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n4), XMFLOAT2(0.5f, 0.0f) };
+
+    // bottom- another half
+    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n5) };
+    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n5) };
+    m_vertices[i++] = { VectorToFloat3(v4), VectorToFloat3(n5) };
+
+    ASSERT(m_vertices.size() == i);
+
+    std::vector<uint32_t> indices =
+    {
+        0, 1, 2,
+        3, 4, 5,
+        6, 7, 8,
+        9, 10, 11,
+
+        12, 13, 14,
+        15, 16, 17
+    };
+
+    info.IndexCount = indices.size();
+    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
+
+    m_meshes[name] = info;
+}
+
+/// <summary>
+/// Creates a pyramid. The pyramid's base is a unit square. The simple pyramid has 5 vertices
+///  which is not sufficient to define a texture on every face.
+/// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
+/// </summary>
+void MeshGeneratorTexture::CreateSimplePyramid(std::string const& name)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 
@@ -188,86 +271,6 @@ void MeshGeneratorTexture::CreatePyramid(std::string const& name)
 
         2, 1, 3,
         3, 1, 4,
-    };
-
-    info.IndexCount = indices.size();
-    CopyIndices(indices, info.StartIndexLocation, info.IndexCount);
-
-    m_meshes[name] = info;
-}
-
-/// <summary>
-/// Creates a pyramid with additional vertices to achieve different lighting.
-/// The lighting is "flat" meaning that each face of the pyramid is lit uniformly.
-/// </summary>
-void MeshGeneratorTexture::CreatePyramid2(std::string const& name)
-{
-    ASSERT(m_meshes.find(name) == m_meshes.end());
-
-    MeshInfo info;
-    info.BaseVertexLocation = m_vertices.size();
-    info.StartIndexLocation = m_indices.size();
-
-    auto i = info.BaseVertexLocation;
-    m_vertices.resize(i + 18); // a pyramid with additonal vertices has 18 vertices
-
-    // vertices
-    float l = 0.5f;
-    XMVECTOR v0 = {  0,  l,  0 };
-    XMVECTOR v1 = { -l, -l, -l };
-    XMVECTOR v2 = {  l, -l, -l };
-    XMVECTOR v3 = {  l, -l,  l };
-    XMVECTOR v4 = { -l, -l,  l };
-
-    // normals
-    XMVECTOR n0 = ComputeNormal(v0, v2, v1); // front
-    XMVECTOR n1 = ComputeNormal(v0, v3, v2); // right
-    XMVECTOR n2 = ComputeNormal(v0, v4, v3); // back
-    XMVECTOR n3 = ComputeNormal(v0, v1, v4); // left
-    XMVECTOR n4 = ComputeNormal(v1, v2, v3); // bottom
-    XMVECTOR n5 = ComputeNormal(v1, v3, v4); // bottom (should be the same as n4)
-
-    // front
-    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n0) };
-    m_vertices[i++] = { VectorToFloat3(v2), VectorToFloat3(n0) };
-    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n0) };
-
-    // right
-    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n1) };
-    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n1) };
-    m_vertices[i++] = { VectorToFloat3(v2), VectorToFloat3(n1) };
-
-    // back
-    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n2) };
-    m_vertices[i++] = { VectorToFloat3(v4), VectorToFloat3(n2) };
-    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n2) };
-
-    // left
-    m_vertices[i++] = { VectorToFloat3(v0), VectorToFloat3(n3) };
-    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n3) };
-    m_vertices[i++] = { VectorToFloat3(v4), VectorToFloat3(n3) };
-
-    // bottom
-    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n4) };
-    m_vertices[i++] = { VectorToFloat3(v2), VectorToFloat3(n4) };
-    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n4) };
-
-    // bottom
-    m_vertices[i++] = { VectorToFloat3(v1), VectorToFloat3(n5) };
-    m_vertices[i++] = { VectorToFloat3(v3), VectorToFloat3(n5) };
-    m_vertices[i++] = { VectorToFloat3(v4), VectorToFloat3(n5) };
-
-    ASSERT(m_vertices.size() == i);
-
-    std::vector<uint32_t> indices =
-    {
-        0, 1, 2,
-        3, 4, 5,
-        6, 7, 8,
-        9, 10, 11,
-
-        12, 13, 14,
-        15, 16, 17
     };
 
     info.IndexCount = indices.size();
@@ -340,8 +343,11 @@ void MeshGeneratorTexture::CreateCylinder(std::string const& name, float bottomR
             float c = cosf(j * theta);
             float s = sinf(j * theta);
 
-            VertexPositionNormal v;
-            v.Position = XMFLOAT3(r * c, y, r * s);
+            VertexPositionTexture vertex;
+            vertex.Position = XMFLOAT3(r * c, y, r * s);
+
+            vertex.Texture.x = (float)j / sliceCount;
+            vertex.Texture.y = 1.0f - (float)i / stackCount;
 
             // Computing Tangent Space Basis Vectors for an Arbitrary Mesh 
             // "Foundations of Game Engine Development, Volume 2: Rendering"
@@ -382,9 +388,9 @@ void MeshGeneratorTexture::CreateCylinder(std::string const& name, float bottomR
             XMVECTOR t = XMLoadFloat3(&tangent);
             XMVECTOR b = XMLoadFloat3(&bitangent);
             XMVECTOR n = XMVector3Normalize(XMVector3Cross(t, b));
-            XMStoreFloat3(&v.Normal, n);
+            XMStoreFloat3(&vertex.Normal, n);
 
-            m_vertices.push_back(v);
+            m_vertices.push_back(vertex);
         }
     }
 
@@ -427,24 +433,30 @@ void MeshGeneratorTexture::BuildCylinderTopCap(uint32_t baseVertexLocation, floa
     float y = 0.5f * cylinderHeight; // the y-coordinate of the top cap
     float theta = XM_2PI / sliceCount;
 
-    VertexPositionNormal v;
+    VertexPositionTexture vertex;
 
-    // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
+    // Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = topRadius * cosf(i * theta);
         float z = topRadius * sinf(i * theta);
 
-        v.Position = XMFLOAT3(x, y, z);
-        v.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-        m_vertices.push_back(v);
+        // Scale down by the height to make the top cap texture proportional to the base.
+        float u = x / cylinderHeight + 0.5f;
+        float v = z / cylinderHeight + 0.5f;
+
+        vertex.Position = XMFLOAT3(x, y, z);
+        vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+        vertex.Texture = XMFLOAT2(u, v);
+        m_vertices.push_back(vertex);
 
     }
 
     // The center vertex of the top cap.
-    v.Position = XMFLOAT3(0.0f, y, 0.0f);
-    v.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    m_vertices.push_back(v);
+    vertex.Position = XMFLOAT3(0.0f, y, 0.0f);
+    vertex.Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+    vertex.Texture = XMFLOAT2(0.5f, 0.5f);
+    m_vertices.push_back(vertex);
 
     // The index of the center vertex.
     uint32_t centerIndex = (uint32_t)m_vertices.size() - baseVertexLocation - 1;
@@ -464,23 +476,29 @@ void MeshGeneratorTexture::BuildCylinderBottomCap(uint32_t baseVertexLocation, f
     float y = -0.5f * cylinderHeight; // the y-coordinate of the bottom cap
     float theta = XM_2PI / sliceCount;
 
-    VertexPositionNormal v;
+    VertexPositionTexture vertex;
 
-    // TODO: (texture and normals) Duplicate top cap vertices because the texture coordinates and normals differ.
+    // Duplicate top cap vertices because the texture coordinates and normals differ.
     for (uint32_t i = 0; i <= sliceCount; ++i)
     {
         float x = bottomRadius * cosf(i * theta);
         float z = bottomRadius * sinf(i * theta);
 
-        v.Position = XMFLOAT3(x, y, z);
-        v.Normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
-        m_vertices.push_back(v);
+        // Scale down by the height to make the top cap texture proportional to the base.
+        float u = x / cylinderHeight + 0.5f;
+        float v = z / cylinderHeight + 0.5f;
+
+        vertex.Position = XMFLOAT3(x, y, z);
+        vertex.Normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+        vertex.Texture = XMFLOAT2(u, v);
+        m_vertices.push_back(vertex);
     }
 
     // The center vertex of the bottom cap.
-    v.Position = XMFLOAT3(0.0f, y, 0.0f);
-    v.Normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
-    m_vertices.push_back(v);
+    vertex.Position = XMFLOAT3(0.0f, y, 0.0f);
+    vertex.Normal = XMFLOAT3(0.0f, -1.0f, 0.0f);
+    vertex.Texture = XMFLOAT2(0.5f, 0.5f);
+    m_vertices.push_back(vertex);
 
     // The index of the center vertex.
     uint32_t centerIndex = (uint32_t)m_vertices.size() - baseVertexLocation - 1;
@@ -512,8 +530,8 @@ void MeshGeneratorTexture::CreateSphere(std::string const& name, float radius, u
     info.StartIndexLocation = m_indices.size();
 
     // Create the sphere's poles.
-    VertexPositionNormal topVertex{ { 0.0f, radius, 0.0f }, { 0.0f, 1.0f, 0.0f } };
-    VertexPositionNormal bottomVertex{ { 0.0f, -radius, 0.0f }, {0.0f, -1.0f, 0.0f } };
+    VertexPositionTexture topVertex{ { 0.0f, radius, 0.0f }, { 0.0f, 1.0f, 0.0f } };
+    VertexPositionTexture bottomVertex{ { 0.0f, -radius, 0.0f }, {0.0f, -1.0f, 0.0f } };
 
     // Add the north pole as the first vertex.
     m_vertices.push_back(topVertex);
@@ -530,7 +548,7 @@ void MeshGeneratorTexture::CreateSphere(std::string const& name, float radius, u
         {
             float theta = j * thetaStep;
 
-            VertexPositionNormal v;
+            VertexPositionTexture v;
 
             // Convert spherical coordinates to Cartesian coordinates.
             v.Position.x = radius * sinf(phi) * cosf(theta);
@@ -540,6 +558,10 @@ void MeshGeneratorTexture::CreateSphere(std::string const& name, float radius, u
             // Compute normal vector.
             XMVECTOR p = XMLoadFloat3(&v.Position);
             XMStoreFloat3(&v.Normal, XMVector3Normalize(p));
+
+            // Compute texture coordinates.
+            v.Texture.x = theta / XM_2PI;
+            v.Texture.y = phi / XM_PI;
 
             m_vertices.push_back(v);
         }
@@ -627,7 +649,7 @@ void MeshGeneratorTexture::CreateGeosphere(std::string const& name, float radius
 
     // Define geometry of in icosahedron with 12 vertices and 60 indices.
     // The icosahedron is the starting point to generate the geosphere.
-    std::vector<VertexPositionNormal> vertices(12);
+    std::vector<VertexPositionTexture> vertices(12);
     std::vector<uint32_t> indices(60);
 
     const float X = 0.525731f;
@@ -671,17 +693,17 @@ void MeshGeneratorTexture::CreateGeosphere(std::string const& name, float radius
         XMStoreFloat3(&vertices[i].Position, p);
         XMStoreFloat3(&vertices[i].Normal, n);
 
-        // TODO: Derive texture coordinates from spherical coordinates.
-        //float theta = MathHelper::AngleFromXY(
-        //meshData.Vertices[i].Position.x,
-        //meshData.Vertices[i].Position.z);
+        // Derive texture coordinates from spherical coordinates.
+        float theta = MathHelper::AngleFromXY(
+            vertices[i].Position.x,
+            vertices[i].Position.z);
 
-        //float phi = acosf(meshData.Vertices[i].Position.y / radius);
+        float phi = acosf(vertices[i].Position.y / radius);
 
-        //meshData.Vertices[i].TexC.x = theta / XM_2PI;
-        //meshData.Vertices[i].TexC.y = phi / XM_PI;
+        vertices[i].Texture.x = theta / XM_2PI;
+        vertices[i].Texture.y = phi / XM_PI;
 
-        //// Partial derivative of P with respect to theta
+        // Calculate partial derivative of P with respect to theta
         //meshData.Vertices[i].TangentU.x = -radius*sinf(phi)*sinf(theta);
         //meshData.Vertices[i].TangentU.y = 0.0f;
         //meshData.Vertices[i].TangentU.z = +radius*sinf(phi)*cosf(theta);
@@ -701,10 +723,10 @@ void MeshGeneratorTexture::CreateGeosphere(std::string const& name, float radius
     m_meshes[name] = info;
 }
 
-void MeshGeneratorTexture::Subdivide(std::vector<VertexPositionNormal>& vertices, std::vector<uint32_t>& indices)
+void MeshGeneratorTexture::Subdivide(std::vector<VertexPositionTexture>& vertices, std::vector<uint32_t>& indices)
 {
     // Save a copy of the input geometry.
-    std::vector<VertexPositionNormal> verticesCopy(vertices);
+    std::vector<VertexPositionTexture> verticesCopy(vertices);
     std::vector<uint32_t> indicesCopy(indices);
 
     // Clear the original vectors. We will re-populate them with new vertices and indices.
@@ -724,12 +746,12 @@ void MeshGeneratorTexture::Subdivide(std::vector<VertexPositionNormal>& vertices
     auto triangleCount = indicesCopy.size() / 3;
     for (uint32_t i = 0; i < triangleCount; ++i)
     {
-        VertexPositionNormal v0 = verticesCopy[indicesCopy[i * 3 + 0]];
-        VertexPositionNormal v1 = verticesCopy[indicesCopy[i * 3 + 1]];
-        VertexPositionNormal v2 = verticesCopy[indicesCopy[i * 3 + 2]];
+        VertexPositionTexture v0 = verticesCopy[indicesCopy[i * 3 + 0]];
+        VertexPositionTexture v1 = verticesCopy[indicesCopy[i * 3 + 1]];
+        VertexPositionTexture v2 = verticesCopy[indicesCopy[i * 3 + 2]];
 
         // Calculate the triangle midpoints.
-        VertexPositionNormal m0, m1, m2;
+        VertexPositionTexture m0, m1, m2;
 
         m0.Position = XMFLOAT3(
             0.5f * (v0.Position.x + v1.Position.x),
@@ -796,6 +818,10 @@ void MeshGeneratorTexture::CreateGrid(std::string const& name, float gridWidth, 
     uint32_t m = quadCountDepth + 1;
     uint32_t n = quadCountHoriz + 1;
 
+    // Calculate increments for texture coordinates.
+    float du = 1.0f / quadCountHoriz;
+    float dv = 1.0f / quadCountDepth;
+
     // Create vertices.
     uint32_t vertexCount = m * n;
     m_vertices.resize(info.BaseVertexLocation + vertexCount);
@@ -830,6 +856,10 @@ void MeshGeneratorTexture::CreateGrid(std::string const& name, float gridWidth, 
 
             m_vertices[info.BaseVertexLocation + k].Position = XMFLOAT3(x, 0, z);
             m_vertices[info.BaseVertexLocation + k].Normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+            // Stretch the texture over grid.
+            m_vertices[info.BaseVertexLocation + k].Texture.x = j * du;
+            m_vertices[info.BaseVertexLocation + k].Texture.y = i * dv;
 
             x += dx;
         };
@@ -1016,7 +1046,7 @@ void MeshGeneratorTexture::CreateBuffers()
         Utilities::CreateImmutableBuffer(
             m_deviceResources->GetD3DDevice(),
             D3D11_BIND_VERTEX_BUFFER,
-            m_vertices.size() * sizeof(VertexPositionNormal),
+            m_vertices.size() * sizeof(VertexPositionTexture),
             m_vertices.data()));
 
     // Create an immutable index buffer and load indices to the buffer.
@@ -1033,7 +1063,7 @@ void MeshGeneratorTexture::SetBuffers()
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
     // Each vertex is one instance of the VertexPositionNormal struct.
-    UINT stride = sizeof(VertexPositionNormal);
+    UINT stride = sizeof(VertexPositionTexture);
     UINT offset = 0;
     ID3D11Buffer* pVertexBuffer{ m_vertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
@@ -1056,4 +1086,3 @@ void MeshGeneratorTexture::ReleaseBuffers()
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
 }
-

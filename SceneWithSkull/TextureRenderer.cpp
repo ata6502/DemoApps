@@ -2,6 +2,7 @@
 #include <string>
 
 #include "DirectMathHelper.h"
+#include "FileReader.h"
 #include "LightsShaderStructures.h"
 #include "TextureRenderer.h"
 #include "Utilities.h"
@@ -46,7 +47,8 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -73,34 +75,39 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [6] Create rasterizer states to enable or diable the scissor test using 
-    // the D3D11_RASTERIZER_DESC::ScissorEnable flag.
-    D3D11_RASTERIZER_DESC2 rsDesc;
-    ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.AntialiasedLineEnable = false;
-    rsDesc.CullMode = D3D11_CULL_BACK;
-    rsDesc.DepthBias = 0;
-    rsDesc.DepthBiasClamp = 0.0f;
-    rsDesc.DepthClipEnable = true;
-    rsDesc.FillMode = D3D11_FILL_SOLID;
-    rsDesc.FrontCounterClockwise = false;
-    rsDesc.MultisampleEnable = false;
-    rsDesc.ScissorEnable = true; // enable the scissor test
-    rsDesc.SlopeScaledDepthBias = 0.0f;
+    // [12] Load textures from files.
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\bricks.dds", m_textures["bricks"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\dummy.dds", m_textures["dummy"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\marble.dds", m_textures["marble"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\paint.dds", m_textures["paint"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\stones.dds", m_textures["stones"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\wood.dds", m_textures["wood"].put());
 
-    // Create the rasterizer state to enable the scissor test.
+    // [13] Create a sampler state.
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerDesc.BorderColor[0] = 0.0f; // Red
+    samplerDesc.BorderColor[1] = 1.0f; // Green
+    samplerDesc.BorderColor[2] = 0.0f; // Blue
+    samplerDesc.BorderColor[3] = 1.0f;
+    samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
+    samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
+
     winrt::check_hresult(
-        device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestEnabled.put()));
+        device->CreateSamplerState(
+            &samplerDesc,
+            m_linearSampler.put()));
 
-    // Create the rasterizer state to disable the scissor test.
-    rsDesc.ScissorEnable = false; // disable the scissor test
-    winrt::check_hresult(
-        device->CreateRasterizerState2(&rsDesc, m_rasterizerStateScissorTestDisabled.put()));
-
-    // [7] Create meshes using the MeshGenerator.
+    // [6] Create meshes using the MeshGenerator.
     co_await CreateMeshes();
 
-    // [8] Define the scene.
+    // [7] Define the scene.
     DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.
@@ -179,6 +186,10 @@ void TextureRenderer::Render()
     context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
     context->PSSetConstantBuffers(2, 1, &cbPerObjectPtr);
 
+    // Set the sampler.
+    ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
+    context->PSSetSamplers(0, 1, &pLinearSampler);
+
     // Render the scene.
     for (auto& obj : m_objects)
     {
@@ -217,6 +228,8 @@ void TextureRenderer::Update(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] Dir
 
 void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& info)
 {
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
     ConstantBufferPerObject constantBufferPerObjectData;
 
     auto worldMatrix = XMLoadFloat4x4(&info.WorldMatrix);
@@ -232,6 +245,10 @@ void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& i
     constantBufferPerObjectData.Material = info.Material;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
+
+    // Set the shader resource view i.e. a texture.
+    ID3D11ShaderResourceView* pTexture{ m_textures[info.TextureName].get() };
+    context->PSSetShaderResources(0, 1, &pTexture);
 }
 
 float TextureRenderer::GetDistanceToCamera()
@@ -247,7 +264,7 @@ float TextureRenderer::GetCameraPitch()
 winrt::Windows::Foundation::IAsyncAction TextureRenderer::CreateMeshes()
 {
     m_meshGenerator->CreateGrid("grid", 20.0f, 30.0f, 60, 40);
-    m_meshGenerator->CreateGeosphere("sphere", 1.0f, 3);
+    m_meshGenerator->CreateGeosphere("sphere", 1.0f, 4);
     m_meshGenerator->CreateCube("cube");
     m_meshGenerator->CreateCylinder("cylinder", 0.5f, 0.3f, 3.0f, 20, 10);
     co_await m_meshGenerator->CreateModelAsync("skull", L"Data\\skull.txt");
@@ -269,8 +286,8 @@ void TextureRenderer::DefineSceneObjects()
     materialCylinder.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f); // w = SpecularPower
 
     MaterialDesc materialSphere;
-    materialSphere.Ambient = XMFLOAT4(0.1f, 0.2f, 0.3f, 1.0f);
-    materialSphere.Diffuse = XMFLOAT4(0.2f, 0.4f, 0.6f, 1.0f);
+    materialSphere.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    materialSphere.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     materialSphere.Specular = XMFLOAT4(0.9f, 0.9f, 0.9f, 16.0f); // w = SpecularPower
 
     MaterialDesc materialBox;
@@ -287,21 +304,25 @@ void TextureRenderer::DefineSceneObjects()
 
     info.MeshName = "grid";
     info.Material = materialGrid;
+    info.TextureName = "stones";
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixIdentity());
     m_objects["Floor"] = info;
 
     info.MeshName = "sphere";
     info.Material = materialSphere;
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.0f, 2.0f, 2.0f)); // updated dynamically
+    info.TextureName = "paint";
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(1.0f, 2.0f, 2.0f));
     m_objects["Ellipsoid"] = info;
 
     info.MeshName = "cube";
     info.Material = materialBox;
+    info.TextureName = "wood";
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
-    m_objects["EllipsoidStand"] = info;
+    m_objects["Stand"] = info;
 
     info.MeshName = "skull";
     info.Material = materialSkull;
+    info.TextureName = "dummy";
     XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 3.0f, 5.0f));
     m_objects["Skull"] = info;
 
@@ -310,6 +331,7 @@ void TextureRenderer::DefineSceneObjects()
     {
         info.MeshName = "cylinder";
         info.Material = materialCylinder;
+        info.TextureName = "bricks";
         auto n = std::to_string(i + 1);
 
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i * 5.0f));
@@ -319,6 +341,7 @@ void TextureRenderer::DefineSceneObjects()
         m_objects["ColumnRight" + n] = info;
 
         info.MeshName = "sphere";
+        info.TextureName = "marble";
         info.Material = materialSphere;
 
         XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f));

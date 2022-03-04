@@ -5,8 +5,21 @@
 #define LIGHT_COUNT 0
 #endif
 
+// Declare a texture a.k.a. a diffuse map.
+Texture2D gTexture : register(t0);
+
+// Declare a linear sampler.
+SamplerState gLinearSampler : register(s0);
+
 float4 main(PixelShaderInput input) : SV_TARGET
 {
+    // Default to multiplicative identity. This is a default texture 
+    // sample in case we wanted to make texturing optional.
+    float4 texColor = float4(1, 1, 1, 1);
+
+    // Sample the texture.
+    texColor = gTexture.Sample(gLinearSampler, input.Tex);
+
     // Normalize the input normal vector as interpolation may have unnormalize it.
     input.Normal = normalize(input.Normal);
 
@@ -28,7 +41,12 @@ float4 main(PixelShaderInput input) : SV_TARGET
         A += a; D += d; S += s;
     }
 
-    float4 color = A + D + S;
+    // Modulate with late add.
+    float4 color = texColor * (A + D) + S;
+
+    // Common to take alpha from diffuse material and texture.
+    color.a = Material.Diffuse.a * texColor.a;
+
     return color;
 }
 

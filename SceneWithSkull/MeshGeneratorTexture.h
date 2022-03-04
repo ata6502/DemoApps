@@ -11,9 +11,9 @@ public:
     MeshGeneratorTexture(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
     void CreateCube(std::string const& name);
-    void CreateCube2(std::string const& name); // a cube with additional vertices
+    void CreateSimpleCube(std::string const& name);
     void CreatePyramid(std::string const& name);
-    void CreatePyramid2(std::string const& name); // a pyramid with additional vertices
+    void CreateSimplePyramid(std::string const& name);
     void CreateCylinder(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void CreateSphere(std::string const& name, float radius, uint32_t sliceCount, uint32_t stackCount);
     void CreateGeosphere(std::string const& name, float radius, uint16_t subdivisionCount);
@@ -38,13 +38,13 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_vertexBuffer;
     winrt::com_ptr<ID3D11Buffer>            m_indexBuffer;
 
-    std::vector<VertexPositionNormal>       m_vertices;
+    std::vector<VertexPositionTexture>      m_vertices;
     std::vector<uint32_t>                   m_indices;
     std::map<std::string, MeshInfo>         m_meshes;
 
     void BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount);
     void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount);
-    void Subdivide(std::vector<VertexPositionNormal>& vertices, std::vector<uint32_t>& indices);
+    void Subdivide(std::vector<VertexPositionTexture>& vertices, std::vector<uint32_t>& indices);
     void CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount);
     void GetTokes(const wchar_t* ps, std::vector<std::wstring>& tokens);
 };

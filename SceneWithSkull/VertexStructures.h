@@ -6,8 +6,9 @@ struct VertexPositionColor
     DirectX::XMFLOAT4 Color;
 };
 
-struct VertexPositionNormal
+struct VertexPositionTexture
 {
     DirectX::XMFLOAT3 Position;
     DirectX::XMFLOAT3 Normal;
+    DirectX::XMFLOAT2 Texture;
 };

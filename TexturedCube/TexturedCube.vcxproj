@@ -94,8 +94,6 @@
     <ClInclude Include="ColorRenderer.h" />
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
-    <ClInclude Include="FileReader.h" />
-    <ClInclude Include="FileReaderStructures.h" />
     <ClInclude Include="IndependentInput.h" />
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="MaterialRenderer.h" />
@@ -136,10 +134,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
+    <ClCompile Include="..\Shared\FileReader.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="ColorRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />
-    <ClCompile Include="FileReader.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
     <ClCompile Include="MaterialRenderer.cpp" />
     <ClCompile Include="pch.cpp">

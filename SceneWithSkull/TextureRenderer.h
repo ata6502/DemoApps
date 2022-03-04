@@ -30,6 +30,7 @@ private:
     struct ObjectInfo
     {
         std::string MeshName;
+        std::string TextureName;
         MaterialDesc Material;
         DirectX::XMFLOAT4X4 WorldMatrix;
     };
@@ -39,13 +40,15 @@ private:
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>      m_inputLayout;
     winrt::com_ptr<ID3D11VertexShader>     m_vertexShader;
-    winrt::com_ptr<ID3D11RasterizerState2> m_rasterizerStateScissorTestEnabled;
-    winrt::com_ptr<ID3D11RasterizerState2> m_rasterizerStateScissorTestDisabled;
 
     // Constant buffers.
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferNeverChanges;
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferPerObject;
+
+    // Direct3D objects used with textures.
+    std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
+    winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
 
     DirectX::XMFLOAT4X4                    m_projMatrix;
     std::unique_ptr<MeshGeneratorTexture>  m_meshGenerator;

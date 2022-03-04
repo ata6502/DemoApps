@@ -38,6 +38,7 @@ struct VertexShaderInput
 {
     float3 PosL : POSITION; // a position in local coordinates
     float3 Normal : NORMAL;
+    float2 Tex : TEXCOORD;
 };
 
 struct PixelShaderInput
@@ -45,6 +46,7 @@ struct PixelShaderInput
     float4 PosH : SV_POSITION;  // a position in homogenous coordinates
     float3 PosW : POSITION; // a position in world space
     float3 Normal : NORMAL;
+    float2 Tex : TEXCOORD;
 };
 
 

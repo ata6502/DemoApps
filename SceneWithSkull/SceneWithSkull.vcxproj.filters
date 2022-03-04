@@ -46,6 +46,12 @@
     <ClCompile Include="ThreeLightSystemController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\FileReader.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\MathHelper.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -115,6 +121,27 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Textures\wood.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\bricks.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\dummy.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\marble.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\paint.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\stones.DDS">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\vertigo.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -143,6 +170,9 @@
     </Filter>
     <Filter Include="Controllers">
       <UniqueIdentifier>{d1826610-39b6-4d12-b380-c870490c2920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{ead3fe35-8c00-4e42-bf01-fd61dbc13c94}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

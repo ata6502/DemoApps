@@ -24,6 +24,9 @@ struct ConstantBufferNeverChanges
 struct ConstantBufferPerFrame
 {
     DirectX::XMFLOAT4X4 ViewProj;
+
+    // The eye position is needed to calculate specular 
+    // highlights which depend on the eye position.
     DirectX::XMFLOAT3 EyePosition;
 };
 

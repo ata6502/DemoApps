@@ -31,13 +31,13 @@
     <ClCompile Include="TextureRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="FileReader.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared\DeviceResources.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\Shared\Utilities.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\FileReader.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
@@ -70,12 +70,6 @@
     </ClInclude>
     <ClInclude Include="TextureShaderStructures.h">
       <Filter>Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="FileReader.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="FileReaderStructures.h">
-      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
