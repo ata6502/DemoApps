@@ -44,7 +44,6 @@ private:
 
     void BuildCylinderTopCap(uint32_t baseVertexLocation, float topRadius, float cylinderHeight, uint32_t sliceCount);
     void BuildCylinderBottomCap(uint32_t baseVertexLocation, float bottomRadius, float cylinderHeight, uint32_t sliceCount);
-    void Subdivide(std::vector<VertexPositionTexture>& vertices, std::vector<uint32_t>& indices);
     void CopyIndices(std::vector<uint32_t> const& indices, uint32_t startIndexLocation, size_t indexCount);
     void GetTokes(const wchar_t* ps, std::vector<std::wstring>& tokens);
 };

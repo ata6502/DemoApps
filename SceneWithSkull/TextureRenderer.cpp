@@ -283,7 +283,7 @@ void TextureRenderer::DefineSceneObjects()
     MaterialDesc materialCylinder;
     materialCylinder.Ambient = XMFLOAT4(0.7f, 0.85f, 0.7f, 1.0f);
     materialCylinder.Diffuse = XMFLOAT4(0.7f, 0.85f, 0.7f, 1.0f);
-    materialCylinder.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 16.0f); // w = SpecularPower
+    materialCylinder.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 8.0f); // w = SpecularPower
 
     MaterialDesc materialSphere;
     materialSphere.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);

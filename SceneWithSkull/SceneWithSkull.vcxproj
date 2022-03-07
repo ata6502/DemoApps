@@ -163,7 +163,6 @@
     <Image Include="Assets\Textures\marble.dds" />
     <Image Include="Assets\Textures\paint.dds" />
     <Image Include="Assets\Textures\stones.DDS" />
-    <Image Include="Assets\Textures\vertigo.dds" />
     <Image Include="Assets\Textures\wood.dds" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>

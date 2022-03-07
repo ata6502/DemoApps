@@ -139,9 +139,6 @@
     <Image Include="Assets\Textures\stones.DDS">
       <Filter>Assets\Textures</Filter>
     </Image>
-    <Image Include="Assets\Textures\vertigo.dds">
-      <Filter>Assets\Textures</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

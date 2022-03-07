@@ -614,7 +614,8 @@ void MeshGeneratorTexture::CreateSphere(std::string const& name, float radius, u
 }
 
 /// <summary>
-/// Based on [Luna]
+/// The code to create a geosphere comes from DirectXTK
+/// https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp
 /// 
 /// Creates a geosphere - a sphere in which each triangle has the same area and equal side lengths.
 /// The geosphere generator starts with an icosahedron (a polyhedron with 20 faces) and subdivides
@@ -635,10 +636,11 @@ void MeshGeneratorTexture::CreateSphere(std::string const& name, float radius, u
 ///
 /// </summary>
 /// <param name="radius">The sphere's radius</param>
-/// <param name="subdivisionCount"></param>
+/// <param name="subdivisionCount">The number of subdivisions between 0 and 5</param>
 void MeshGeneratorTexture::CreateGeosphere(std::string const& name, float radius, uint16_t subdivisionCount)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
+    ASSERT(subdivisionCount >= 0);
 
     MeshInfo info;
     info.BaseVertexLocation = m_vertices.size(); // initial vertex count
@@ -647,151 +649,272 @@ void MeshGeneratorTexture::CreateGeosphere(std::string const& name, float radius
     // Limit the number of subdivisions to 5.
     subdivisionCount = std::min(subdivisionCount, (uint16_t)5);
 
-    // Define geometry of in icosahedron with 12 vertices and 60 indices.
-    // The icosahedron is the starting point to generate the geosphere.
-    std::vector<VertexPositionTexture> vertices(12);
-    std::vector<uint32_t> indices(60);
+    std::vector<VertexPositionTexture> vertices;
+    std::vector<uint32_t> indices;
 
-    const float X = 0.525731f;
-    const float Z = 0.850651f;
+    // An undirected edge between two vertices.
+    using UndirectedEdge = std::pair<uint16_t, uint16_t>;
 
-    XMFLOAT3 pos[12] =
+    auto makeUndirectedEdge = [](uint16_t a, uint16_t b) noexcept
     {
-        XMFLOAT3(-X, 0.0f, Z), XMFLOAT3(X, 0.0f, Z),
-        XMFLOAT3(-X, 0.0f, -Z), XMFLOAT3(X, 0.0f, -Z),
-        XMFLOAT3(0.0f, Z, X), XMFLOAT3(0.0f, Z, -X),
-        XMFLOAT3(0.0f, -Z, X), XMFLOAT3(0.0f, -Z, -X),
-        XMFLOAT3(Z, X, 0.0f), XMFLOAT3(-Z, X, 0.0f),
-        XMFLOAT3(Z, -X, 0.0f), XMFLOAT3(-Z, -X, 0.0f)
+        return std::make_pair(std::max(a, b), std::min(a, b));
     };
 
-    uint32_t k[60] =
+    using EdgeSubdivisionMap = std::map<UndirectedEdge, uint16_t>;
+
+    static const XMFLOAT3 OctahedronVertices[] =
     {
-        1, 4, 0, 4, 9, 0, 4, 5, 9, 8, 5, 4, 1, 8, 4,
-        1, 10, 8, 10, 3, 8, 8, 3, 5, 3, 2, 5, 3, 7, 2,
-        3, 10, 7, 10, 6, 7, 6, 11, 7, 6, 0, 11, 6, 1, 0,
-        10, 1, 6, 11, 0, 9, 2, 11, 9, 5, 2, 9, 11, 2, 7
+        XMFLOAT3(0,  1,  0),
+        XMFLOAT3(0,  0, -1),
+        XMFLOAT3(1,  0,  0),
+        XMFLOAT3(0,  0,  1),
+        XMFLOAT3(-1,  0,  0),
+        XMFLOAT3(0, -1,  0),
+    };
+    static const uint16_t OctahedronIndices[] =
+    {
+        0, 1, 2,
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 1,
+        5, 1, 4,
+        5, 4, 3,
+        5, 3, 2,
+        5, 2, 1
     };
 
-    for (auto i = 0; i < 12; ++i)
-        vertices[i].Position = pos[i];
+    // Start with an octahedron; copy the data into the vertex/index collection.
+    std::vector<XMFLOAT3> vertexPositions(std::begin(OctahedronVertices), std::end(OctahedronVertices));
 
-    for (auto i = 0; i < 60; ++i)
-        indices[i] = k[i];
+    indices.insert(indices.begin(), std::begin(OctahedronIndices), std::end(OctahedronIndices));
 
-    // Tessellate the icosahedron.
-    for (auto i = 0; i < subdivisionCount; ++i)
-        // The vertices and indices collections are modified in Subdivide.
-        Subdivide(vertices, indices); 
+    constexpr uint16_t northPoleIndex = 0;
+    constexpr uint16_t southPoleIndex = 5;
 
-    // Project vertices onto a unit sphere and scale.
-    for (uint32_t i = 0; i < vertices.size(); ++i)
+    for (size_t subdivision = 0; subdivision < subdivisionCount; ++subdivision)
     {
-        XMVECTOR n = XMVector3Normalize(XMLoadFloat3(&vertices[i].Position));
-        XMVECTOR p = radius * n;
+        ASSERT(indices.size() % 3 == 0);
 
-        XMStoreFloat3(&vertices[i].Position, p);
-        XMStoreFloat3(&vertices[i].Normal, n);
+        EdgeSubdivisionMap subdividedEdges;
 
-        // Derive texture coordinates from spherical coordinates.
-        float theta = MathHelper::AngleFromXY(
-            vertices[i].Position.x,
-            vertices[i].Position.z);
+        std::vector<uint32_t> newIndices;
 
-        float phi = acosf(vertices[i].Position.y / radius);
+        const size_t triangleCount = indices.size() / 3;
+        for (size_t iTriangle = 0; iTriangle < triangleCount; ++iTriangle)
+        {
+            const uint16_t iv0 = indices[iTriangle * 3 + 0];
+            const uint16_t iv1 = indices[iTriangle * 3 + 1];
+            const uint16_t iv2 = indices[iTriangle * 3 + 2];
 
-        vertices[i].Texture.x = theta / XM_2PI;
-        vertices[i].Texture.y = phi / XM_PI;
+            XMFLOAT3 v01;
+            XMFLOAT3 v12;
+            XMFLOAT3 v20;
+            uint16_t iv01;
+            uint16_t iv12;
+            uint16_t iv20;
 
-        // Calculate partial derivative of P with respect to theta
-        //meshData.Vertices[i].TangentU.x = -radius*sinf(phi)*sinf(theta);
-        //meshData.Vertices[i].TangentU.y = 0.0f;
-        //meshData.Vertices[i].TangentU.z = +radius*sinf(phi)*cosf(theta);
+            auto const divideEdge = [&](uint16_t i0, uint16_t i1, XMFLOAT3& outVertex, uint16_t& outIndex)
+            {
+                const UndirectedEdge edge = makeUndirectedEdge(i0, i1);
 
-        //XMVECTOR T = XMLoadFloat3(&meshData.Vertices[i].TangentU);
-        //XMStoreFloat3(&meshData.Vertices[i].TangentU, XMVector3Normalize(T));
+                auto it = subdividedEdges.find(edge);
+                if (it != subdividedEdges.end())
+                {
+                    outIndex = it->second;
+                    outVertex = vertexPositions[outIndex];
+                }
+                else
+                {
+                    XMStoreFloat3(
+                        &outVertex,
+                        XMVectorScale(
+                            XMVectorAdd(XMLoadFloat3(&vertexPositions[i0]), XMLoadFloat3(&vertexPositions[i1])),
+                            0.5f));
+
+                    outIndex = static_cast<uint16_t>(vertexPositions.size());
+                    vertexPositions.push_back(outVertex);
+
+                    auto entry = std::make_pair(edge, outIndex);
+                    subdividedEdges.insert(entry);
+                }
+            };
+
+            divideEdge(iv0, iv1, v01, iv01);
+            divideEdge(iv1, iv2, v12, iv12);
+            divideEdge(iv0, iv2, v20, iv20);
+
+            // Add the new indices.
+            //        v0
+            //        o
+            //       /a\
+            //  v20 o---o v01
+            //     /b\c/d\
+            // v2 o---o---o v1
+            //       v12
+            const uint16_t indicesToAdd[] =
+            {
+                 iv0, iv01, iv20,
+                iv20, iv12,  iv2,
+                iv20, iv01, iv12,
+                iv01,  iv1, iv12,
+            };
+            newIndices.insert(newIndices.end(), std::begin(indicesToAdd), std::end(indicesToAdd));
+        }
+
+        indices = std::move(newIndices);
     }
 
+    // Now that we've completed subdivision, fill in the final vertex collection
+    vertices.reserve(vertexPositions.size());
+    for (const auto& it : vertexPositions)
+    {
+        auto const normal = XMVector3Normalize(XMLoadFloat3(&it));
+        auto const pos = XMVectorScale(normal, radius);
+
+        XMFLOAT3 normalFloat3;
+        XMStoreFloat3(&normalFloat3, normal);
+
+        const float longitude = atan2f(normalFloat3.x, -normalFloat3.z);
+        const float latitude = acosf(normalFloat3.y);
+
+        const float u = longitude / XM_2PI + 0.5f;
+        const float v = latitude / XM_PI;
+
+        auto const texcoord = XMVectorSet(1.0f - u, v, 0.0f, 0.0f);
+        VertexPositionTexture vertex;
+        XMStoreFloat3(&vertex.Position, pos);
+        XMStoreFloat3(&vertex.Normal, normal);
+        XMStoreFloat2(&vertex.Texture, texcoord);
+        vertices.push_back(vertex);
+    }
+
+    // A texture coordinate wraparound fixup.
+    const size_t preFixupVertexCount = vertices.size();
+    for (size_t i = 0; i < preFixupVertexCount; ++i)
+    {
+        const bool isOnPrimeMeridian = XMVector2NearEqual(
+            XMVectorSet(vertices[i].Position.x, vertices[i].Texture.x, 0.0f, 0.0f),
+            XMVectorZero(),
+            XMVectorSplatEpsilon());
+
+        if (isOnPrimeMeridian)
+        {
+            size_t newIndex = vertices.size();
+
+            VertexPositionTexture v = vertices[i];
+            v.Texture.x = 1.0f;
+            vertices.push_back(v);
+
+            for (size_t j = 0; j < indices.size(); j += 3)
+            {
+                uint32_t* triIndex0 = &indices[j + 0];
+                uint32_t* triIndex1 = &indices[j + 1];
+                uint32_t* triIndex2 = &indices[j + 2];
+
+                if (*triIndex0 == i)
+                {
+                }
+                else if (*triIndex1 == i)
+                {
+                    std::swap(triIndex0, triIndex1);
+                }
+                else if (*triIndex2 == i)
+                {
+                    std::swap(triIndex0, triIndex2);
+                }
+                else
+                {
+                    continue;
+                }
+
+                ASSERT(*triIndex0 == i);
+                ASSERT(*triIndex1 != i && *triIndex2 != i);
+
+                const VertexPositionTexture& v0 = vertices[*triIndex0];
+                const VertexPositionTexture& v1 = vertices[*triIndex1];
+                const VertexPositionTexture& v2 = vertices[*triIndex2];
+
+                if (abs(v0.Texture.x - v1.Texture.x) > 0.5f ||
+                    abs(v0.Texture.x - v2.Texture.x) > 0.5f)
+                {
+                    *triIndex0 = static_cast<uint16_t>(newIndex);
+                }
+            }
+        }
+    }
+
+    // Fix the poles.
+    auto const fixPole = [&](size_t poleIndex)
+    {
+        const auto& poleVertex = vertices[poleIndex];
+        bool overwrittenPoleVertex = false;
+
+        for (size_t i = 0; i < indices.size(); i += 3)
+        {
+            uint32_t* pPoleIndex;
+            uint32_t* pOtherIndex0;
+            uint32_t* pOtherIndex1;
+            if (indices[i + 0] == poleIndex)
+            {
+                pPoleIndex = &indices[i + 0];
+                pOtherIndex0 = &indices[i + 1];
+                pOtherIndex1 = &indices[i + 2];
+            }
+            else if (indices[i + 1] == poleIndex)
+            {
+                pPoleIndex = &indices[i + 1];
+                pOtherIndex0 = &indices[i + 2];
+                pOtherIndex1 = &indices[i + 0];
+            }
+            else if (indices[i + 2] == poleIndex)
+            {
+                pPoleIndex = &indices[i + 2];
+                pOtherIndex0 = &indices[i + 0];
+                pOtherIndex1 = &indices[i + 1];
+            }
+            else
+            {
+                continue;
+            }
+
+            const auto& otherVertex0 = vertices[*pOtherIndex0];
+            const auto& otherVertex1 = vertices[*pOtherIndex1];
+
+            VertexPositionTexture newPoleVertex = poleVertex;
+            newPoleVertex.Texture.x = (otherVertex0.Texture.x + otherVertex1.Texture.x) / 2;
+            newPoleVertex.Texture.y = poleVertex.Texture.y;
+
+            if (!overwrittenPoleVertex)
+            {
+                vertices[poleIndex] = newPoleVertex;
+                overwrittenPoleVertex = true;
+            }
+            else
+            {
+                *pPoleIndex = static_cast<uint16_t>(vertices.size());
+                vertices.push_back(newPoleVertex);
+            }
+        }
+    };
+
+    fixPole(northPoleIndex);
+    fixPole(southPoleIndex);
+
+    // Reverse winding.
+    for (auto it = indices.begin(); it != indices.end(); it += 3)
+        std::swap(*it, *(it + 2));
+    for (auto& it : vertices)
+        it.Texture.x = (1.f - it.Texture.x);
+
     // Add the geosphere vertices and indices to the buffers.
-    for (const auto& v : vertices)
-        m_vertices.push_back(v);
-    for (auto i : indices)
-        m_indices.push_back(i);
+    for (auto index : indices)
+        m_indices.push_back(index);
+    for (const auto& vertex : vertices)
+        m_vertices.push_back(vertex);
 
     info.IndexCount = m_indices.size() - info.StartIndexLocation;
 
     m_meshes[name] = info;
-}
-
-void MeshGeneratorTexture::Subdivide(std::vector<VertexPositionTexture>& vertices, std::vector<uint32_t>& indices)
-{
-    // Save a copy of the input geometry.
-    std::vector<VertexPositionTexture> verticesCopy(vertices);
-    std::vector<uint32_t> indicesCopy(indices);
-
-    // Clear the original vectors. We will re-populate them with new vertices and indices.
-    vertices.clear();
-    indices.clear();
-
-    //       v1
-    //        *
-    //       / \
-    //      /   \
-    //   m0*-----*m1
-    //    / \   / \
-    //   /   \ /   \
-    //  *-----*-----*
-    // v0    m2     v2
-
-    auto triangleCount = indicesCopy.size() / 3;
-    for (uint32_t i = 0; i < triangleCount; ++i)
-    {
-        VertexPositionTexture v0 = verticesCopy[indicesCopy[i * 3 + 0]];
-        VertexPositionTexture v1 = verticesCopy[indicesCopy[i * 3 + 1]];
-        VertexPositionTexture v2 = verticesCopy[indicesCopy[i * 3 + 2]];
-
-        // Calculate the triangle midpoints.
-        VertexPositionTexture m0, m1, m2;
-
-        m0.Position = XMFLOAT3(
-            0.5f * (v0.Position.x + v1.Position.x),
-            0.5f * (v0.Position.y + v1.Position.y),
-            0.5f * (v0.Position.z + v1.Position.z));
-
-        m1.Position = XMFLOAT3(
-            0.5f * (v1.Position.x + v2.Position.x),
-            0.5f * (v1.Position.y + v2.Position.y),
-            0.5f * (v1.Position.z + v2.Position.z));
-
-        m2.Position = XMFLOAT3(
-            0.5f * (v0.Position.x + v2.Position.x),
-            0.5f * (v0.Position.y + v2.Position.y),
-            0.5f * (v0.Position.z + v2.Position.z));
-
-        // Populate vertex and index collections.
-        vertices.push_back(v0); // 0
-        vertices.push_back(v1); // 1
-        vertices.push_back(v2); // 2
-        vertices.push_back(m0); // 3
-        vertices.push_back(m1); // 4
-        vertices.push_back(m2); // 5
-
-        indices.push_back(i * 6 + 0);
-        indices.push_back(i * 6 + 3);
-        indices.push_back(i * 6 + 5);
-
-        indices.push_back(i * 6 + 3);
-        indices.push_back(i * 6 + 4);
-        indices.push_back(i * 6 + 5);
-
-        indices.push_back(i * 6 + 5);
-        indices.push_back(i * 6 + 4);
-        indices.push_back(i * 6 + 2);
-
-        indices.push_back(i * 6 + 3);
-        indices.push_back(i * 6 + 1);
-        indices.push_back(i * 6 + 4);
-    }
 }
 
 /// <summary>
