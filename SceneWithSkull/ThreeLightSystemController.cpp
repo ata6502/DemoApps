@@ -6,7 +6,7 @@
 ThreeLightSystemController::ThreeLightSystemController(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_initialized(false),
-    m_currentPixelShaderIndex(0)
+    m_currentPixelShaderIndex(2)
 { 
     // Initialize device resources asynchronously.
     InitializeInBackground();
