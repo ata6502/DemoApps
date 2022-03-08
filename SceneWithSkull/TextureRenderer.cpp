@@ -80,7 +80,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\dummy.dds", m_textures["dummy"].put());
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\marble.dds", m_textures["marble"].put());
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\paint.dds", m_textures["paint"].put());
-    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\stones.dds", m_textures["stones"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\floor.dds", m_textures["stones"].put());
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\wood.dds", m_textures["wood"].put());
 
     // [13] Create a sampler state.
@@ -235,7 +235,7 @@ void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& i
     auto worldMatrix = XMLoadFloat4x4(&info.WorldMatrix);
 
     if (name == "Ellipsoid")
-        worldMatrix = worldMatrix * XMMatrixRotationY(m_rotation) * XMMatrixTranslation(0.0f, 3.0f, 0.0f);
+        worldMatrix = worldMatrix * XMMatrixRotationY(m_rotation) * XMMatrixTranslation(0.0f, 3.0f, -6.0f);
 
     // Calculate the world inverse transpose matrix in order to properly transform normals in case there are any non-uniform or shear transformations.
     auto worldInvTranspose = InverseTranspose(worldMatrix);
@@ -276,9 +276,9 @@ void TextureRenderer::DefineSceneObjects()
 {
     // Prepare materials.
     MaterialDesc materialGrid;
-    materialGrid.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-    materialGrid.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-    materialGrid.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    materialGrid.Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+    materialGrid.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+    materialGrid.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 8.0f); // w = SpecularPower
 
     MaterialDesc materialCylinder;
     materialCylinder.Ambient = XMFLOAT4(0.7f, 0.85f, 0.7f, 1.0f);
@@ -291,9 +291,9 @@ void TextureRenderer::DefineSceneObjects()
     materialSphere.Specular = XMFLOAT4(0.9f, 0.9f, 0.9f, 16.0f); // w = SpecularPower
 
     MaterialDesc materialBox;
-    materialBox.Ambient = XMFLOAT4(0.651f, 0.5f, 0.392f, 1.0f);
-    materialBox.Diffuse = XMFLOAT4(0.651f, 0.5f, 0.392f, 1.0f);
-    materialBox.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
+    materialBox.Ambient = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
+    materialBox.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+    materialBox.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 8.0f); // w = SpecularPower
 
     MaterialDesc materialSkull;
     materialSkull.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
@@ -317,13 +317,13 @@ void TextureRenderer::DefineSceneObjects()
     info.MeshName = "cube";
     info.Material = materialBox;
     info.TextureName = "wood";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(2.0f, 1.0f, 2.0f) * XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(3.0f, 1.0f, 3.0f) * XMMatrixTranslation(0.0f, 0.5f, -6.0f));
     m_objects["Stand"] = info;
 
     info.MeshName = "skull";
     info.Material = materialSkull;
     info.TextureName = "dummy";
-    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 3.0f, 5.0f));
+    XMStoreFloat4x4(&info.WorldMatrix, XMMatrixScaling(0.7f, 0.7f, 0.7f) * XMMatrixTranslation(0.0f, 3.0f, 5.0f));
     m_objects["Skull"] = info;
 
     // Create 5 rows of 2 cylinders and 2 spheres per row.
