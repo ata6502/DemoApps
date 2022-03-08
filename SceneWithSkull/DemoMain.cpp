@@ -17,7 +17,7 @@ DemoMain::DemoMain()
     m_input = std::make_unique<IndependentInput>();
     m_camera = std::make_unique<Camera>();
 
-    auto renderer = RendererFactory::CreateRenderer(RendererType::Color, m_deviceResources); // TODO: set TextureRenderer as default
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Texture, m_deviceResources);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
     m_input->SetRadius(m_renderer->GetDistanceToCamera());
     m_input->SetPitch(m_renderer->GetCameraPitch());

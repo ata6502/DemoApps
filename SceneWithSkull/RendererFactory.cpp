@@ -8,10 +8,10 @@ RendererBase* RendererFactory::CreateRenderer(RendererType rendererType, std::sh
 {
     switch (rendererType)
     {
-    case RendererType::Color:
-        return new ColorRenderer(deviceResources);
     case RendererType::Texture:
         return new TextureRenderer(deviceResources);
+    case RendererType::Color:
+        return new ColorRenderer(deviceResources);
     default:
         return nullptr;
     }

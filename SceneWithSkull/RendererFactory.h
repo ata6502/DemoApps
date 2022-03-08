@@ -4,8 +4,8 @@
 
 enum class RendererType
 {
-    Color = 0,
-    Texture = 1 // TODO: move texture renderer as default when finished
+    Texture = 0,
+    Color = 1
 };
 
 class RendererFactory
