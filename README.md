@@ -57,12 +57,10 @@ For simplicity, we compute wave simulation on the CPU and update vertices using 
 
 ## Scene with Skull
 
-The `SceneWithSkull` app builds a scene made of Cube, Pyramid, Cylinder, Sphere, Grid, and Geosphere meshes. It also
-loads a skull mesh from a file.
+The `SceneWithSkull` app builds a scene made of a cube, cylinders, spheres, and a grid. It also loads a skull mesh from a file.
 
 * `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
 * `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
-* `MeshGenerator` creates the following meshes: .
 * `ScissorTestController` enables a scissor test that culls pixels that are outside of a scissor rectangle.
 * `ThreeLightSystemController`controls the number of directional lights.
 
