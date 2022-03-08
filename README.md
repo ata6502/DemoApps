@@ -7,7 +7,7 @@ and XAML. So far, there are four demos in the repository:
 * `HelloWorld` - A colored rotating cube -- the most basic 3D application.
 * `TexturedCube` - A cube with materials and textures, lit by directional lights.
 * `SimpleWaves` - A terrain and waves.
-* `SimpleScene` - A scene built from meshes.
+* `SceneWithSkull` - A scene built from meshes.
 
 ## Hello World
 
@@ -55,17 +55,20 @@ For simplicity, we compute wave simulation on the CPU and update vertices using 
 
 <img src="./Docs/Images/SimpleWaves2.png"/>
 
-## Simple Scene
+## Scene with Skull
 
-It's the first version of the Simple Scene app. In the source code, it's called SceneWithSkull because 
-in the future we will load a skull mesh from a file. 
+The `SceneWithSkull` app builds a scene made of Cube, Pyramid, Cylinder, Sphere, Grid, and Geosphere meshes. It also
+loads a skull mesh from a file.
 
-* The `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
-* The `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
-* The `MeshGenerator` creates the following meshes: Cube, Pyramid, Cylinder, Sphere, Grid, and Geosphere.
-* The application allows the user to enable a scissor test that culls pixels that are outside of a scissor rectangle.
+* `DrawIndexed` method draws multiple objects by using a separate world matrix for each object.
+* `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
+* `MeshGenerator` creates the following meshes: .
+* `ScissorTestController` enables a scissor test that culls pixels that are outside of a scissor rectangle.
+* `ThreeLightSystemController`controls the number of directional lights.
 
-<img src="./Docs/Images/SceneWithSkull.png"/>
+<img src="./Docs/Images/SceneWithSkull1.png"/>
+
+<img src="./Docs/Images/SceneWithSkull2.png"/>
 
 # References
 
