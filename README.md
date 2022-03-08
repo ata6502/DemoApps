@@ -63,6 +63,7 @@ The `SceneWithSkull` app builds a scene made of a cube, cylinders, spheres, and 
 * `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
 * `ScissorTestController` enables a scissor test that culls pixels that are outside of a scissor rectangle.
 * `ThreeLightSystemController`controls the number of directional lights.
+* The geosphere uses code from [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L222)
 
 <img src="./Docs/Images/SceneWithSkull1.png"/>
 
@@ -75,3 +76,4 @@ Many pieces of code in DemoApps are based on or inspired by the following source
 * [Luna] Luna, Frank, "Introduction to 3D Game Programming with DirectX 11". Mercury Learning, 2012
 * [Lengyel] Lengyel, Eric, "Mathematics for 3D Game Programming and Computer Graphics". Charles River Media, Inc., Boston, MA, 2002.
 * Microsoft sample applications - [Simple3DGameDX](https://github.com/microsoft/Windows-universal-samples/tree/main/Samples/Simple3DGameDX/cppwinrt)
+* [DXTK] [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK)
