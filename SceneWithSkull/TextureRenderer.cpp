@@ -75,7 +75,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     winrt::check_hresult(
         device->CreateBuffer(&bd, nullptr, m_constantBufferPerObject.put()));
 
-    // [12] Load textures from files.
+    // [6] Load textures from files.
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\bricks.dds", m_textures["bricks"].put());
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\dummy.dds", m_textures["dummy"].put());
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\marble.dds", m_textures["marble"].put());
@@ -83,7 +83,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\floor.dds", m_textures["stones"].put());
     co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\wood.dds", m_textures["wood"].put());
 
-    // [13] Create a sampler state.
+    // [7] Create a sampler state.
     D3D11_SAMPLER_DESC samplerDesc;
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -104,10 +104,10 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             &samplerDesc,
             m_linearSampler.put()));
 
-    // [6] Create meshes using the MeshGenerator.
+    // [8] Create meshes using the MeshGenerator.
     co_await CreateMeshes();
 
-    // [7] Define the scene.
+    // [9] Define the scene.
     DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.

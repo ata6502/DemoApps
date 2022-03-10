@@ -63,7 +63,7 @@ The `SceneWithSkull` app builds a scene made of a cube, cylinders, spheres, and 
 * `MeshGenerator` class keeps vertices of all the objects in a single vertex buffer and all indices in a single index buffer.
 * `ScissorTestController` enables a scissor test that culls pixels that are outside of a scissor rectangle.
 * `ThreeLightSystemController`controls the number of directional lights.
-* The geosphere uses code from [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L222)
+* The geosphere mesh uses code from [DirectX Tool Kit for DirectX 11](https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp#L222)
 
 <img src="./Docs/Images/SceneWithSkull1.png"/>
 

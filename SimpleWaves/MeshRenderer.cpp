@@ -16,6 +16,7 @@ MeshRenderer::MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceRes
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
     m_gridMesh = std::make_unique<GridMesh>(deviceResources);
+    m_rasterizerState = std::make_unique<RasterizerStateManager>(deviceResources);
 
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -81,19 +82,8 @@ winrt::Windows::Foundation::IAsyncAction MeshRenderer::InitializeInBackground()
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
-    // [8] Create a rasterizer state.
-    D3D11_RASTERIZER_DESC2 rsDesc;
-    ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.FillMode = D3D11_FILL_WIREFRAME;
-    //rsDesc.FillMode = D3D11_FILL_SOLID; // TODO: Create a D3D11_FILL_SOLID rasterizer state
-    rsDesc.CullMode = D3D11_CULL_BACK;
-    rsDesc.FrontCounterClockwise = false;
-    rsDesc.DepthClipEnable = true;
-
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateRasterizerState2(
-            &rsDesc,
-            m_rasterizerState.put()));
+    // [8] Create rasterizer states.
+    m_rasterizerState->AddRasterizerState(RasterizerState::Wireframe);
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
@@ -139,7 +129,7 @@ void MeshRenderer::Render()
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
     // Set the rasterizer state.
-    context->RSSetState(m_rasterizerState.get());
+    m_rasterizerState->SetRasterizerState(RasterizerState::Wireframe);
 
     // Draw the grid.
     m_gridMesh->Draw();
@@ -155,7 +145,7 @@ void MeshRenderer::ReleaseResources()
     m_constantBufferNeverChanges = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
-    m_rasterizerState = nullptr;
+    m_rasterizerState->ReleaseResources();
 }
 
 void MeshRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
