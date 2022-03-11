@@ -83,7 +83,7 @@ winrt::Windows::Foundation::IAsyncAction MeshRenderer::InitializeInBackground()
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // [8] Create rasterizer states.
-    m_rasterizerState->AddRasterizerState(RasterizerState::Wireframe);
+    m_rasterizerState->AddRasterizerState("wireframe", RasterizerState::FillMode::Wireframe, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
@@ -129,7 +129,7 @@ void MeshRenderer::Render()
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
     // Set the rasterizer state.
-    m_rasterizerState->SetRasterizerState(RasterizerState::Wireframe);
+    m_rasterizerState->SetRasterizerState("wireframe");
 
     // Draw the grid.
     m_gridMesh->Draw();

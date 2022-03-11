@@ -2,29 +2,39 @@
 
 #include "DeviceResources.h"
 
-enum class RasterizerState
+namespace RasterizerState
 {
-    Default,
-    Wireframe,          // FillMode
-    Solid,              // FillMode
-    Clockwise,          // Front
-    CounterClockwise,   // Front
-    CullNone,           // CullMode - disable backface culling
-    CullFront,          // CullMode
-    CullBack            // CullMode
-};
+    enum class FillMode
+    {
+        Wireframe,
+        Solid
+    };
+
+    enum class CullMode
+    {
+        CullNone, // disable backface culling
+        CullFront,
+        CullBack
+    };
+
+    enum class WindingOrder
+    {
+        Clockwise,
+        CounterClockwise
+    };
+}
 
 class RasterizerStateManager
 {
 public:
     RasterizerStateManager::RasterizerStateManager(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    void AddRasterizerState(RasterizerState state);
-    void SetRasterizerState(RasterizerState state);
+    void AddRasterizerState(std::string name, RasterizerState::FillMode fillMode, RasterizerState::CullMode cullMode, RasterizerState::WindingOrder windingOrder);
+    void SetRasterizerState(std::string name);
     void ReleaseResources();
 
 private:
-    std::shared_ptr<DX::DeviceResources>    m_deviceResources;
-    std::map<RasterizerState, winrt::com_ptr<ID3D11RasterizerState2>> m_rasterizerStates;
+    std::shared_ptr<DX::DeviceResources> m_deviceResources;
+    std::map<std::string, winrt::com_ptr<ID3D11RasterizerState2>> m_rasterizerStates;
 };
 

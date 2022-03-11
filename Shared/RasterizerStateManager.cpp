@@ -6,35 +6,69 @@ RasterizerStateManager::RasterizerStateManager(std::shared_ptr<DX::DeviceResourc
 {
 }
 
-void RasterizerStateManager::AddRasterizerState(RasterizerState state)
+void RasterizerStateManager::AddRasterizerState(std::string name, RasterizerState::FillMode fillMode, RasterizerState::CullMode cullMode, RasterizerState::WindingOrder windingOrder)
 {
-    auto device{ m_deviceResources->GetD3DDevice() };
+    using namespace RasterizerState;
 
-    // TODO: Convert from the RasterizerState enum to Direct3D enum.
+    auto device{ m_deviceResources->GetD3DDevice() };
 
     // Create a rasterizer state.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.FillMode = D3D11_FILL_WIREFRAME;
-    //rsDesc.FillMode = D3D11_FILL_SOLID; // TODO: Create a D3D11_FILL_SOLID rasterizer state
-    rsDesc.CullMode = D3D11_CULL_BACK;
-    rsDesc.FrontCounterClockwise = false;
+
+    // Convert from the RasterizerState::FillMode to Direct3D enum.
+    switch (fillMode)
+    {
+    case FillMode::Wireframe:
+        rsDesc.FillMode = D3D11_FILL_WIREFRAME;
+        break;
+    case FillMode::Solid:
+        rsDesc.FillMode = D3D11_FILL_SOLID;
+        break;
+    }
+
+    // Convert from the RasterizerState::FillMode to Direct3D enum.
+    switch (cullMode)
+    {
+    case CullMode::CullNone:
+        rsDesc.CullMode = D3D11_CULL_NONE;
+        break;
+    case CullMode::CullFront:
+        rsDesc.CullMode = D3D11_CULL_FRONT;
+        break;
+    case CullMode::CullBack:
+        rsDesc.CullMode = D3D11_CULL_BACK;
+        break;
+    }
+
+    // Convert from the RasterizerState::WindingOrder to Direct3D enum.
+    switch (windingOrder)
+    {
+    case WindingOrder::Clockwise:
+        rsDesc.FrontCounterClockwise = false;
+        break;
+    case WindingOrder::CounterClockwise:
+        rsDesc.FrontCounterClockwise = true;
+        break;
+    }
+
     rsDesc.DepthClipEnable = true;
 
     winrt::check_hresult(
         device->CreateRasterizerState2(
             &rsDesc,
-            m_rasterizerStates[RasterizerState::Wireframe].put()));
+            m_rasterizerStates[name].put()));
 }
 
-void RasterizerStateManager::SetRasterizerState(RasterizerState state)
+void RasterizerStateManager::SetRasterizerState(std::string name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    context->RSSetState(m_rasterizerStates[state].get());
+    context->RSSetState(m_rasterizerStates[name].get());
 }
 
 void RasterizerStateManager::ReleaseResources()
 {
-    // TODO: Should we release all rasterizer states?
+    for (auto& state : m_rasterizerStates)
+        state.second = nullptr;
 }
