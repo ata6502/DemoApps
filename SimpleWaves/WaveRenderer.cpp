@@ -299,9 +299,8 @@ void WaveRenderer::Render()
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     context->IASetInputLayout(m_inputLayout.get());
 
-    // Attach shaders.
+    // Attach shaders. A pixel changed is attached in ShaderController.
     context->VSSetShader(m_vertexShader.get(), nullptr, 0);
-    //context->PSSetShader(m_pixelShader.get(), nullptr, 0); // TODO: turn it on and off
 
     // Get pointers to constant buffers.
     ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };

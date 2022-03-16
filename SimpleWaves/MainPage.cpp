@@ -116,4 +116,16 @@ namespace winrt::SimpleWaves::implementation
         auto selectedIndex = listBox.SelectedIndex();
         m_main->SetRenderer(selectedIndex);
     }
+
+    void MainPage::ToolShaderToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        critical_section::scoped_lock lock(m_main->GetCriticalSection());
+
+        auto isToonShaderEnabled = sender.as<ToggleSwitch>().IsOn();
+
+        if (isToonShaderEnabled)
+            m_main->SetShader(ShaderType::Toon);
+        else
+            m_main->SetShader(ShaderType::Lights);
+    }
 }

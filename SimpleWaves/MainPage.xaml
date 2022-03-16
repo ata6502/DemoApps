@@ -84,6 +84,21 @@
                             <ListBoxItem>Mesh Renderer</ListBoxItem>
                         </ListBox.Items>
                     </ListBox>
+
+                    <StackPanel x:Name="ShaderPanel">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,8,8,0"
+                                    VerticalAlignment="Top">
+                            <TextBlock Text="Toon Shader:"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,4" />
+                            <ToggleSwitch x:Name="ToolShaderToggle"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      IsOn="False" 
+                                      Toggled="ToolShaderToggle_Toggled" />
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
                 
             </ScrollViewer>
