@@ -236,5 +236,4 @@ void DemoMain::SetLightCount(int lightCount)
 {
     m_threeLightSystem->SetLightCount(lightCount);
 }
-
 #pragma endregion

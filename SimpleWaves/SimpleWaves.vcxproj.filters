@@ -49,6 +49,9 @@
     <ClCompile Include="..\Shared\RasterizerStateManager.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="ShaderController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -85,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="VertexStructures.h">
       <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderController.h">
+      <Filter>Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +138,9 @@
     <Filter Include="Shared">
       <UniqueIdentifier>{5d9ced02-8b0f-49ad-89ae-dfa32f7f9919}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controllers">
+      <UniqueIdentifier>{0e50f963-49ad-401b-8675-f5e608913570}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
@@ -143,6 +152,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="LightsShaderInclude.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="ToonLightSources.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -157,6 +169,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="LightsVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ToonPixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

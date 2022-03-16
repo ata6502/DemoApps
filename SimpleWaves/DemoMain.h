@@ -4,6 +4,7 @@
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "RendererBase.h"
+#include "ShaderController.h"
 #include "Timer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -27,6 +28,7 @@ public:
     void Resume();
 
     void SetRenderer(int32_t rendererIndex);
+    void SetShader(ShaderType shaderType);
 
     // IDeviceNotify
     virtual void OnDeviceLost();
@@ -46,5 +48,6 @@ private:
     std::unique_ptr<IndependentInput>        m_input;
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
+    std::unique_ptr<ShaderController>        m_shaderController;
 };
 

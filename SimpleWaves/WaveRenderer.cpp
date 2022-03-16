@@ -301,7 +301,7 @@ void WaveRenderer::Render()
 
     // Attach shaders.
     context->VSSetShader(m_vertexShader.get(), nullptr, 0);
-    context->PSSetShader(m_pixelShader.get(), nullptr, 0);
+    //context->PSSetShader(m_pixelShader.get(), nullptr, 0); // TODO: turn it on and off
 
     // Get pointers to constant buffers.
     ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };

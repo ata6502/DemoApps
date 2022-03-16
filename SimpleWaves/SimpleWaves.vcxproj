@@ -131,6 +131,7 @@
     </ClInclude>
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererFactory.h" />
+    <ClInclude Include="ShaderController.h" />
     <ClInclude Include="VertexStructures.h" />
     <ClInclude Include="WaveRenderer.h" />
     <ClInclude Include="Waves.h" />
@@ -178,6 +179,7 @@
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="RendererFactory.cpp" />
+    <ClCompile Include="ShaderController.cpp" />
     <ClCompile Include="WaveRenderer.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>
@@ -195,6 +197,7 @@
     <None Include="LightsShaderInclude.hlsli" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
+    <None Include="ToonLightSources.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorPixelShader.hlsl">
@@ -212,6 +215,9 @@
     <FxCompile Include="LightsVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="ToonPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -20,6 +20,8 @@ DemoMain::DemoMain()
     auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
+    m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
+
     m_timer.Reset();
 }
 
@@ -125,6 +127,7 @@ void DemoMain::OnDeviceLost()
 void DemoMain::OnDeviceRestored()
 {
     m_renderer->InitializeInBackground();
+    m_shaderController->InitializeInBackground();
     CreateWindowSizeDependentResources();
     StartRenderLoop();
 }
@@ -158,12 +161,14 @@ void DemoMain::Render()
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
+    m_shaderController->Render();
     m_renderer->Render();
 }
 
 void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
+    m_shaderController->ReleaseResources();
 }
 
 void DemoMain::SetRenderer(int32_t rendererIndex)
@@ -175,7 +180,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     critical_section::scoped_lock lock(m_criticalSection);
 
-    ReleaseResources();
+    m_renderer->ReleaseResources();
 
     auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
     m_renderer.reset();
@@ -183,4 +188,9 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     CreateWindowSizeDependentResources();
     StartRenderLoop();
+}
+
+void DemoMain::SetShader(ShaderType shaderType)
+{
+    m_shaderController->SetShader(shaderType);
 }
