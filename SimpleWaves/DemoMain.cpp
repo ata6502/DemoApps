@@ -194,3 +194,8 @@ void DemoMain::SetShader(ShaderType shaderType)
 {
     m_shaderController->SetShader(shaderType);
 }
+
+bool DemoMain::IsToonShaderSupported() const
+{
+    return m_renderer->IsToonShaderSupported();
+}

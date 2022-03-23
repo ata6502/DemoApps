@@ -19,6 +19,7 @@ public:
     void FinalizeInitialization();
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
+    bool IsToonShaderSupported() const { return false; }
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

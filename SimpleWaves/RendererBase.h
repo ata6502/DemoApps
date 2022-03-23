@@ -16,6 +16,7 @@ public:
     virtual void FinalizeInitialization() = 0;
     virtual void SetProjMatrix(DirectX::FXMMATRIX projMatrix) = 0;
     virtual void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds) = 0;
+    virtual bool IsToonShaderSupported() const = 0;
 
 protected:
     void IsInitialized(bool isInitialized) { m_initialized = isInitialized; }

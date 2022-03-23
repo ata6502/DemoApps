@@ -18,6 +18,8 @@ namespace winrt::SimpleWaves::implementation
     {
         InitializeComponent();
 
+        Loaded({ this, &MainPage::OnWindowLoaded });
+
         auto window = Window::Current().CoreWindow();
         window.VisibilityChanged({ this, &MainPage::OnVisibilityChanged });
 
@@ -32,6 +34,11 @@ namespace winrt::SimpleWaves::implementation
         m_main = std::make_unique<DemoMain>();
         m_main->SetSwapChainPanel(DXSwapChainPanel());
         m_main->StartRenderLoop();
+    }
+
+    void MainPage::OnWindowLoaded([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        InitializePanels();
     }
 
     void MainPage::OnVisibilityChanged([[maybe_unused]] winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::VisibilityChangedEventArgs const& args)
@@ -115,16 +122,38 @@ namespace winrt::SimpleWaves::implementation
         auto listBox = sender.as<ListBox>();
         auto selectedIndex = listBox.SelectedIndex();
         m_main->SetRenderer(selectedIndex);
+
+        InitializePanels();
+        SetShader();
     }
 
     void MainPage::ToolShaderToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         critical_section::scoped_lock lock(m_main->GetCriticalSection());
 
-        auto isToonShaderEnabled = sender.as<ToggleSwitch>().IsOn();
+        SetShader();
+    }
 
-        if (isToonShaderEnabled)
-            m_main->SetShader(ShaderType::Toon);
+    void MainPage::InitializePanels()
+    {
+        if (m_main->IsToonShaderSupported())
+            ShaderPanel().Visibility(Visibility::Visible);
+        else
+            ShaderPanel().Visibility(Visibility::Collapsed);
+    }
+
+    void MainPage::SetShader()
+    {
+        if (!m_rendererInitialized)
+        {
+            m_rendererInitialized = true;
+            return;
+        }
+
+        auto isToonShaderEnabled = ToolShaderToggle().IsOn();
+
+        if (m_main->IsToonShaderSupported() && isToonShaderEnabled)
+            m_main->SetShader(ShaderType::Toon); 
         else
             m_main->SetShader(ShaderType::Lights);
     }

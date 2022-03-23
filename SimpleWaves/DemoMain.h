@@ -30,6 +30,9 @@ public:
     void SetRenderer(int32_t rendererIndex);
     void SetShader(ShaderType shaderType);
 
+    // Shader management.
+    bool IsToonShaderSupported() const;
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();

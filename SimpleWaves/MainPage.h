@@ -16,6 +16,7 @@ namespace winrt::SimpleWaves::implementation
 
     private:
         // Window event handlers.
+        void OnWindowLoaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args);
         void OnVisibilityChanged(winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::VisibilityChangedEventArgs const& args);
 
         // Other event handlers.
@@ -29,6 +30,8 @@ namespace winrt::SimpleWaves::implementation
 
         // Helper methods.
         void ToggleControlPanel();
+        void InitializePanels();
+        void SetShader();
 
         std::unique_ptr<DemoMain> m_main;
         bool m_controlPanelVisible;
