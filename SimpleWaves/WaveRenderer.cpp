@@ -169,7 +169,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     m_spotLight.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
     m_spotLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_spotLight.Attenuation = XMFLOAT3(1.0f, 0.0f, 0.0f);
-    m_spotLight.Spot = 96.0f;
+    m_spotLight.Spot = 128.0f;
     m_spotLight.Range = 10000.0f;
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 

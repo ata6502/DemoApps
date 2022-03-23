@@ -33,7 +33,7 @@ void ComputeDirectionalLight(
         // Calculate the specular factor. toEye is the view vector.
         float specFactor = pow(max(dot(r, toEye), 0.0f), p);
 
-        // Calculate the diffuse component.
+        // Calculate the specular component.
         specularColor = specFactor * light.Specular * float4(material.Specular.xyz, 1.0f); // replace SpecularPower component (stored in w) with 1.0
     }
 }

@@ -1,4 +1,9 @@
-
+/*
+    [Luna] Ex.3 p.278 (Section 7.16)
+    One characteristic of toon lighting is the abrupt transition from one color shade to the next (in contrast with a smooth transition).
+    This can be implemented by computing kd and ks in the usual way, but then transforming them by discrete functions before using them 
+    in the pixel shader. Modify the lighting demo of this chapter to use this sort of toon shading.
+*/
 void ComputeToonDirectionalLight(
     MaterialDesc material, DirectionalLightDesc light, float3 normal, float3 toEye,
     out float4 ambientColor, out float4 diffuseColor, out float4 specularColor)
@@ -20,41 +25,36 @@ void ComputeToonDirectionalLight(
 
     // Apply toon effect to the diffuse factor kd.
     [flatten]
-    if (diffuseFactor <= 0.f)
+    if (diffuseFactor <= 0.0f)
         diffuseFactor = 0.4f;
     else if (diffuseFactor <= 0.5f)
         diffuseFactor = 0.6f;
     else if (diffuseFactor <= 1.0f)
         diffuseFactor = 1.0f;
 
-    // Flatten to avoid dynamic branching.
+    // Calculate the diffuse component.
+    diffuseColor = diffuseFactor * light.Diffuse * material.Diffuse;
+
+    // Determine the reflection vector r. The reflect function accepts two args: the incident vector and the normal.
+    float3 r = reflect(-L, normal); 
+
+    // Grab the specular power.
+    float p = material.Specular.w; 
+
+    // Calculate the specular factor. toEye is the view vector.
+    float specFactor = pow(max(dot(r, toEye), 0.0f), p);
+
+    // Apply toon effect to the specular factor ks.
     [flatten]
-    if (diffuseFactor > 0.0f)
-    {
-        // Calculate the diffuse component.
-        diffuseColor = diffuseFactor * light.Diffuse * material.Diffuse;
+    if (specFactor <= 0.1f)
+        specFactor = 0.0f;
+    else if (specFactor <= 0.8f)
+        specFactor = 0.5f;
+    else if (specFactor <= 1.0f)
+        specFactor = 0.8f;
 
-        // Determine the reflection vector r. The reflect function accepts two args: the incident vector and the normal.
-        float3 r = reflect(-L, normal); 
-
-        // Grab the specular power.
-        float p = material.Specular.w; 
-
-        // Calculate the specular factor. toEye is the view vector.
-        float specFactor = pow(max(dot(r, toEye), 0.0f), p);
-
-        // Apply toon effect to the specular factor ks.
-        [flatten]
-        if (specFactor <= 0.1f)
-            specFactor = 0.0f;
-        else if (specFactor <= 0.8f)
-            specFactor = 0.5f;
-        else if (specFactor <= 1.0f)
-            specFactor = 0.8f;
-
-        // Calculate the diffuse component.
-        specularColor = specFactor * light.Specular * float4(material.Specular.xyz, 1.0f); // replace SpecularPower component (stored in w) with 1.0
-    }
+    // Calculate the specular component.
+    specularColor = specFactor * light.Specular * float4(material.Specular.xyz, 1.0f); // replace SpecularPower component (stored in w) with 1.0
 }
 
 void ComputeToonPointLight(
@@ -85,17 +85,31 @@ void ComputeToonPointLight(
     // Calculate the diffuse factor.
     float diffuseFactor = dot(L, normal);
 
-    // Flatten to avoid dynamic branching.
+    // Apply toon effect to the diffuse factor kd.
     [flatten]
-    if (diffuseFactor > 0.0f)
-    {
-        float3 r = reflect(-L, normal); // reflection vector
-        float p = material.Specular.w; // specular power
-        float specFactor = pow(max(dot(r, toEye), 0.0f), p);
+    if (diffuseFactor <= 0.0f)
+        diffuseFactor = 0.4f;
+    else if (diffuseFactor <= 0.5f)
+        diffuseFactor = 0.6f;
+    else if (diffuseFactor <= 1.0f)
+        diffuseFactor = 1.0f;
 
-        diffuseColor = diffuseFactor * material.Diffuse * light.Diffuse;
-        specularColor = specFactor * material.Specular * light.Specular;
-    }
+    diffuseColor = diffuseFactor * material.Diffuse * light.Diffuse;
+
+    float3 r = reflect(-L, normal); // reflection vector
+    float p = material.Specular.w; // specular power
+    float specFactor = pow(max(dot(r, toEye), 0.0f), p);
+
+    // Apply toon effect to the specular factor ks.
+    [flatten]
+    if (specFactor <= 0.1f)
+        specFactor = 0.0f;
+    else if (specFactor <= 0.8f)
+        specFactor = 0.5f;
+    else if (specFactor <= 1.0f)
+        specFactor = 0.8f;
+
+    specularColor = specFactor * material.Specular * light.Specular;
 
     // Attenuate
     // The use of dot: light.Attenuation is float3 and we perform dot product of two float3 values to obtain a0+a1*d+a2*d^2
@@ -133,17 +147,31 @@ void ComputeToonSpotLight(
     // Calculate the diffuse factor.
     float diffuseFactor = dot(L, normal);
 
-    // Flatten to avoid dynamic branching.
+    // Apply toon effect to the diffuse factor kd.
     [flatten]
-    if (diffuseFactor > 0.0f)
-    {
-        float3 r = reflect(-L, normal); // reflection vector
-        float p = material.Specular.w; // specular power
-        float specFactor = pow(max(dot(r, toEye), 0.0f), p);
+    if (diffuseFactor <= 0.f)
+        diffuseFactor = 0.4f;
+    else if (diffuseFactor <= 0.5f)
+        diffuseFactor = 0.6f;
+    else if (diffuseFactor <= 1.0f)
+        diffuseFactor = 1.0f;
 
-        diffuseColor = diffuseFactor * material.Diffuse * light.Diffuse;
-        specularColor = specFactor * material.Specular * light.Specular;
-    }
+    diffuseColor = diffuseFactor * material.Diffuse * light.Diffuse;
+
+    float3 r = reflect(-L, normal); // reflection vector
+    float p = material.Specular.w; // specular power
+    float specFactor = pow(max(dot(r, toEye), 0.0f), p);
+
+    // Apply toon effect to the specular factor ks.
+    [flatten]
+    if (specFactor <= 0.1f)
+        specFactor = 0.0f;
+    else if (specFactor <= 0.8f)
+        specFactor = 0.5f;
+    else if (specFactor <= 1.0f)
+        specFactor = 0.8f;
+
+    specularColor = specFactor * material.Specular * light.Specular;
 
     // Compute the intensity falloff: kspot(f) = max(cos(f),0)^s = max(-L dot d,0)^s where d is the light direction.
     float spot = pow(max(dot(-L, light.Direction), 0.0f), light.Spot);
