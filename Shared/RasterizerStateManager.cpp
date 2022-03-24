@@ -15,17 +15,7 @@ void RasterizerStateManager::AddRasterizerState(std::string name, RasterizerStat
     // Create a rasterizer state.
     D3D11_RASTERIZER_DESC2 rsDesc;
     ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-
-    // Convert from the RasterizerState::FillMode to Direct3D enum.
-    switch (fillMode)
-    {
-    case FillMode::Wireframe:
-        rsDesc.FillMode = D3D11_FILL_WIREFRAME;
-        break;
-    case FillMode::Solid:
-        rsDesc.FillMode = D3D11_FILL_SOLID;
-        break;
-    }
+    rsDesc.AntialiasedLineEnable = false;
 
     // Convert from the RasterizerState::FillMode to Direct3D enum.
     switch (cullMode)
@@ -41,6 +31,21 @@ void RasterizerStateManager::AddRasterizerState(std::string name, RasterizerStat
         break;
     }
 
+    rsDesc.DepthBias = 0;
+    rsDesc.DepthBiasClamp = 0.0f;
+    rsDesc.DepthClipEnable = true;
+
+    // Convert from the RasterizerState::FillMode to Direct3D enum.
+    switch (fillMode)
+    {
+    case FillMode::Wireframe:
+        rsDesc.FillMode = D3D11_FILL_WIREFRAME;
+        break;
+    case FillMode::Solid:
+        rsDesc.FillMode = D3D11_FILL_SOLID;
+        break;
+    }
+
     // Convert from the RasterizerState::WindingOrder to Direct3D enum.
     switch (windingOrder)
     {
@@ -52,7 +57,9 @@ void RasterizerStateManager::AddRasterizerState(std::string name, RasterizerStat
         break;
     }
 
-    rsDesc.DepthClipEnable = true;
+    rsDesc.MultisampleEnable = false;
+    rsDesc.ScissorEnable = false;
+    rsDesc.SlopeScaledDepthBias = 0.0f;
 
     winrt::check_hresult(
         device->CreateRasterizerState2(

@@ -16,7 +16,6 @@ MeshRenderer::MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceRes
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
     m_gridMesh = std::make_unique<GridMesh>(deviceResources);
-    m_rasterizerState = std::make_unique<RasterizerStateManager>(deviceResources);
 
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -82,9 +81,6 @@ winrt::Windows::Foundation::IAsyncAction MeshRenderer::InitializeInBackground()
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
-    // [8] Create rasterizer states.
-    m_rasterizerState->AddRasterizerState("wireframe", RasterizerState::FillMode::Wireframe, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
-
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
     auto heightFunction = [](float x, float z)->float { return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z)); };
@@ -128,9 +124,6 @@ void MeshRenderer::Render()
     context->VSSetConstantBuffers(1, 1, &cbPerObjectPtr);
     context->PSSetConstantBuffers(0, 1, &cbPerFramePtr);
 
-    // Set the rasterizer state.
-    m_rasterizerState->SetRasterizerState("wireframe");
-
     // Draw the grid.
     m_gridMesh->Draw();
 }
@@ -145,7 +138,6 @@ void MeshRenderer::ReleaseResources()
     m_constantBufferNeverChanges = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
-    m_rasterizerState->ReleaseResources();
 }
 
 void MeshRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)

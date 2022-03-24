@@ -127,19 +127,26 @@ namespace winrt::SimpleWaves::implementation
         SetShader();
     }
 
-    void MainPage::ToolShaderToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    void MainPage::ToolShaderToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         critical_section::scoped_lock lock(m_main->GetCriticalSection());
 
         SetShader();
     }
 
+    void MainPage::WireframeToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        critical_section::scoped_lock lock(m_main->GetCriticalSection());
+
+        if (WireframeToggle().IsOn())
+            m_main->SetWireframeFillMode();
+        else
+            m_main->SetSolidFillMode();
+    }
+
     void MainPage::InitializePanels()
     {
-        if (m_main->IsToonShaderSupported())
-            ShaderPanel().Visibility(Visibility::Visible);
-        else
-            ShaderPanel().Visibility(Visibility::Collapsed);
+        ToolShaderToggle().IsEnabled(m_main->IsToonShaderSupported());
     }
 
     void MainPage::SetShader()

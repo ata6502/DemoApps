@@ -2,7 +2,6 @@
 
 #include "DeviceResources.h"
 #include "GridMesh.h"
-#include "RasterizerStateManager.h"
 #include "RendererBase.h"
 
 class MeshRenderer : public RendererBase
@@ -34,7 +33,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
-    std::unique_ptr<RasterizerStateManager> m_rasterizerState;
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_gridMesh;
 };

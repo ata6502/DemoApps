@@ -129,26 +129,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             &indexBufferData,
             m_waveIndexBuffer.put()));
 
-    // [9] Create a rasterizer state. It is set using RSSetState in the Render method.
-    D3D11_RASTERIZER_DESC2 rsDesc;
-    ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC2));
-    rsDesc.AntialiasedLineEnable = false;
-    rsDesc.CullMode = D3D11_CULL_BACK;
-    rsDesc.DepthBias = 0;
-    rsDesc.DepthBiasClamp = 0.0f;
-    rsDesc.DepthClipEnable = true;
-    rsDesc.FillMode = D3D11_FILL_SOLID;
-    rsDesc.FrontCounterClockwise = false;
-    rsDesc.MultisampleEnable = false;
-    rsDesc.ScissorEnable = false;
-    rsDesc.SlopeScaledDepthBias = 0.0f;
-
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateRasterizerState2(
-            &rsDesc,
-            m_rasterizerState.put()));
-
-    // [10] Create materials
+    // [9] Create materials
     m_terrainMaterial.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
     m_terrainMaterial.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
     m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
@@ -157,14 +138,14 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     m_waveMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
     m_waveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 96.0f); // w = SpecularPower
 
-    // [11] Create the point light source.
+    // [10] Create the point light source.
     m_pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
     m_pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
     m_pointLight.Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
     m_pointLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
     m_pointLight.Range = 25.0f;
 
-    // [12] Create the spot light source.
+    // [11] Create the spot light source.
     m_spotLight.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     m_spotLight.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
     m_spotLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -314,9 +295,6 @@ void WaveRenderer::Render()
     context->PSSetConstantBuffers(1, 1, &cbPerFramePtr);
     context->PSSetConstantBuffers(2, 1, &cbPerObjectPtr);
 
-    // Set the rasterizer state.
-    context->RSSetState(m_rasterizerState.get());
-
     ConstantBufferPerObject constantBufferPerObjectData;
 
     // Set the material and the world matrix of the terrain.
@@ -354,7 +332,6 @@ void WaveRenderer::ReleaseResources()
     m_constantBufferNeverChanges = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
-    m_rasterizerState = nullptr;
 }
 
 void WaveRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)

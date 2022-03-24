@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
+#include "RasterizerStateManager.h"
 #include "RendererBase.h"
 #include "ShaderController.h"
 #include "Timer.h"
@@ -33,6 +34,10 @@ public:
     // Shader management.
     bool IsToonShaderSupported() const;
 
+    // Rasterizer state management.
+    void SetWireframeFillMode();
+    void SetSolidFillMode();
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();
@@ -52,5 +57,7 @@ private:
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
     std::unique_ptr<ShaderController>        m_shaderController;
+    std::unique_ptr<RasterizerStateManager>  m_rasterizerStateManager;
+    std::string                              m_currentFillMode;
 };
 

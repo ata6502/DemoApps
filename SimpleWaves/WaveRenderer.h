@@ -31,7 +31,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_waveIndexBuffer;
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
-    winrt::com_ptr<ID3D11RasterizerState2>  m_rasterizerState;
 
     // Constant buffers.
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferNeverChanges;

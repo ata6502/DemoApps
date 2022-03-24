@@ -85,22 +85,39 @@
                         </ListBox.Items>
                     </ListBox>
 
-                    <StackPanel x:Name="ShaderPanel">
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,8,8,0"
-                                    VerticalAlignment="Top">
-                            <TextBlock Text="Toon Shader:"
-                                       VerticalAlignment="Center"
-                                       Margin="0,0,8,4" />
-                            <ToggleSwitch x:Name="ToolShaderToggle"
+                    <Grid Margin="0,8,8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="Wireframe:"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,4" />
+                        <ToggleSwitch x:Name="WireframeToggle"
+                                      Grid.Column="1"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      IsOn="False"
+                                      Toggled="WireframeToggle_Toggled" />
+
+                        <TextBlock Grid.Column="0" Grid.Row="1"
+                                   Text="Toon Shader:"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,4" />
+                        <ToggleSwitch x:Name="ToolShaderToggle"
+                                      Grid.Column="1" Grid.Row="1"
                                       OnContent="On"
                                       OffContent="Off"
                                       IsOn="False" 
                                       Toggled="ToolShaderToggle_Toggled" />
-                        </StackPanel>
-                    </StackPanel>
+                    </Grid>
                 </StackPanel>
-                
             </ScrollViewer>
         </Grid>
     </SwapChainPanel>

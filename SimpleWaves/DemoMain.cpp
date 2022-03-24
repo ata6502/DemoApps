@@ -9,7 +9,8 @@ using namespace Windows::System::Threading;
 using namespace Concurrency;
 using namespace DirectX;
 
-DemoMain::DemoMain()
+DemoMain::DemoMain() :
+    m_currentFillMode("solid")
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -21,6 +22,11 @@ DemoMain::DemoMain()
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
+    m_rasterizerStateManager = std::make_unique<RasterizerStateManager>(m_deviceResources);
+
+    // Create rasterizer states.
+    m_rasterizerStateManager->AddRasterizerState("solid", RasterizerState::FillMode::Solid, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
+    m_rasterizerStateManager->AddRasterizerState("wireframe", RasterizerState::FillMode::Wireframe, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
 
     m_timer.Reset();
 }
@@ -161,6 +167,9 @@ void DemoMain::Render()
     context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
+    // Set the rasterizer state.
+    m_rasterizerStateManager->SetRasterizerState(m_currentFillMode);
+
     m_shaderController->Render();
     m_renderer->Render();
 }
@@ -169,6 +178,7 @@ void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
     m_shaderController->ReleaseResources();
+    m_rasterizerStateManager->ReleaseResources();
 }
 
 void DemoMain::SetRenderer(int32_t rendererIndex)
@@ -193,6 +203,16 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 void DemoMain::SetShader(ShaderType shaderType)
 {
     m_shaderController->SetShader(shaderType);
+}
+
+void DemoMain::SetWireframeFillMode()
+{
+    m_currentFillMode = "wireframe";
+}
+
+void DemoMain::SetSolidFillMode()
+{
+    m_currentFillMode = "solid";
 }
 
 bool DemoMain::IsToonShaderSupported() const
