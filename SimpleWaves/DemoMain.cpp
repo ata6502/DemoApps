@@ -10,6 +10,7 @@ using namespace Concurrency;
 using namespace DirectX;
 
 DemoMain::DemoMain() :
+    m_renderer(nullptr),
     m_currentFillMode("solid")
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
@@ -17,8 +18,9 @@ DemoMain::DemoMain() :
 
     m_input = std::make_unique<IndependentInput>();
     m_camera = std::make_unique<Camera>();
+    m_materialController = std::make_shared<MaterialController>();
 
-    auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources);
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources, m_materialController);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
@@ -192,7 +194,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     m_renderer->ReleaseResources();
 
-    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources);
+    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources, m_materialController);
     m_renderer.reset();
     m_renderer.reset(renderer);
 
@@ -218,4 +220,14 @@ void DemoMain::SetSolidFillMode()
 bool DemoMain::IsToonShaderSupported() const
 {
     return m_renderer->IsToonShaderSupported();
+}
+
+void DemoMain::SetTerrainSpecularComponent(int specularComponent)
+{
+    m_materialController->SetTerrainSpecularComponent(specularComponent);
+}
+
+void DemoMain::SetWaveSpecularComponent(int specularComponent)
+{
+    m_materialController->SetWaveSpecularComponent(specularComponent);
 }

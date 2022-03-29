@@ -3,13 +3,14 @@
 #include "DeviceResources.h"
 #include "GridMesh.h"
 #include "LightsShaderStructures.h"
+#include "MaterialController.h"
 #include "RendererBase.h"
 #include "Waves.h"
 
 class WaveRenderer : public RendererBase
 {
 public:
-    WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, std::shared_ptr<MaterialController> const& materialController);
     ~WaveRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
@@ -21,9 +22,11 @@ public:
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     bool IsToonShaderSupported() const { return true; }
+    bool IsSpecularComponentSupported() const { return true; }
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
+    std::shared_ptr<MaterialController>     m_materialController;
 
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
@@ -37,10 +40,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
     ConstantBufferPerFrame                  m_constantBufferPerFrameData;
-
-    // Materials.
-    MaterialDesc                            m_terrainMaterial;
-    MaterialDesc                            m_waveMaterial;
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_terrainMesh;

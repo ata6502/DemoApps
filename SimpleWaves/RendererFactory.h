@@ -11,6 +11,9 @@ enum class RendererType
 class RendererFactory
 {
 public:
-    static RendererBase* CreateRenderer(RendererType rendererType, std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    static RendererBase* CreateRenderer(
+        RendererType rendererType, 
+        std::shared_ptr<DX::DeviceResources> const& deviceResources,
+        std::shared_ptr<MaterialController> const& materialController);
 };
 

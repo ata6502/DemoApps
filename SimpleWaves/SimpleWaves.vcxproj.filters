@@ -52,6 +52,9 @@
     <ClCompile Include="ShaderController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="MaterialController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -90,6 +93,9 @@
       <Filter>Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ShaderController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialController.h">
       <Filter>Controllers</Filter>
     </ClInclude>
   </ItemGroup>

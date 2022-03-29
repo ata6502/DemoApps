@@ -13,8 +13,8 @@ using namespace Concurrency;
 namespace winrt::SimpleWaves::implementation
 {
     MainPage::MainPage() :
-        m_controlPanelVisible(false),
-        m_rendererInitialized(false)
+        m_main(nullptr),
+        m_controlPanelVisible(false)
     {
         InitializeComponent();
 
@@ -113,11 +113,8 @@ namespace winrt::SimpleWaves::implementation
 
     void MainPage::RendererListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
     {
-        if (!m_rendererInitialized)
-        {
-            m_rendererInitialized = true;
+        if (m_main == nullptr)
             return;
-        }
 
         auto listBox = sender.as<ListBox>();
         auto selectedIndex = listBox.SelectedIndex();
@@ -144,18 +141,36 @@ namespace winrt::SimpleWaves::implementation
             m_main->SetSolidFillMode();
     }
 
+    void MainPage::TerrainSpecularComponentSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        // Set specular material component.
+        m_main->SetTerrainSpecularComponent(args.NewValue());
+    }
+
+    void MainPage::WaveSpecularComponentSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        // Set specular material component.
+        m_main->SetWaveSpecularComponent(args.NewValue());
+    }
+
     void MainPage::InitializePanels()
     {
-        ToolShaderToggle().IsEnabled(m_main->IsToonShaderSupported());
+        if (m_main->IsToonShaderSupported())
+            LightControlPanel().Visibility(Visibility::Visible);
+        else
+            LightControlPanel().Visibility(Visibility::Collapsed);
     }
 
     void MainPage::SetShader()
     {
-        if (!m_rendererInitialized)
-        {
-            m_rendererInitialized = true;
+        if (m_main == nullptr)
             return;
-        }
 
         auto isToonShaderEnabled = ToolShaderToggle().IsOn();
 

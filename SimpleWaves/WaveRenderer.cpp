@@ -8,8 +8,9 @@
 
 using namespace DirectX;
 
-WaveRenderer::WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+WaveRenderer::WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, std::shared_ptr<MaterialController> const& materialController) :
     m_deviceResources(deviceResources),
+    m_materialController(materialController),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr)
@@ -129,29 +130,23 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             &indexBufferData,
             m_waveIndexBuffer.put()));
 
-    // [9] Create materials
-    m_terrainMaterial.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-    m_terrainMaterial.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-    m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
-
-    m_waveMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
-    m_waveMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
-    m_waveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 96.0f); // w = SpecularPower
-
-    // [10] Create the point light source.
+    // [9] Create the point light source.
     m_pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
     m_pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
     m_pointLight.Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
     m_pointLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
     m_pointLight.Range = 25.0f;
 
-    // [11] Create the spot light source.
+    // [10] Create the spot light source.
     m_spotLight.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     m_spotLight.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
     m_spotLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_spotLight.Attenuation = XMFLOAT3(1.0f, 0.0f, 0.0f);
     m_spotLight.Spot = 128.0f;
     m_spotLight.Range = 10000.0f;
+
+    // [11] Create materials.
+    m_materialController->CreateMaterials();
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
     // applied to every point. The function makes the grid look like a terrain with hills and valleys.
@@ -299,7 +294,7 @@ void WaveRenderer::Render()
 
     // Set the material and the world matrix of the terrain.
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
-    constantBufferPerObjectData.Material = m_terrainMaterial;
+    constantBufferPerObjectData.Material = m_materialController->GetTerrainMaterial();
     context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // Draw the terrain.
@@ -308,7 +303,7 @@ void WaveRenderer::Render()
 
     // Set the material and the world matrix of the waves.
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
-    constantBufferPerObjectData.Material = m_waveMaterial;
+    constantBufferPerObjectData.Material = m_materialController->GetWaveMaterial();
     context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // Draw the waves.
@@ -353,3 +348,4 @@ void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECT
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
 }
+

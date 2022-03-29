@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
+#include "MaterialController.h"
 #include "RasterizerStateManager.h"
 #include "RendererBase.h"
 #include "ShaderController.h"
@@ -38,6 +39,10 @@ public:
     void SetWireframeFillMode();
     void SetSolidFillMode();
 
+    // Material management.
+    void SetTerrainSpecularComponent(int specularComponent);
+    void SetWaveSpecularComponent(int specularComponent);
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();
@@ -59,5 +64,6 @@ private:
     std::unique_ptr<ShaderController>        m_shaderController;
     std::unique_ptr<RasterizerStateManager>  m_rasterizerStateManager;
     std::string                              m_currentFillMode;
+    std::shared_ptr<MaterialController>      m_materialController;
 };
 
