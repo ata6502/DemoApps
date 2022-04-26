@@ -2,6 +2,7 @@
 
 #include "DeviceResources.h"
 #include "GridMesh.h"
+#include "LightsController.h"
 #include "LightsShaderStructures.h"
 #include "MaterialController.h"
 #include "RendererBase.h"
@@ -10,7 +11,10 @@
 class WaveRenderer : public RendererBase
 {
 public:
-    WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, std::shared_ptr<MaterialController> const& materialController);
+    WaveRenderer(
+        std::shared_ptr<DX::DeviceResources> const& deviceResources, 
+        std::shared_ptr<MaterialController> const& materialController,
+        std::shared_ptr<LightsController> const& lightsController);
     ~WaveRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
@@ -27,6 +31,7 @@ public:
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
     std::shared_ptr<MaterialController>     m_materialController;
+    std::shared_ptr<LightsController>       m_lightsController;
 
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
@@ -44,12 +49,6 @@ private:
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_terrainMesh;
     Waves                                   m_waves; // wave simulation
-
-    // Keep the description of a point light source as a data member as we need to change its position every frame.
-    PointLightDesc m_pointLight;
-
-    // Keep the description of a spot light source as a data member as we need to change its position and direction every frame.
-    SpotLightDesc m_spotLight;
 
     // Helper functions.
     DirectX::XMFLOAT3 const GetHillNormal(float x, float z);

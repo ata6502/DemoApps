@@ -8,9 +8,13 @@
 
 using namespace DirectX;
 
-WaveRenderer::WaveRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, std::shared_ptr<MaterialController> const& materialController) :
+WaveRenderer::WaveRenderer(
+    std::shared_ptr<DX::DeviceResources> const& deviceResources, 
+    std::shared_ptr<MaterialController> const& materialController,
+    std::shared_ptr<LightsController> const& lightsController) :
     m_deviceResources(deviceResources),
     m_materialController(materialController),
+    m_lightsController(lightsController),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr)
@@ -130,22 +134,8 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             &indexBufferData,
             m_waveIndexBuffer.put()));
 
-    // [9] Create the point light source.
-    m_pointLight.Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-    m_pointLight.Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-    m_pointLight.Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-    m_pointLight.Attenuation = XMFLOAT3(0.0f, 0.1f, 0.0f);
-    m_pointLight.Range = 25.0f;
-
-    // [10] Create the spot light source.
-    m_spotLight.Ambient = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-    m_spotLight.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
-    m_spotLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    m_spotLight.Attenuation = XMFLOAT3(1.0f, 0.0f, 0.0f);
-    m_spotLight.Spot = 128.0f;
-    m_spotLight.Range = 10000.0f;
-
-    // [11] Create materials.
+    // Create light sources and materials.
+    m_lightsController->CreateLights();
     m_materialController->CreateMaterials();
 
     // [Luna] The graph of a function y = f(x,z) is a grid in the xz-plane with the function y = f(x,z) 
@@ -258,14 +248,17 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXM
     context->Unmap(m_waveVertexBuffer.get(), 0);
 
     // Update the point light by circling it over the terrain.
-    m_pointLight.Position.x = 70.0f * cosf(0.2f * totalSeconds);
-    m_pointLight.Position.z = 70.0f * sinf(0.2f * totalSeconds);
-    m_pointLight.Position.y = std::max(GetHillHeight(m_pointLight.Position.x, m_pointLight.Position.z), -3.0f) + 10.0f;
+    float pointLightPosX = 70.0f * cosf(0.2f * totalSeconds);
+    float pointLightPosZ = 70.0f * sinf(0.2f * totalSeconds);
+    float pointLightPosY = std::max(GetHillHeight(pointLightPosX, pointLightPosZ), -3.0f) + 10.0f;
+    XMVECTOR pointLightPos = XMVectorSet(pointLightPosX, pointLightPosY, pointLightPosZ, 0.0f);
+    m_lightsController->UpdatePointLight(pointLightPos);
 
     // Update the spot light by taking the camera position and aiming in the same direction the camera is looking.  
     // This way, it looks like we are holding a flashlight.
-    XMStoreFloat3(&m_spotLight.Position, eyePosition);
-    XMStoreFloat3(&m_spotLight.Direction, XMVector3Normalize(lookingAtPosition - eyePosition));
+    m_lightsController->UpdateSpotLight(
+        eyePosition, // the spot light's position
+        XMVector3Normalize(lookingAtPosition - eyePosition)); // the spot light's direction
 }
 
 void WaveRenderer::Render()
@@ -341,10 +334,10 @@ void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECT
     XMStoreFloat3(&m_constantBufferPerFrameData.EyePosition, eyePosition);
 
     // Copy the point light description to the per frame constant buffer.
-    m_constantBufferPerFrameData.PointLight = m_pointLight;
+    m_constantBufferPerFrameData.PointLight = m_lightsController->GetPointLight();
 
     // Copy the spot light description to the per frame constant buffer.
-    m_constantBufferPerFrameData.SpotLight = m_spotLight;
+    m_constantBufferPerFrameData.SpotLight = m_lightsController->GetSpotLight();
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
 }

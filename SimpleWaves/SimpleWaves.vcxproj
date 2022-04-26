@@ -120,6 +120,7 @@
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="GridMesh.h" />
     <ClInclude Include="IndependentInput.h" />
+    <ClInclude Include="LightsController.h" />
     <ClInclude Include="LightsShaderStructures.h" />
     <ClInclude Include="MaterialController.h" />
     <ClInclude Include="MeshRenderer.h" />
@@ -133,6 +134,7 @@
     <ClInclude Include="RendererBase.h" />
     <ClInclude Include="RendererFactory.h" />
     <ClInclude Include="ShaderController.h" />
+    <ClInclude Include="SpotlightConeHalfAngleConverter.h" />
     <ClInclude Include="VertexStructures.h" />
     <ClInclude Include="WaveRenderer.h" />
     <ClInclude Include="Waves.h" />
@@ -168,6 +170,7 @@
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="GridMesh.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
+    <ClCompile Include="LightsController.cpp" />
     <ClCompile Include="MaterialController.cpp" />
     <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="pch.cpp">
@@ -182,6 +185,7 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="RendererFactory.cpp" />
     <ClCompile Include="ShaderController.cpp" />
+    <ClCompile Include="SpotlightConeHalfAngleConverter.cpp" />
     <ClCompile Include="WaveRenderer.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>
@@ -192,6 +196,7 @@
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Midl>
+    <Midl Include="SpotlightConeHalfAngleConverter.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ColorShaderInclude.hlsli" />

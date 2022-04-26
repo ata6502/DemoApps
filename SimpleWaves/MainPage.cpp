@@ -159,6 +159,15 @@ namespace winrt::SimpleWaves::implementation
         m_main->SetWaveSpecularComponent(args.NewValue());
     }
 
+    void MainPage::SpotlightConeHalfAngleSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        auto halfAngleId = static_cast<int>(args.NewValue());
+        m_main->SetSpotlightConeHalfAngle(halfAngleId);
+    }
+
     void MainPage::InitializePanels()
     {
         if (m_main->IsToonShaderSupported())

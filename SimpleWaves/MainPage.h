@@ -2,6 +2,7 @@
 
 #include "MainPage.g.h"
 #include "DemoMain.h"
+#include "SpotlightConeHalfAngleConverter.h"
 
 namespace winrt::SimpleWaves::implementation
 {
@@ -16,6 +17,7 @@ namespace winrt::SimpleWaves::implementation
         void WireframeToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args);
         void TerrainSpecularComponentSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
         void WaveSpecularComponentSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
+        void SpotlightConeHalfAngleSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
 
     private:
         // Window event handlers.

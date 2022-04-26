@@ -9,6 +9,9 @@
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainPage.idl" />
+    <Midl Include="SpotlightConeHalfAngleConverter.idl">
+      <Filter>Converters</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -55,6 +58,12 @@
     <ClCompile Include="MaterialController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="LightsController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotlightConeHalfAngleConverter.cpp">
+      <Filter>Converters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -97,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="MaterialController.h">
       <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="LightsController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotlightConeHalfAngleConverter.h">
+      <Filter>Converters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +161,9 @@
     </Filter>
     <Filter Include="Controllers">
       <UniqueIdentifier>{0e50f963-49ad-401b-8675-f5e608913570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Converters">
+      <UniqueIdentifier>{c1850d1b-0475-456a-afbf-0f67dff5b434}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

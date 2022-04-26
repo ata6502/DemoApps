@@ -128,6 +128,7 @@ void ComputeSpotLight(
     }
 
     // Compute the intensity falloff: kspot(f) = max(cos(f),0)^s = max(-L dot d,0)^s where d is the light direction.
+    // We also indirectly control the spotlight cone half-angle by altering the exponent s i.e., light.Spot
     float spot = pow(max(dot(-L, light.Direction), 0.0f), light.Spot);
 
     // Scale by spotlight factor and attenuate.

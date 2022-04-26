@@ -19,8 +19,9 @@ DemoMain::DemoMain() :
     m_input = std::make_unique<IndependentInput>();
     m_camera = std::make_unique<Camera>();
     m_materialController = std::make_shared<MaterialController>();
+    m_lightsController = std::make_shared<LightsController>();
 
-    auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources, m_materialController);
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources, m_materialController, m_lightsController);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
@@ -194,7 +195,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     m_renderer->ReleaseResources();
 
-    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources, m_materialController);
+    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources, m_materialController, m_lightsController);
     m_renderer.reset();
     m_renderer.reset(renderer);
 
@@ -230,4 +231,40 @@ void DemoMain::SetTerrainSpecularComponent(int specularComponent)
 void DemoMain::SetWaveSpecularComponent(int specularComponent)
 {
     m_materialController->SetWaveSpecularComponent(specularComponent);
+}
+
+void DemoMain::SetSpotlightConeHalfAngle(int halfAngleId)
+{
+    int halfAnglePower = 0;
+    switch (halfAngleId)
+    {
+    case 1:
+        halfAnglePower = 256;
+        break;
+    case 2:
+        halfAnglePower = 128;
+        break;
+    case 3:
+        halfAnglePower = 64;
+        break;
+    case 4:
+        halfAnglePower = 32;
+        break;
+    case 5:
+        halfAnglePower = 16;
+        break;
+    case 6:
+        halfAnglePower = 8;
+        break;
+    case 7:
+        halfAnglePower = 4;
+        break;
+    case 8:
+        halfAnglePower = 2;
+        break;
+    case 9:
+        halfAnglePower = 1;
+        break;
+    }
+    m_lightsController->SetSpotlightConeHalfAngle(halfAnglePower);
 }

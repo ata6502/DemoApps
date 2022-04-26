@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
+#include "LightsController.h"
 #include "MaterialController.h"
 #include "RasterizerStateManager.h"
 #include "RendererBase.h"
@@ -43,6 +44,9 @@ public:
     void SetTerrainSpecularComponent(int specularComponent);
     void SetWaveSpecularComponent(int specularComponent);
 
+    // Light management.
+    void SetSpotlightConeHalfAngle(int halfAngleId);
+
     // IDeviceNotify
     virtual void OnDeviceLost();
     virtual void OnDeviceRestored();
@@ -65,5 +69,6 @@ private:
     std::unique_ptr<RasterizerStateManager>  m_rasterizerStateManager;
     std::string                              m_currentFillMode;
     std::shared_ptr<MaterialController>      m_materialController;
+    std::shared_ptr<LightsController>        m_lightsController;
 };
 
