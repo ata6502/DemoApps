@@ -237,7 +237,7 @@ void MeshGeneratorTexture::CreatePyramid(std::string const& name)
 
 /// <summary>
 /// Creates a pyramid. The pyramid's base is a unit square. The simple pyramid has 5 vertices
-///  which is not sufficient to define a texture on every face.
+/// which is not sufficient to define a texture on every face.
 /// [Luna] Ex.4 p.242 Construct the vertex and index list of a pyramid.
 /// </summary>
 void MeshGeneratorTexture::CreateSimplePyramid(std::string const& name)

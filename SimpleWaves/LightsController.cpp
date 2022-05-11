@@ -20,7 +20,7 @@ void LightsController::CreateLights()
     m_spotLight.Position = XMFLOAT3(0.0f, 0.0f, 0.0f); // we change the light's position dynamically
     m_spotLight.Range = 10000.0f;
     m_spotLight.Direction = XMFLOAT3(0.0f, 0.0f, 0.0f); // we change the light's direction dynamically
-    m_spotLight.Spot = 128.0f; // we change the light's cone angle dynamically
+    m_spotLight.Spot = 64.0f; // we change the light's cone angle dynamically
     m_spotLight.Attenuation = XMFLOAT3(1.0f, 0.0f, 0.0f);
 }
 
@@ -35,9 +35,12 @@ void LightsController::UpdateSpotLight(DirectX::FXMVECTOR const& position, Direc
     XMStoreFloat3(&m_spotLight.Direction, direction);
 }
 
+// [Luna] Ex.4 p.279 Increase or decrease the spotlight's cone based on user input.
 void LightsController::SetSpotlightConeHalfAngle(int halfAngleIndex)
 {
     auto halfAnglePowers = std::vector<int>{ 256, 128, 64, 32, 16, 8, 4, 2, 1 };
+    auto angle = (acos(pow(0.06, 1.0 / halfAnglePowers[halfAngleIndex])) * 180.0) / XM_PI;
+
     ASSERT(halfAngleIndex < halfAnglePowers.size());
 
     m_spotLight.Spot = halfAnglePowers[halfAngleIndex];
