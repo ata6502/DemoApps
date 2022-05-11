@@ -233,38 +233,7 @@ void DemoMain::SetWaveSpecularComponent(int specularComponent)
     m_materialController->SetWaveSpecularComponent(specularComponent);
 }
 
-void DemoMain::SetSpotlightConeHalfAngle(int halfAngleId)
+void DemoMain::SetSpotlightConeHalfAngle(int halfAngleIndex)
 {
-    int halfAnglePower = 0;
-    switch (halfAngleId)
-    {
-    case 1:
-        halfAnglePower = 256;
-        break;
-    case 2:
-        halfAnglePower = 128;
-        break;
-    case 3:
-        halfAnglePower = 64;
-        break;
-    case 4:
-        halfAnglePower = 32;
-        break;
-    case 5:
-        halfAnglePower = 16;
-        break;
-    case 6:
-        halfAnglePower = 8;
-        break;
-    case 7:
-        halfAnglePower = 4;
-        break;
-    case 8:
-        halfAnglePower = 2;
-        break;
-    case 9:
-        halfAnglePower = 1;
-        break;
-    }
-    m_lightsController->SetSpotlightConeHalfAngle(halfAnglePower);
+    m_lightsController->SetSpotlightConeHalfAngle(halfAngleIndex);
 }

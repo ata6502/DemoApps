@@ -159,7 +159,7 @@
                                 Grid.ColumnSpan="2" Grid.Row="6"
                                 TickPlacement="BottomRight" 
                                 ThumbToolTipValueConverter="{StaticResource SpotlightConeHalfAngleConverter}"
-                                Value="2" Minimum="1" Maximum="9" StepFrequency="1" TickFrequency="1"
+                                Value="2" Minimum="0" Maximum="8" StepFrequency="1" TickFrequency="1"
                                 ValueChanged="SpotlightConeHalfAngleSlider_ValueChanged" />
                     </Grid>
                 </StackPanel>

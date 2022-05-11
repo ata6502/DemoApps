@@ -45,7 +45,7 @@ public:
     void SetWaveSpecularComponent(int specularComponent);
 
     // Light management.
-    void SetSpotlightConeHalfAngle(int halfAngleId);
+    void SetSpotlightConeHalfAngle(int halfAngleIndex);
 
     // IDeviceNotify
     virtual void OnDeviceLost();

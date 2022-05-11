@@ -9,7 +9,7 @@ public:
 
     void UpdatePointLight(DirectX::FXMVECTOR const& position);
     void UpdateSpotLight(DirectX::FXMVECTOR const& position, DirectX::FXMVECTOR const& direction);
-    void SetSpotlightConeHalfAngle(int halfAnglePower);
+    void SetSpotlightConeHalfAngle(int halfAngleIndex);
 
     PointLightDesc GetPointLight() const { return m_pointLight; }
     SpotLightDesc GetSpotLight() const { return m_spotLight; }

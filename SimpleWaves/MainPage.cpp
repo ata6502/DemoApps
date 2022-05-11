@@ -164,8 +164,8 @@ namespace winrt::SimpleWaves::implementation
         if (m_main == nullptr)
             return;
 
-        auto halfAngleId = static_cast<int>(args.NewValue());
-        m_main->SetSpotlightConeHalfAngle(halfAngleId);
+        auto halfAngleIndex = static_cast<int>(args.NewValue());
+        m_main->SetSpotlightConeHalfAngle(halfAngleIndex);
     }
 
     void MainPage::InitializePanels()
