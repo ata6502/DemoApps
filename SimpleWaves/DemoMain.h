@@ -41,8 +41,7 @@ public:
     void SetSolidFillMode();
 
     // Material management.
-    void SetTerrainSpecularComponent(int specularComponent);
-    void SetWaveSpecularComponent(int specularComponent);
+    void SetSpecularComponent(int specularComponent);
 
     // Light management.
     void SetSpotlightConeHalfAngle(int halfAngleIndex);

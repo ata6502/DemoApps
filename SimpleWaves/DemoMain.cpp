@@ -223,13 +223,9 @@ bool DemoMain::IsToonShaderSupported() const
     return m_renderer->IsToonShaderSupported();
 }
 
-void DemoMain::SetTerrainSpecularComponent(int specularComponent)
+void DemoMain::SetSpecularComponent(int specularComponent)
 {
     m_materialController->SetTerrainSpecularComponent(specularComponent);
-}
-
-void DemoMain::SetWaveSpecularComponent(int specularComponent)
-{
     m_materialController->SetWaveSpecularComponent(specularComponent);
 }
 

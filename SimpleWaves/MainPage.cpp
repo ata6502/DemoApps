@@ -141,22 +141,13 @@ namespace winrt::SimpleWaves::implementation
             m_main->SetSolidFillMode();
     }
 
-    void MainPage::TerrainSpecularComponentSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    void MainPage::SpecularComponentSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
     {
         if (m_main == nullptr)
             return;
 
-        // Set specular material component.
-        m_main->SetTerrainSpecularComponent(args.NewValue());
-    }
-
-    void MainPage::WaveSpecularComponentSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
-    {
-        if (m_main == nullptr)
-            return;
-
-        // Set specular material component.
-        m_main->SetWaveSpecularComponent(args.NewValue());
+        // Set specular component of terrain and waves.
+        m_main->SetSpecularComponent(args.NewValue());
     }
 
     void MainPage::SpotlightConeHalfAngleSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)

@@ -132,24 +132,14 @@
                                       Toggled="ToolShaderToggle_Toggled" />
                         
                         <TextBlock Grid.ColumnSpan="2" Grid.Row="1"
-                                   Text="Terrain Specular Component:"
+                                   Text="Specular Component:"
                                    VerticalAlignment="Top"
                                    Margin="0,12,0,4" />
-                        <Slider x:Name="TerrainSpecularComponentSlider"
+                        <Slider x:Name="SpecularComponentSlider"
                                 Grid.ColumnSpan="2" Grid.Row="2"
                                 TickPlacement="BottomRight" 
                                 Value="2" Minimum="1" Maximum="7" StepFrequency="1" TickFrequency="1"
-                                ValueChanged="TerrainSpecularComponentSlider_ValueChanged" />
-
-                        <TextBlock Grid.ColumnSpan="2" Grid.Row="3"
-                                   Text="Wave Specular Component:"
-                                   VerticalAlignment="Top"
-                                   Margin="0,8,0,4" />
-                        <Slider x:Name="WaveSpecularComponentSlider"
-                                Grid.ColumnSpan="2" Grid.Row="4"
-                                TickPlacement="BottomRight"
-                                Value="4" Minimum="1" Maximum="7" StepFrequency="1" TickFrequency="1"
-                                ValueChanged="WaveSpecularComponentSlider_ValueChanged" />
+                                ValueChanged="SpecularComponentSlider_ValueChanged" />
 
                         <TextBlock Grid.ColumnSpan="2" Grid.Row="5"
                                    Text="Spotlight Cone Half-Angle:"
