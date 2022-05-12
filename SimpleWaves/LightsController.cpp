@@ -39,8 +39,6 @@ void LightsController::UpdateSpotLight(DirectX::FXMVECTOR const& position, Direc
 void LightsController::SetSpotlightConeHalfAngle(int halfAngleIndex)
 {
     auto halfAnglePowers = std::vector<int>{ 256, 128, 64, 32, 16, 8, 4, 2, 1 };
-    auto angle = (acos(pow(0.06, 1.0 / halfAnglePowers[halfAngleIndex])) * 180.0) / XM_PI;
-
     ASSERT(halfAngleIndex < halfAnglePowers.size());
 
     m_spotLight.Spot = halfAnglePowers[halfAngleIndex];

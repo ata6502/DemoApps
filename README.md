@@ -40,13 +40,15 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
 
 ## Simple Waves
 
-The `SimpleWaves` app: 
+The `SimpleWaves` app has the following features: 
 
-* Applies a height function to a grid to create "hills and valleys".
-* Utilizes a dynamic vertex buffer to animate waves. The buffer is populated using the `ID3D11DeviceContext2::Map` method.
-* Includes a `Waves` class from [Luna] that performs calculations of waves. The code is based on [Lengyel].
-* `WaveRenderer` uses three light sources: a fixed directional light, a point light that  circles about the terrain, 
+* A height function applied to a grid mesh. This techniques creates "hills and valleys".
+* A dynamic vertex buffer used to animate waves. The buffer is populated using the `ID3D11DeviceContext2::Map` method.
+* A `Waves` class from [Luna] that performs calculations of waves. The code is based on [Lengyel].
+* Three light sources in the `WaveRenderer` class: a fixed directional light, a point light that circles about the terrain, 
 and a spot light that moves with the camera and aims in the direction the camera is looking.
+* Toggles to enable a wireframe mode and a toon shader.
+* Sliders to adjust the specular component of terrain and wave materials as well as a spotlight cone half-angle.
 
 This app could be implemented on the GPU using rendering to texture or the compute shader as well as vertex texture fetch. 
 For simplicity, we compute wave simulation on the CPU and update vertices using a dynamic vertex buffer.
@@ -54,6 +56,10 @@ For simplicity, we compute wave simulation on the CPU and update vertices using 
 <img src="./Docs/Images/SimpleWaves1.png"/>
 
 <img src="./Docs/Images/SimpleWaves2.png"/>
+
+<img src="./Docs/Images/SimpleWaves3.png"/>
+
+<img src="./Docs/Images/SimpleWaves4.png"/>
 
 ## Scene with Skull
 
