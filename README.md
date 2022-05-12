@@ -59,8 +59,6 @@ For simplicity, we compute wave simulation on the CPU and update vertices using 
 
 <img src="./Docs/Images/SimpleWaves3.png"/>
 
-<img src="./Docs/Images/SimpleWaves4.png"/>
-
 ## Scene with Skull
 
 The `SceneWithSkull` app builds a scene made of a cube, cylinders, spheres, and a grid. It also loads a skull mesh from a file.
