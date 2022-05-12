@@ -201,7 +201,7 @@ void TextureRenderer::Render()
 void TextureRenderer::ReleaseResources()
 {
     IsInitialized(false);
-    m_meshGenerator->ReleaseBuffers();
+    m_meshGenerator->Clear();
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_constantBufferNeverChanges = nullptr;

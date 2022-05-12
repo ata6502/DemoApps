@@ -1204,8 +1204,14 @@ void MeshGeneratorTexture::DrawMesh(std::string const& name)
     context->DrawIndexed(info.IndexCount, info.StartIndexLocation, info.BaseVertexLocation);
 }
 
-void MeshGeneratorTexture::ReleaseBuffers()
+void MeshGeneratorTexture::Clear()
 {
+    // Clear collections.
+    m_vertices.clear();
+    m_indices.clear();
+    m_meshes.clear();
+
+    // Release buffers.
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
 }

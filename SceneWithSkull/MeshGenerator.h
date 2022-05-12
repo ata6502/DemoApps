@@ -18,7 +18,7 @@ public:
     void CreateBuffers();
     void SetBuffers();
     void DrawMesh(std::string const& name);
-    void ReleaseBuffers();
+    void Clear();
 
 private:
     struct MeshInfo

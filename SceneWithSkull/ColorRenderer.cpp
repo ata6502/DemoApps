@@ -126,7 +126,7 @@ void ColorRenderer::Render()
 void ColorRenderer::ReleaseResources()
 {
     IsInitialized(false);
-    m_meshGenerator->ReleaseBuffers();
+    m_meshGenerator->Clear();
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
