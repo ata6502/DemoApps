@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utilities.h"
+
 // Computes a face normal of a triangle P1P2P3.
 inline DirectX::XMVECTOR ComputeNormal(const DirectX::FXMVECTOR& p0, const DirectX::FXMVECTOR& p1, const DirectX::FXMVECTOR& p2)
 {
@@ -36,21 +38,6 @@ static DirectX::XMMATRIX InverseTranspose(DirectX::CXMMATRIX M)
 }
 
 #if defined(_DEBUG)
-// Examples: 
-// DebugTrace(L"num = %4.2f\n", num);
-// DebugTrace(L"%s\n", str.c_str());
-inline void DebugTrace(const wchar_t* format, ...)
-{
-    // Generate the message string.
-    va_list args;
-    va_start(args, format); // initialize the argument list
-    wchar_t buffer[1024];
-    ASSERT(_vsnwprintf_s(buffer, _countof(buffer) - 1, format, args) != -1);
-    va_end(args);
-
-    OutputDebugStringW(buffer); // this is a Windows function
-}
-
 inline void OutputDebug(DirectX::CXMMATRIX matrix)
 {
     DirectX::XMFLOAT4X4 m;

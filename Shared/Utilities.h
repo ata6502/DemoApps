@@ -1,5 +1,7 @@
 #pragma once
 
+void DebugTrace(const wchar_t* format, ...);
+
 class Utilities
 {
 public:

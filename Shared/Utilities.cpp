@@ -43,3 +43,20 @@ ID3D11Buffer* Utilities::CreateImmutableBuffer(ID3D11Device3* device, D3D11_BIND
 
     return pBuffer;
 }
+
+#if defined(_DEBUG)
+// Examples: 
+// DebugTrace(L"num = %4.2f\n", num);
+// DebugTrace(L"%s\n", str.c_str());
+void DebugTrace(const wchar_t* format, ...)
+{
+    // Generate the message string.
+    va_list args;
+    va_start(args, format); // initialize the argument list
+    wchar_t buffer[1024];
+    ASSERT(_vsnwprintf_s(buffer, _countof(buffer) - 1, format, args) != -1);
+    va_end(args);
+
+    OutputDebugStringW(buffer); // this is a Windows function
+}
+#endif

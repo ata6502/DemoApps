@@ -1,7 +1,8 @@
 #include "TextureShaderInclude.hlsli"
 
 // This code is based on the book "Introduction to 3D Game Programming with DirectX 11" by Frank Luna
- 
+// The pixel shader samples the textures and use them to color pixels.
+
 // Two directional lights
 #define LIGHT_COUNT 2
 
