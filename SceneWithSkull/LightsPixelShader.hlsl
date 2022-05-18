@@ -8,7 +8,7 @@
 // Declare a texture a.k.a. a diffuse map.
 Texture2D gTexture : register(t0);
 
-// Declare a linear sampler.
+// Declare a linear sampler. SamplerState mirrors the interface ID3D11SamplerState.
 SamplerState gLinearSampler : register(s0);
 
 float4 main(PixelShaderInput input) : SV_TARGET
@@ -41,10 +41,11 @@ float4 main(PixelShaderInput input) : SV_TARGET
         A += a; D += d; S += s;
     }
 
-    // Modulate with late add.
+    // Modulate the texture color with the ambient and diffuse lighting,
+    // but not with the specular lighting term. This is called "modulate with late add".
     float4 color = texColor * (A + D) + S;
 
-    // Common to take alpha from diffuse material and texture.
+    // Take alpha from diffuse material and texture.
     color.a = Material.Diffuse.a * texColor.a;
 
     return color;

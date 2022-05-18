@@ -48,7 +48,7 @@ private:
 
     // Direct3D objects used with textures.
     std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
-    winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
+    winrt::com_ptr<ID3D11SamplerState>     m_linearSampler;
 
     DirectX::XMFLOAT4X4                    m_projMatrix;
     std::unique_ptr<MeshGeneratorTexture>  m_meshGenerator;
