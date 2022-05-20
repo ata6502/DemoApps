@@ -84,6 +84,7 @@
                              SelectionChanged="RendererListBox_SelectionChanged">
                         <ListBox.Items>
                             <ListBoxItem IsSelected="True">Wave Renderer</ListBoxItem>
+                            <ListBoxItem>Texture Renderer</ListBoxItem>
                             <ListBoxItem>Mesh Renderer</ListBoxItem>
                         </ListBox.Items>
                     </ListBox>

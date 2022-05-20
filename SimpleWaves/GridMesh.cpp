@@ -12,128 +12,6 @@ GridMesh::GridMesh(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
 }
 
 /// <summary>
-/// Builds a grid mesh in the xz-plane.
-/// </summary>
-/// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
-/// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
-/// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
-/// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
-/// <param name="heightFunction">A function that determines the y-coordinate of grid's vertices.</param>
-/// <param name="normalFunction">A function that determines the normal vector for each triangle of the grid</param>
-void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, std::function<XMFLOAT3(float, float)> normalFunction)
-{
-    ReleaseResources();
-
-    auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
-    auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
-    float halfWidth = 0.5f * gridWidth;
-    float halfDepth = 0.5f * gridDepth;
-
-    // The grid is built from an M x N matrix of vertices. 
-    uint32_t m = quadCountDepth + 1;
-    uint32_t n = quadCountHoriz + 1;
-
-    // Create vertices.
-    auto vertexCount = m * n;
-    std::vector<VertexPositionNormal> vertices(vertexCount);
-
-    // Compute vertex positions by starting at the upper-left corner of the grid. 
-    // Then, incrementally compute the vertex coordinates row-by-row. 
-    float z = halfDepth;
-    for (uint32_t i = 0; i < m; ++i)
-    {
-        float x = -halfWidth;
-
-        for (uint32_t j = 0; j < n; ++j)
-        {
-            auto k = i * n + j;
-            auto y = heightFunction(x, z);
-
-            vertices[k].Position = XMFLOAT3(x, y, z);
-            vertices[k].Normal = normalFunction(x, z);
-
-            x += dx;
-        };
-
-        z -= dz;
-    }
-
-    // Create vertex buffer and load data.
-    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-    vertexBufferData.pSysMem = vertices.data();
-    vertexBufferData.SysMemPitch = 0;
-    vertexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC vertexBufferDesc(vertices.size() * sizeof(VertexPositionNormal), D3D11_BIND_VERTEX_BUFFER);
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &vertexBufferDesc,
-            &vertexBufferData,
-            m_vertexBuffer.put()));
-
-    // Create indices: 
-    // - each quad has two triangles
-    // - each triangle has three vertices
-    // - each quad is duplicated for the top and the bottom face of the grid
-    m_indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
-
-    std::vector<uint32_t> indices(m_indexCount);
-    size_t k = 0;
-
-    for (uint32_t i = 0; i < quadCountDepth; ++i)
-    {
-        for (uint32_t j = 0; j < quadCountHoriz; ++j)
-        {
-            // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
-            // The bottom face of the grid has the same indices but in opposite order.
-            //
-            //     a----b
-            //     |\   |
-            //     | \  |
-            //     |  \ |
-            //     |   \|
-            //     c----d
-            //
-            uint32_t a = j + i * n;
-            uint32_t b = j + 1 + i * n;
-            uint32_t c = j + (i + 1) * n;
-            uint32_t d = j + 1 + (i + 1) * n;
-
-            // top face
-            indices[k] = a;
-            indices[k + 1] = b;
-            indices[k + 2] = d;
-            indices[k + 3] = a;
-            indices[k + 4] = d;
-            indices[k + 5] = c;
-            k += 6;
-
-            // bottom face
-            indices[k] = a;
-            indices[k + 1] = d;
-            indices[k + 2] = b;
-            indices[k + 3] = a;
-            indices[k + 4] = c;
-            indices[k + 5] = d;
-            k += 6;
-        };
-    }
-
-    ASSERT(k == m_indexCount);
-
-    // Create index buffer and load indices to the buffer.
-    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
-    indexBufferData.pSysMem = indices.data();
-    indexBufferData.SysMemPitch = 0;
-    indexBufferData.SysMemSlicePitch = 0;
-    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
-    winrt::check_hresult(
-        m_deviceResources->GetD3DDevice()->CreateBuffer(
-            &indexBufferDesc,
-            &indexBufferData,
-            m_indexBuffer.put()));
-}
-
-/// <summary>
 /// Builds a two-color grid mesh in the xz-plane. Flips triangles alternately in the mesh. 
 /// </summary>
 /// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
@@ -143,7 +21,7 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
 /// <param name="heightFunction">A function that determines the y-coordinate of grid's vertices.</param>
 /// <param name="color">The color of the grid.</param>
 /// <param name="altColor">The color of the pattern on the grid.</param>
-void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, XMFLOAT4 color, XMFLOAT4 altColor)
+void GridMesh::CreateWithColor(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, XMFLOAT4 color, XMFLOAT4 altColor)
 {
     ReleaseResources();
 
@@ -306,6 +184,258 @@ void GridMesh::Create(float gridWidth, float gridDepth, uint32_t quadCountHoriz,
                 indices[k + 5] = b;
                 k += 6;
             }
+        };
+    }
+
+    ASSERT(k == m_indexCount);
+
+    // Create index buffer and load indices to the buffer.
+    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+    indexBufferData.pSysMem = indices.data();
+    indexBufferData.SysMemPitch = 0;
+    indexBufferData.SysMemSlicePitch = 0;
+    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateBuffer(
+            &indexBufferDesc,
+            &indexBufferData,
+            m_indexBuffer.put()));
+}
+
+/// <summary>
+/// Builds a grid mesh in the xz-plane.
+/// </summary>
+/// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
+/// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
+/// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
+/// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
+/// <param name="heightFunction">A function that determines the y-coordinate of grid's vertices.</param>
+/// <param name="normalFunction">A function that determines the normal vector for each triangle of the grid</param>
+void GridMesh::CreateWithMaterial(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, std::function<XMFLOAT3(float, float)> normalFunction)
+{
+    ReleaseResources();
+
+    auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
+    auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
+    float halfWidth = 0.5f * gridWidth;
+    float halfDepth = 0.5f * gridDepth;
+
+    // The grid is built from an M x N matrix of vertices. 
+    uint32_t m = quadCountDepth + 1;
+    uint32_t n = quadCountHoriz + 1;
+
+    // Create vertices.
+    auto vertexCount = m * n;
+    std::vector<VertexPositionNormal> vertices(vertexCount);
+
+    // Compute vertex positions by starting at the upper-left corner of the grid. 
+    // Then, incrementally compute the vertex coordinates row-by-row. 
+    float z = halfDepth;
+    for (uint32_t i = 0; i < m; ++i)
+    {
+        float x = -halfWidth;
+
+        for (uint32_t j = 0; j < n; ++j)
+        {
+            auto k = i * n + j;
+            auto y = heightFunction(x, z);
+
+            vertices[k].Position = XMFLOAT3(x, y, z);
+            vertices[k].Normal = normalFunction(x, z);
+
+            x += dx;
+        };
+
+        z -= dz;
+    }
+
+    // Create vertex buffer and load data.
+    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+    vertexBufferData.pSysMem = vertices.data();
+    vertexBufferData.SysMemPitch = 0;
+    vertexBufferData.SysMemSlicePitch = 0;
+    CD3D11_BUFFER_DESC vertexBufferDesc(vertices.size() * sizeof(VertexPositionNormal), D3D11_BIND_VERTEX_BUFFER);
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateBuffer(
+            &vertexBufferDesc,
+            &vertexBufferData,
+            m_vertexBuffer.put()));
+
+    // Create indices: 
+    // - each quad has two triangles
+    // - each triangle has three vertices
+    // - each quad is duplicated for the top and the bottom face of the grid
+    m_indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
+
+    std::vector<uint32_t> indices(m_indexCount);
+    size_t k = 0;
+
+    for (uint32_t i = 0; i < quadCountDepth; ++i)
+    {
+        for (uint32_t j = 0; j < quadCountHoriz; ++j)
+        {
+            // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
+            // The bottom face of the grid has the same indices but in opposite order.
+            //
+            //     a----b
+            //     |\   |
+            //     | \  |
+            //     |  \ |
+            //     |   \|
+            //     c----d
+            //
+            uint32_t a = j + i * n;
+            uint32_t b = j + 1 + i * n;
+            uint32_t c = j + (i + 1) * n;
+            uint32_t d = j + 1 + (i + 1) * n;
+
+            // top face
+            indices[k] = a;
+            indices[k + 1] = b;
+            indices[k + 2] = d;
+            indices[k + 3] = a;
+            indices[k + 4] = d;
+            indices[k + 5] = c;
+            k += 6;
+
+            // bottom face
+            indices[k] = a;
+            indices[k + 1] = d;
+            indices[k + 2] = b;
+            indices[k + 3] = a;
+            indices[k + 4] = c;
+            indices[k + 5] = d;
+            k += 6;
+        };
+    }
+
+    ASSERT(k == m_indexCount);
+
+    // Create index buffer and load indices to the buffer.
+    D3D11_SUBRESOURCE_DATA indexBufferData = { 0 };
+    indexBufferData.pSysMem = indices.data();
+    indexBufferData.SysMemPitch = 0;
+    indexBufferData.SysMemSlicePitch = 0;
+    CD3D11_BUFFER_DESC indexBufferDesc(indices.size() * sizeof(uint32_t), D3D11_BIND_INDEX_BUFFER);
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateBuffer(
+            &indexBufferDesc,
+            &indexBufferData,
+            m_indexBuffer.put()));
+}
+
+/// <summary>
+/// Builds a grid mesh in the xz-plane.
+/// </summary>
+/// <param name="gridWidth">Grid width. It determines the relative size of the grid.</param>
+/// <param name="gridDepth">Grid depth. It determines the relative size of the grid.</param>
+/// <param name="quadCountHoriz">The number of quads in the grid in the horizontal dimension (x-axis)</param>
+/// <param name="quadCountDepth">The number of quads in the grid in the depth dimension (z-axis)</param>
+/// <param name="heightFunction">A function that determines the y-coordinate of grid's vertices.</param>
+/// <param name="normalFunction">A function that determines the normal vector for each triangle of the grid</param>
+void GridMesh::CreateWithTexture(float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth, std::function<float(float, float)> heightFunction, std::function<XMFLOAT3(float, float)> normalFunction)
+{
+    ReleaseResources();
+
+    auto dx = gridWidth / quadCountHoriz; // the quad spacing along the x-axis 
+    auto dz = gridDepth / quadCountDepth; // the quad spacing along the z-axis
+    float halfWidth = 0.5f * gridWidth;
+    float halfDepth = 0.5f * gridDepth;
+
+    // The grid is built from an M x N matrix of vertices. 
+    uint32_t m = quadCountDepth + 1;
+    uint32_t n = quadCountHoriz + 1;
+
+    // Calculate increments for texture coordinates.
+    float du = 1.0f / quadCountHoriz;
+    float dv = 1.0f / quadCountDepth;
+
+    // Create vertices.
+    auto vertexCount = m * n;
+    std::vector<VertexPositionTexture> vertices(vertexCount);
+
+    // Compute vertex positions by starting at the upper-left corner of the grid. 
+    // Then, incrementally compute the vertex coordinates row-by-row. 
+    float z = halfDepth;
+    for (uint32_t i = 0; i < m; ++i)
+    {
+        float x = -halfWidth;
+
+        for (uint32_t j = 0; j < n; ++j)
+        {
+            auto k = i * n + j;
+            auto y = heightFunction(x, z);
+
+            vertices[k].Position = XMFLOAT3(x, y, z);
+            vertices[k].Normal = normalFunction(x, z);
+
+            // Stretch the texture over grid.
+            vertices[k].Texture.x = j * du;
+            vertices[k].Texture.y = i * dv;
+
+            x += dx;
+        };
+
+        z -= dz;
+    }
+
+    // Create vertex buffer and load data.
+    D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
+    vertexBufferData.pSysMem = vertices.data();
+    vertexBufferData.SysMemPitch = 0;
+    vertexBufferData.SysMemSlicePitch = 0;
+    CD3D11_BUFFER_DESC vertexBufferDesc(vertices.size() * sizeof(VertexPositionTexture), D3D11_BIND_VERTEX_BUFFER);
+    winrt::check_hresult(
+        m_deviceResources->GetD3DDevice()->CreateBuffer(
+            &vertexBufferDesc,
+            &vertexBufferData,
+            m_vertexBuffer.put()));
+
+    // Create indices: 
+    // - each quad has two triangles
+    // - each triangle has three vertices
+    // - each quad is duplicated for the top and the bottom face of the grid
+    m_indexCount = 2 * quadCountHoriz * quadCountDepth * 2 * 3;
+
+    std::vector<uint32_t> indices(m_indexCount);
+    size_t k = 0;
+
+    for (uint32_t i = 0; i < quadCountDepth; ++i)
+    {
+        for (uint32_t j = 0; j < quadCountHoriz; ++j)
+        {
+            // Compute four indices of a single quad composed of two triangles: ABD and ADC. 
+            // The bottom face of the grid has the same indices but in opposite order.
+            //
+            //     a----b
+            //     |\   |
+            //     | \  |
+            //     |  \ |
+            //     |   \|
+            //     c----d
+            //
+            uint32_t a = j + i * n;
+            uint32_t b = j + 1 + i * n;
+            uint32_t c = j + (i + 1) * n;
+            uint32_t d = j + 1 + (i + 1) * n;
+
+            // top face
+            indices[k] = a;
+            indices[k + 1] = b;
+            indices[k + 2] = d;
+            indices[k + 3] = a;
+            indices[k + 4] = d;
+            indices[k + 5] = c;
+            k += 6;
+
+            // bottom face
+            indices[k] = a;
+            indices[k + 1] = d;
+            indices[k + 2] = b;
+            indices[k + 3] = a;
+            indices[k + 4] = c;
+            indices[k + 5] = d;
+            k += 6;
         };
     }
 

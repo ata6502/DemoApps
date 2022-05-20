@@ -1,14 +1,15 @@
 #include "pch.h"
 
+#include "FileReader.h"
 #include "LightsShaderStructures.h"
 #include "MathHelper.h"
-#include "WaveRenderer.h"
+#include "TextureRenderer.h"
 #include "Utilities.h"
 #include "VertexStructures.h"
 
 using namespace DirectX;
 
-WaveRenderer::WaveRenderer(
+TextureRenderer::TextureRenderer(
     std::shared_ptr<DX::DeviceResources> const& deviceResources, 
     std::shared_ptr<MaterialController> const& materialController,
     std::shared_ptr<LightsController> const& lightsController) :
@@ -27,13 +28,13 @@ WaveRenderer::WaveRenderer(
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
+winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // [1] Load shader bytecode.
-    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsVertexShader.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"LightsPixelShader.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"TextureVertexShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"TexturePixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -47,7 +48,8 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
 
     // [4] Create the input layout using the vertex description and the vertex shader bytecode.
@@ -89,7 +91,7 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
     // We will be updating the data every frame.
     D3D11_BUFFER_DESC vertexBufferDesc;
     vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    vertexBufferDesc.ByteWidth = sizeof(VertexPositionNormal) * m_waves.VertexCount();
+    vertexBufferDesc.ByteWidth = sizeof(VertexPositionTexture) * m_waves.VertexCount();
     vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     vertexBufferDesc.MiscFlags = 0;
@@ -134,6 +136,31 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
             &indexBufferData,
             m_waveIndexBuffer.put()));
 
+    // [9] Load textures from files.
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\grass.dds", m_textures["grass"].put());
+    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\water.dds", m_textures["water"].put());
+
+    // [10] Create a sampler state.
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; // use linear filtering for minification, magnification, and mipmapping
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0;
+    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerDesc.BorderColor[0] = 0.0f; // Red
+    samplerDesc.BorderColor[1] = 1.0f; // Green
+    samplerDesc.BorderColor[2] = 0.0f; // Blue
+    samplerDesc.BorderColor[3] = 1.0f;
+    samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
+    samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
+
+    winrt::check_hresult(
+        device->CreateSamplerState(
+            &samplerDesc,
+            m_linearSampler.put()));
+
     // Create light sources and materials.
     m_lightsController->CreateLights();
     m_materialController->CreateMaterials();
@@ -152,19 +179,19 @@ winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
         return this->GetHillNormal(x, z);
     };
 
-    // Create a grid mesh.
-    m_terrainMesh->CreateWithMaterial(160, 160, 50, 50, heightFunction, normalFunction);
+    // Create a grid mesh with texture.
+    m_terrainMesh->CreateWithTexture(160, 160, 50, 50, heightFunction, normalFunction);
 
     // Inform other parts of the application that the initialization has completed.
     IsInitialized(true);
 }
 
-float const WaveRenderer::GetHillHeight(float x, float z)
+float const TextureRenderer::GetHillHeight(float x, float z)
 {
     return 0.3f * z * sinf(0.1f * x) + 0.3f * x * cosf(0.1f * z);
 }
 
-DirectX::XMFLOAT3 const WaveRenderer::GetHillNormal(float x, float z)
+DirectX::XMFLOAT3 const TextureRenderer::GetHillNormal(float x, float z)
 {
     // n = (-df/dx, 1, -df/dz)
     XMFLOAT3 n(
@@ -181,7 +208,7 @@ DirectX::XMFLOAT3 const WaveRenderer::GetHillNormal(float x, float z)
 /// <summary>
 /// Device context dependent initialization.
 /// </summary>
-void WaveRenderer::FinalizeInitialization()
+void TextureRenderer::FinalizeInitialization()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
     auto context{ m_deviceResources->GetD3DDeviceContext() };
@@ -208,7 +235,7 @@ void WaveRenderer::FinalizeInitialization()
 }
 
 // Animate waves.
-void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition)
+void TextureRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition)
 {
     // Every quarter second, generate a random wave.
     static float t_base = 0.0f;
@@ -238,7 +265,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXM
             0,
             &mappedData));
 
-    VertexPositionNormal* v = reinterpret_cast<VertexPositionNormal*>(mappedData.pData);
+    VertexPositionTexture* v = reinterpret_cast<VertexPositionTexture*>(mappedData.pData);
     for (uint32_t i = 0; i < m_waves.VertexCount(); ++i)
     {
         v[i].Position = m_waves[i];
@@ -261,15 +288,16 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXM
         XMVector3Normalize(lookingAtPosition - eyePosition)); // the spot light's direction
 }
 
-void WaveRenderer::Render()
+void TextureRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     context->IASetInputLayout(m_inputLayout.get());
 
-    // Attach shaders. A pixel changed is attached in ShaderController.
+    // Attach shaders.
     context->VSSetShader(m_vertexShader.get(), nullptr, 0);
+    context->PSSetShader(m_pixelShader.get(), nullptr, 0);
 
     // Get pointers to constant buffers.
     ID3D11Buffer* cbNeverChangesPtr{ m_constantBufferNeverChanges.get() };
@@ -290,8 +318,16 @@ void WaveRenderer::Render()
     constantBufferPerObjectData.Material = m_materialController->GetTerrainMaterial();
     context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
+    // Set the sampler.
+    ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
+    context->PSSetSamplers(0, 1, &pLinearSampler);
+
+    // Set the shader resource view i.e. a texture for terrain.
+    ID3D11ShaderResourceView* pGrassTexture{ m_textures["grass"].get() };
+    context->PSSetShaderResources(0, 1, &pGrassTexture);
+
     // Draw the terrain.
-    m_terrainMesh->SetBuffers(sizeof(VertexPositionNormal));
+    m_terrainMesh->SetBuffers(sizeof(VertexPositionTexture));
     m_terrainMesh->Draw();
 
     // Set the material and the world matrix of the waves.
@@ -299,8 +335,12 @@ void WaveRenderer::Render()
     constantBufferPerObjectData.Material = m_materialController->GetWaveMaterial();
     context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
+    // Set the shader resource view i.e. a texture for waves.
+    ID3D11ShaderResourceView* pWaterTexture{ m_textures["water"].get() };
+    context->PSSetShaderResources(0, 1, &pWaterTexture);
+
     // Draw the waves.
-    UINT stride = sizeof(VertexPositionNormal);
+    UINT stride = sizeof(VertexPositionTexture);
     UINT offset = 0;
     ID3D11Buffer* pVertexBuffer{ m_waveVertexBuffer.get() };
     context->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
@@ -308,7 +348,7 @@ void WaveRenderer::Render()
     context->DrawIndexed(3 * m_waves.TriangleCount(), 0, 0);
 }
 
-void WaveRenderer::ReleaseResources()
+void TextureRenderer::ReleaseResources()
 {
     IsInitialized(false);
     m_terrainMesh->ReleaseResources();
@@ -322,12 +362,12 @@ void WaveRenderer::ReleaseResources()
     m_constantBufferPerObject = nullptr;
 }
 
-void WaveRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+void TextureRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
+void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     XMStoreFloat4x4(&m_constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));

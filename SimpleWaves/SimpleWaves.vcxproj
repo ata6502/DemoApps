@@ -138,6 +138,7 @@
     <ClInclude Include="RendererFactory.h" />
     <ClInclude Include="ShaderController.h" />
     <ClInclude Include="SpotlightConeHalfAngleConverter.h" />
+    <ClInclude Include="TextureRenderer.h" />
     <ClInclude Include="VertexStructures.h" />
     <ClInclude Include="WaveRenderer.h" />
     <ClInclude Include="Waves.h" />
@@ -162,10 +163,13 @@
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\Textures\grass.dds" />
+    <Image Include="Assets\Textures\water.dds" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
+    <ClCompile Include="..\Shared\FileReader.cpp" />
     <ClCompile Include="..\Shared\MathHelper.cpp" />
     <ClCompile Include="..\Shared\RasterizerStateManager.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
@@ -189,6 +193,7 @@
     <ClCompile Include="RendererFactory.cpp" />
     <ClCompile Include="ShaderController.cpp" />
     <ClCompile Include="SpotlightConeHalfAngleConverter.cpp" />
+    <ClCompile Include="TextureRenderer.cpp" />
     <ClCompile Include="WaveRenderer.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>
@@ -207,6 +212,7 @@
     <None Include="LightsShaderInclude.hlsli" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
+    <None Include="TextureShaderInclude.hlsli" />
     <None Include="ToonLightSources.hlsli" />
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +235,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="TexturePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="TextureVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="ToonPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>

@@ -3,6 +3,7 @@
 #include "MaterialController.h"
 #include "MeshRenderer.h"
 #include "RendererFactory.h"
+#include "TextureRenderer.h"
 #include "WaveRenderer.h"
 
 RendererBase* RendererFactory::CreateRenderer(
@@ -15,6 +16,8 @@ RendererBase* RendererFactory::CreateRenderer(
     {
     case RendererType::Wave:
         return new WaveRenderer(deviceResources, materialController, lightsController);
+    case RendererType::Texture:
+        return new TextureRenderer(deviceResources, materialController, lightsController);
     case RendererType::Mesh:
         return new MeshRenderer(deviceResources);
     default:

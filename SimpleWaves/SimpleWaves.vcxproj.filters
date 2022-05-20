@@ -64,6 +64,12 @@
     <ClCompile Include="SpotlightConeHalfAngleConverter.cpp">
       <Filter>Converters</Filter>
     </ClCompile>
+    <ClCompile Include="TextureRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\FileReader.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -113,6 +119,9 @@
     <ClInclude Include="SpotlightConeHalfAngleConverter.h">
       <Filter>Converters</Filter>
     </ClInclude>
+    <ClInclude Include="TextureRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -135,6 +144,12 @@
     </Image>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Textures\grass.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\water.dds">
+      <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +180,9 @@
     <Filter Include="Converters">
       <UniqueIdentifier>{c1850d1b-0475-456a-afbf-0f67dff5b434}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{dc4020d0-4f2f-4fae-b9fe-5dd28cbd865c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
@@ -179,6 +197,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="ToonLightSources.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="TextureShaderInclude.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
@@ -196,6 +217,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ToonPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TexturePixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureVertexShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
