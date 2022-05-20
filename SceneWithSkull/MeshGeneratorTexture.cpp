@@ -346,6 +346,7 @@ void MeshGeneratorTexture::CreateCylinder(std::string const& name, float bottomR
             VertexPositionTexture vertex;
             vertex.Position = XMFLOAT3(r * c, y, r * s);
 
+            // Compute texture coordinates for the cylider mesh.
             vertex.Texture.x = (float)j / sliceCount;
             vertex.Texture.y = 1.0f - (float)i / stackCount;
 

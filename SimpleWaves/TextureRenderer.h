@@ -50,6 +50,15 @@ private:
     std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
     winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
 
+    // Texture transforms are used in the vertex shader to transform the input texture coordinates.
+    // Texture coordinates are 2D points in texture plane. We can translate, rotate, and scale 
+    // them like any other point.
+    DirectX::XMFLOAT4X4                     m_grassTextureTransform;
+    DirectX::XMFLOAT4X4                     m_waterTextureTransform;
+
+    // Offset for water animation.
+    DirectX::XMFLOAT2                       m_waterTextureOffset;
+
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_terrainMesh;
     Waves                                   m_waves; // wave simulation

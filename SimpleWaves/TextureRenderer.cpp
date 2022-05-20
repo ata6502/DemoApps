@@ -24,6 +24,9 @@ TextureRenderer::TextureRenderer(
 
     m_terrainMesh = std::make_unique<GridMesh>(deviceResources);
 
+    XMStoreFloat4x4(&m_grassTextureTransform, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_waterTextureTransform, XMMatrixIdentity());
+
     // Initialize device resources asynchronously.
     InitializeInBackground();
 }
@@ -149,9 +152,9 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     samplerDesc.MipLODBias = 0;
     samplerDesc.MaxAnisotropy = 1;
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerDesc.BorderColor[0] = 0.0f; // Red
+    samplerDesc.BorderColor[0] = 1.0f; // Red
     samplerDesc.BorderColor[1] = 1.0f; // Green
-    samplerDesc.BorderColor[2] = 0.0f; // Blue
+    samplerDesc.BorderColor[2] = 1.0f; // Blue
     samplerDesc.BorderColor[3] = 1.0f;
     samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
     samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
@@ -160,6 +163,14 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
         device->CreateSamplerState(
             &samplerDesc,
             m_linearSampler.put()));
+
+    // [11] Create a texture transformation for terrain by repeating the grass texture 
+    // over the land mesh to get more resolution.
+    // To tile the texture, we specify the WRAP address mode (which is a default value)
+    // and scale the texture coordinates by 5 using a texture transformation matrix
+    XMStoreFloat4x4(
+        &m_grassTextureTransform,
+        XMMatrixTranspose(XMMatrixScaling(5.0f, 5.0f, 0.0f)));
 
     // Create light sources and materials.
     m_lightsController->CreateLights();
@@ -234,7 +245,6 @@ void TextureRenderer::FinalizeInitialization()
     context->UpdateSubresource(m_constantBufferNeverChanges.get(), 0, nullptr, &constantBufferNeverChangesData, 0, 0);
 }
 
-// Animate waves.
 void TextureRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition)
 {
     // Every quarter second, generate a random wave.
@@ -270,9 +280,26 @@ void TextureRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::
     {
         v[i].Position = m_waves[i];
         v[i].Normal = m_waves.Normal(i);
+
+        // Derive wave texture-coordinates in the range [0,1] from position.
+        v[i].Texture.x = 0.5f + m_waves[i].x / m_waves.Width();
+        v[i].Texture.y = 0.5f - m_waves[i].z / m_waves.Depth();
     }
 
     context->Unmap(m_waveVertexBuffer.get(), 0);
+
+    // Animate water texture coordinates.
+
+    // Tile water texture.
+    XMMATRIX wavesScale = XMMatrixScaling(5.0f, 5.0f, 0.0f);
+
+    // Scroll the water texture over the water geometry as a function of time.
+    m_waterTextureOffset.y += 0.05f * elapsedSeconds;
+    m_waterTextureOffset.x += 0.1f * elapsedSeconds;
+    XMMATRIX wavesOffset = XMMatrixTranslation(m_waterTextureOffset.x, m_waterTextureOffset.y, 0.0f);
+
+    // Combine scale and translation.
+    XMStoreFloat4x4(&m_waterTextureTransform, wavesScale * wavesOffset);
 
     // Update the point light by circling it over the terrain.
     float pointLightPosX = 70.0f * cosf(0.2f * totalSeconds);
@@ -316,7 +343,6 @@ void TextureRenderer::Render()
     // Set the material and the world matrix of the terrain.
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
     constantBufferPerObjectData.Material = m_materialController->GetTerrainMaterial();
-    context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // Set the sampler.
     ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
@@ -326,6 +352,14 @@ void TextureRenderer::Render()
     ID3D11ShaderResourceView* pGrassTexture{ m_textures["grass"].get() };
     context->PSSetShaderResources(0, 1, &pGrassTexture);
 
+    // Set the grass texture transform.
+    XMStoreFloat4x4(
+        &constantBufferPerObjectData.TextureTransform,
+        XMMatrixTranspose(XMLoadFloat4x4(&m_grassTextureTransform)));
+
+    // Send the per object cbuffer to GPU.
+    context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
+
     // Draw the terrain.
     m_terrainMesh->SetBuffers(sizeof(VertexPositionTexture));
     m_terrainMesh->Draw();
@@ -333,11 +367,18 @@ void TextureRenderer::Render()
     // Set the material and the world matrix of the waves.
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(XMMatrixIdentity()));
     constantBufferPerObjectData.Material = m_materialController->GetWaveMaterial();
-    context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // Set the shader resource view i.e. a texture for waves.
     ID3D11ShaderResourceView* pWaterTexture{ m_textures["water"].get() };
     context->PSSetShaderResources(0, 1, &pWaterTexture);
+
+    // Set the water texture transform.
+    XMStoreFloat4x4(
+        &constantBufferPerObjectData.TextureTransform,
+        XMMatrixTranspose(XMLoadFloat4x4(&m_waterTextureTransform)));
+
+    // Send the per object cbuffer to GPU.
+    context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
     // Draw the waves.
     UINT stride = sizeof(VertexPositionTexture);

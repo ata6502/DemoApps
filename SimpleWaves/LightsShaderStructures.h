@@ -67,4 +67,5 @@ struct ConstantBufferPerObject
 {
     DirectX::XMFLOAT4X4 World;
     MaterialDesc Material;
+    DirectX::XMFLOAT4X4 TextureTransform;
 };

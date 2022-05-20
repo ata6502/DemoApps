@@ -57,10 +57,12 @@ cbuffer ConstantBufferPerFrame : register(b1)
     float Pad;
 };
 
+// matrix = float4x4
 cbuffer ConstantBufferPerObject : register(b2)
 {
     matrix World;
     MaterialDesc Material;
+    matrix TextureTransform;
 };
 
 // Per-vertex data used as input to the vertex shader.
