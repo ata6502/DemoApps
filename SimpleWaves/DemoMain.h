@@ -35,6 +35,7 @@ public:
 
     // Shader management.
     bool IsToonShaderSupported() const;
+    bool AreLightParametersSupported() const;
 
     // Rasterizer state management.
     void SetWireframeFillMode();

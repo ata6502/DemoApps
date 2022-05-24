@@ -26,7 +26,7 @@ public:
     void SetProjMatrix(DirectX::FXMMATRIX projMatrix);
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     bool IsToonShaderSupported() const { return true; }
-    bool IsSpecularComponentSupported() const { return true; }
+    bool AreLightParametersSupported() const { return true; }
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

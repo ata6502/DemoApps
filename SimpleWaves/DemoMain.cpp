@@ -223,6 +223,11 @@ bool DemoMain::IsToonShaderSupported() const
     return m_renderer->IsToonShaderSupported();
 }
 
+bool DemoMain::AreLightParametersSupported() const
+{
+    return m_renderer->AreLightParametersSupported();
+}
+
 void DemoMain::SetSpecularComponent(int specularComponent)
 {
     m_materialController->SetTerrainSpecularComponent(specularComponent);
