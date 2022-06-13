@@ -32,6 +32,7 @@ struct ConstantBufferNeverChanges
 struct ConstantBufferPerFrame
 {
     DirectX::XMFLOAT4X4 ViewProj;
+    DirectX::XMFLOAT4X4 TextureTransform;
     DirectX::XMFLOAT3 EyePosition;
 };
 

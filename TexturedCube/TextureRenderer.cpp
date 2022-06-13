@@ -172,7 +172,7 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.MipLODBias = 0;
-    samplerDesc.MaxAnisotropy = 1;
+    samplerDesc.MaxAnisotropy = 4; // increase MaxAnisotropy if you use the D3D11_FILTER_ANISOTROPIC filter
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
     samplerDesc.BorderColor[0] = 0.0f; // Red
     samplerDesc.BorderColor[1] = 1.0f; // Green
@@ -300,6 +300,13 @@ void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMV
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
+
+    // SetViewMatrix is called every frame. We can update matrix transformation here.
+    auto identity = XMMatrixIdentity();
+    XMStoreFloat4x4(
+        &constantBufferPerFrameData.TextureTransform,
+        XMMatrixTranspose(identity));
+
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
 

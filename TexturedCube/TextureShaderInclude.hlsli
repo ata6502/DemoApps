@@ -23,6 +23,7 @@ cbuffer ConstantBufferNeverChanges : register(b0)
 cbuffer ConstantBufferPerFrame : register(b1)
 {
     matrix ViewProj;
+    matrix TextureTransform;
     float3 EyePosition;
     float Pad;
 };

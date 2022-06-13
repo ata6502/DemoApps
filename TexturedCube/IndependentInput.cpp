@@ -8,7 +8,7 @@ using namespace Windows::System::Threading;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Input;
 
-const float IndependentInput::MIN_INPUT_RADIUS = 1.7f;
+const float IndependentInput::MIN_INPUT_RADIUS = 1.0f;
 const float IndependentInput::MAX_INPUT_RADIUS = 8.0f;
 const float IndependentInput::DEFAULT_INPUT_RADIUS = 2.2f;
 const float IndependentInput::DEFAULT_INPUT_YAW = 1.5f * XM_PI;
