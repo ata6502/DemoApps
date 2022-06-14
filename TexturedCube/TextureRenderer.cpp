@@ -301,11 +301,28 @@ void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMV
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
 
-    // SetViewMatrix is called every frame. We can update matrix transformation here.
-    auto identity = XMMatrixIdentity();
+    XMFLOAT4X4 textureTransform;
+    XMStoreFloat4x4(&textureTransform, XMMatrixScaling(1.f, 1.f, 0.0f) * XMMatrixTranslation(0, 0, 0));
+
+    // [Luna] Ex.1 p.307 Change the texture coordinates to reproduce the images in Figures 8.10, 8.11, 8.12, and 8.13
+    // Fig 8.10 p.298
+    //      Address mode: Wrap (D3D11_TEXTURE_ADDRESS_WRAP)
+    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(0.5f, 0.5f, 0));
+    // Fig 8.11 p.298
+    //      Address mode: Border color (D3D11_TEXTURE_ADDRESS_BORDER)
+    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+    // Fig 8.12 p.299
+    //      Address mode: Clamp (D3D11_TEXTURE_ADDRESS_CLAMP)
+    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+    // Fig 8.13 p.299
+    //      Address mode: Mirror (D3D11_TEXTURE_ADDRESS_MIRROR)
+    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+
+    // SetViewMatrix is called every frame. We can update texture transformation here.
     XMStoreFloat4x4(
         &constantBufferPerFrameData.TextureTransform,
-        XMMatrixTranspose(identity));
+        XMMatrixTranspose(XMLoadFloat4x4(&textureTransform)));
+
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
