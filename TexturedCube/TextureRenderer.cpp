@@ -166,12 +166,18 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     // [12] Load a texture from a file and create the shader resource view to the texture.
     if (m_mode == TextureRendererMode::Normal)
         co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_texture.put());
+    // [Luna] Ex.2 p.307 Create a DDS file with a mipmap chain with a different color on each level.
     else if (m_mode == TextureRendererMode::Mipmap)
         co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\mipmap.dds", m_texture.put());
 
     // [13] Create a sampler state.
     D3D11_SAMPLER_DESC samplerDesc;
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+    if (m_mode == TextureRendererMode::Normal)
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    else if (m_mode == TextureRendererMode::Mipmap)
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT; // linear filtering shows mipmap levels sharply
+
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
