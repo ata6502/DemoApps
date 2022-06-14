@@ -3,10 +3,16 @@
 #include "DeviceResources.h"
 #include "RendererBase.h"
 
+enum class TextureRendererMode
+{
+    Normal,
+    Mipmap
+};
+
 class TextureRenderer : public RendererBase
 {
 public:
-    TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, TextureRendererMode mode);
     ~TextureRenderer() {}
 
     winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
@@ -34,10 +40,11 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
     // Direct3D objects used with textures.
-    winrt::com_ptr<ID3D11ShaderResourceView> m_crateTexture;
+    winrt::com_ptr<ID3D11ShaderResourceView> m_texture;
     winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
 
     uint32_t                                m_indexCount;
     DirectX::XMFLOAT4X4                     m_projMatrix;
+    TextureRendererMode                     m_mode;
 };
 

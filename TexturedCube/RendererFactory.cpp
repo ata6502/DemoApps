@@ -10,7 +10,9 @@ RendererBase* RendererFactory::CreateRenderer(RendererType rendererType, std::sh
     switch (rendererType)
     {
     case RendererType::Texture:
-        return new TextureRenderer(deviceResources);
+        return new TextureRenderer(deviceResources, TextureRendererMode::Normal);
+    case RendererType::Mipmap:
+        return new TextureRenderer(deviceResources, TextureRendererMode::Mipmap);
     case RendererType::Material:
         return new MaterialRenderer(deviceResources);
     case RendererType::Color:

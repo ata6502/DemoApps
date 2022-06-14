@@ -7,13 +7,14 @@
 
 using namespace DirectX;
 
-TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, TextureRendererMode mode) :
     m_deviceResources(deviceResources),
+    m_mode(mode),
     m_indexCount(0),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
-    m_crateTexture(nullptr)
+    m_texture(nullptr)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -163,7 +164,10 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             &cubeIndices));
 
     // [12] Load a texture from a file and create the shader resource view to the texture.
-    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_crateTexture.put());
+    if (m_mode == TextureRendererMode::Normal)
+        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_texture.put());
+    else if (m_mode == TextureRendererMode::Mipmap)
+        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\mipmap.dds", m_texture.put());
 
     // [13] Create a sampler state.
     D3D11_SAMPLER_DESC samplerDesc;
@@ -269,7 +273,7 @@ void TextureRenderer::Render()
     context->PSSetSamplers(0, 1, &pLinearSampler);
 
     // Set the shader resource view i.e. our texture.
-    ID3D11ShaderResourceView* pCrateTexture{ m_crateTexture.get() };
+    ID3D11ShaderResourceView* pCrateTexture{ m_texture.get() };
     context->PSSetShaderResources(0, 1, &pCrateTexture);
 
     // Draw the cube.

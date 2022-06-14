@@ -74,6 +74,20 @@
                 </ScrollViewer.RenderTransform>
 
                 <StackPanel>
+                    <ListBox x:Name="RendererListBox"
+                             Background="White"
+                             Margin="12,8,12,8"
+                             BorderBrush="Black"
+                             BorderThickness="1"
+                             SelectionChanged="RendererListBox_SelectionChanged">
+                        <ListBox.Items>
+                            <ListBoxItem IsSelected="True">Texture Renderer</ListBoxItem>
+                            <ListBoxItem>Mipmap Renderer</ListBoxItem>
+                            <ListBoxItem>Material Renderer</ListBoxItem>
+                            <ListBoxItem>Color Renderer</ListBoxItem>
+                        </ListBox.Items>
+                    </ListBox>
+
                     <StackPanel Orientation="Horizontal"
                             Margin="12,8,8,0"
                             VerticalAlignment="Top">
@@ -85,20 +99,6 @@
                                   IsOn="False" 
                                   Toggled="RotationToggle_Toggled" />
                     </StackPanel>
-
-                    <ListBox x:Name="RendererListBox"
-                             Background="White"
-                             Margin="12,8,12,8"
-                             BorderBrush="Black"
-                             BorderThickness="1"
-                             SelectionChanged="RendererListBox_SelectionChanged">
-                        <ListBox.Items>
-                            <ListBoxItem IsSelected="True">Texture Renderer</ListBoxItem>
-                            <ListBoxItem>Material Renderer</ListBoxItem>
-                            <ListBoxItem>Color Renderer</ListBoxItem>
-                        </ListBox.Items>
-                    </ListBox>
-
                 </StackPanel>
 
             </ScrollViewer>
