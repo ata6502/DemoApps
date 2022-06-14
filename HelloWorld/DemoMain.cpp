@@ -20,8 +20,6 @@ DemoMain::DemoMain() :
     
     // Initialize device resources asynchronously.
     InitializeInBackground();
-
-    m_timer.Reset();
 }
 
 DemoMain::~DemoMain()
@@ -177,8 +175,6 @@ void DemoMain::StartRenderLoop()
     if (m_renderLoopWorker != nullptr && m_renderLoopWorker.Status() == AsyncStatus::Started)
         return;
 
-    m_timer.Start();
-
     // Create a task that will be run on a background thread.
     auto workItemHandler = ([this](IAsyncAction const& action)
     {
@@ -187,12 +183,13 @@ void DemoMain::StartRenderLoop()
         {
             critical_section::scoped_lock lock(m_criticalSection);
 
-            Update();
+            m_timer.Tick([&]()
+            {
+                Update();
+            });
             Render();
 
             m_deviceResources->Present();
-
-            m_timer.Update();
         }
     });
 
@@ -202,7 +199,7 @@ void DemoMain::StartRenderLoop()
 
 void DemoMain::StopRenderLoop()
 {
-    m_timer.Stop();
+    //m_timer.Stop();
     m_renderLoopWorker.Cancel();
 }
 
@@ -270,7 +267,7 @@ void DemoMain::Update()
 void DemoMain::Render()
 {
     // Don't render anything before the first Update.
-    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon())
+    if (m_timer.GetFrameCount() == 0)
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };

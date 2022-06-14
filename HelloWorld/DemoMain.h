@@ -2,7 +2,7 @@
 
 #include "DeviceResources.h"
 #include "ShaderStructures.h"
-#include "Timer.h"
+#include "StepTimer.h"
 
 class DemoMain : public winrt::implements<DemoMain, winrt::Windows::Foundation::IInspectable>, DX::IDeviceNotify
 {
@@ -49,7 +49,7 @@ private:
     ModelViewProjectionConstantBuffer        m_constantBufferData;
     uint32_t                                 m_indexCount;
     bool                                     m_initialized;
-    Timer                                    m_timer;
+    DX::StepTimer                            m_timer;
 
     Concurrency::critical_section            m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;

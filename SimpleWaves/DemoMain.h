@@ -8,7 +8,7 @@
 #include "RasterizerStateManager.h"
 #include "RendererBase.h"
 #include "ShaderController.h"
-#include "Timer.h"
+#include "StepTimer.h"
 
 class DemoMain : public DX::IDeviceNotify
 {
@@ -59,7 +59,7 @@ private:
     void ReleaseResources();
 
     std::shared_ptr<DX::DeviceResources>     m_deviceResources;
-    Timer                                    m_timer;
+    DX::StepTimer                            m_timer;
     Concurrency::critical_section            m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction m_renderLoopWorker;
     std::unique_ptr<IndependentInput>        m_input;

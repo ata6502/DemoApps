@@ -30,8 +30,6 @@ DemoMain::DemoMain() :
     // Create rasterizer states.
     m_rasterizerStateManager->AddRasterizerState("solid", RasterizerState::FillMode::Solid, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
     m_rasterizerStateManager->AddRasterizerState("wireframe", RasterizerState::FillMode::Wireframe, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
-
-    m_timer.Reset();
 }
 
 DemoMain::~DemoMain()
@@ -59,8 +57,6 @@ void DemoMain::StartRenderLoop()
     if ((m_renderLoopWorker != nullptr && m_renderLoopWorker.Status() == AsyncStatus::Started))
         return;
 
-    m_timer.Start();
-
     // Create a task that will be run on a background thread.
     auto workItemHandler = ([this](IAsyncAction const& action)
         {
@@ -76,12 +72,13 @@ void DemoMain::StartRenderLoop()
                 if (!m_renderer->IsInitialized())
                     continue;
 
-                Update();
+                m_timer.Tick([&]()
+                {
+                    Update();
+                });
                 Render();
 
                 m_deviceResources->Present();
-
-                m_timer.Update();
             }
         });
 
@@ -91,7 +88,6 @@ void DemoMain::StartRenderLoop()
 
 void DemoMain::StopRenderLoop()
 {
-    m_timer.Stop();
     m_renderLoopWorker.Cancel();
 }
 
@@ -156,8 +152,8 @@ void DemoMain::Update()
 /// </summary>
 void DemoMain::Render()
 {
-    // Don't render anything before the first Update and until the renderer is initialized.
-    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon())
+    // Don't render anything before the first Update.
+    if (m_timer.GetFrameCount() == 0)
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };

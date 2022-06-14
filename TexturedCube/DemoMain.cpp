@@ -20,8 +20,6 @@ DemoMain::DemoMain() :
 
     auto renderer = RendererFactory::CreateRenderer(RendererType::Texture, m_deviceResources);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
-
-    m_timer.Reset();
 }
 
 DemoMain::~DemoMain()
@@ -52,13 +50,9 @@ void DemoMain::CreateWindowSizeDependentResources()
 
 void DemoMain::StartRenderLoop()
 {
-    using namespace std::literals::chrono_literals;
-
     // Do not start another thread if the render loop is already running.
     if ((m_renderLoopWorker != nullptr && m_renderLoopWorker.Status() == AsyncStatus::Started))
         return;
-
-    m_timer.Start();
 
     // Create a task that will be run on a background thread.
     auto workItemHandler = ([this](IAsyncAction const& action)
@@ -75,12 +69,13 @@ void DemoMain::StartRenderLoop()
             if (!m_renderer->IsInitialized())
                 continue;
 
-            Update();
+            m_timer.Tick([&]()
+            {
+                Update();
+            });
             Render();
 
             m_deviceResources->Present();
-
-            m_timer.Update();
         }
     });
 
@@ -90,7 +85,6 @@ void DemoMain::StartRenderLoop()
 
 void DemoMain::StopRenderLoop()
 {
-    m_timer.Stop();
     m_renderLoopWorker.Cancel();
 }
 
@@ -160,8 +154,8 @@ void DemoMain::Update()
 /// </summary>
 void DemoMain::Render()
 {
-    // Don't render anything before the first Update and until the renderer is initialized.
-    if (fabs(m_timer.GetTotalSeconds()) < std::numeric_limits<float>::epsilon())
+    // Don't render anything before the first Update.
+    if (m_timer.GetFrameCount() == 0)
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };
