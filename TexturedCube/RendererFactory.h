@@ -7,8 +7,9 @@ enum class RendererType
     Texture = 0,
     Mipmap = 1,
     Multitexture = 2,
-    Material = 3,
-    Color = 4
+    PageFlipping = 3,
+    Material = 4,
+    Color = 5
 };
 
 class RendererFactory

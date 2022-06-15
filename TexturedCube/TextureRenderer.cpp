@@ -1,9 +1,14 @@
 #include "pch.h"
 
+#include <iomanip> // std::setw
+#include <sstream>
+#include <string>
+
 #include "FileReader.h"
 #include "TextureRenderer.h"
 #include "TextureShaderStructures.h"
 #include "Utilities.h"
+#include "WICTextureLoader.h"
 
 using namespace DirectX;
 
@@ -14,9 +19,15 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
-    m_texture1(nullptr)
+    m_texture1(nullptr),
+    m_texture2(nullptr),
+    m_currentPageInSequence(0)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
+
+    // Reserve space for 120 frames of animation.
+    if (m_mode == TextureRendererMode::PageFlipping)
+        m_sequence.resize(120);
 
     // Initialize device resources asynchronously.
     InitializeInBackground();
@@ -168,7 +179,9 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
     // [12] Create a sampler state.
     D3D11_SAMPLER_DESC samplerDesc;
 
-    // [13] Load a texture from a file and create the shader resource view to the texture.
+    winrt::com_ptr<ID3D11Resource> texture = nullptr;
+
+    // [13] Load textures and create shader resource views.
     switch (m_mode)
     {
     case TextureRendererMode::Normal:
@@ -201,6 +214,32 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
         samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        break;
+
+    case TextureRendererMode::PageFlipping:
+        // [Luna] Ex.5 p.308 Play 120 frame animation over 4 seconds over each face of a cube.
+
+        // Load textures for page flipping animation and create corresponding shader resource views.
+        for (int i = 1; i <= 120; ++i)
+        {
+            // Convert an integer to a string and pad it with leading zeros.
+            std::wstringstream ss;
+            ss << std::setw(3) << std::setfill(L'0') << i;
+            auto filename = L"Assets\\Textures\\Fire\\Fire" + ss.str() + L".bmp";
+
+            winrt::check_hresult(
+                DX::CreateWICTextureFromFile(
+                    device,
+                    m_deviceResources->GetD3DDeviceContext(),
+                    filename.c_str(),
+                    texture.put(),
+                    m_sequence[i - 1].put()));
+        }
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
         break;
 
     default:
@@ -324,6 +363,11 @@ void TextureRenderer::Render()
         //context->PSSetShaderResources(0, 1, &pTexture1);
         //context->PSSetShaderResources(1, 1, &pTexture2);
     }
+    else if (m_mode == TextureRendererMode::PageFlipping)
+    {
+        ID3D11ShaderResourceView* pTexturePage{ m_sequence[m_currentPageInSequence].get() };
+        context->PSSetShaderResources(0, 1, &pTexturePage);
+    }
     else
     {
         ID3D11ShaderResourceView* pTexture{ m_texture1.get() };
@@ -383,6 +427,27 @@ void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMV
         XMStoreFloat4x4(
             &constantBufferPerFrameData.TextureTransform,
             XMMatrixTranspose(matrixTranslationToOrigin * matrixRotation * matrixTranslationBack));
+    }
+    else if (m_mode == TextureRendererMode::PageFlipping)
+    {
+        // Flip a page every other frame i.e. increment to the next texture every 1/30th of a second. 
+        static bool flipPage = false;
+        if (flipPage)
+        {
+            ++m_currentPageInSequence;
+            if (m_currentPageInSequence == 120) // after the 120th frames, roll back to the first texture 
+                m_currentPageInSequence = 0;
+            flipPage = false;
+        }
+        else
+        {
+            flipPage = true;
+        }
+
+        // There is no texture transform in page flipping mode.
+        XMStoreFloat4x4(
+            &constantBufferPerFrameData.TextureTransform,
+            XMMatrixIdentity());
     }
     else
     {

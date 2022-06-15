@@ -7,7 +7,8 @@ enum class TextureRendererMode
 {
     Normal,
     Mipmap,
-    Multitexture
+    Multitexture,
+    PageFlipping
 };
 
 class TextureRenderer : public RendererBase
@@ -45,6 +46,13 @@ private:
     winrt::com_ptr<ID3D11ShaderResourceView> m_texture1;
     winrt::com_ptr<ID3D11ShaderResourceView> m_texture2;
     winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
+
+    // Variables used with page flipping animation.
+    // Note that working with individual texture animation frames one-by-one is inefficient. 
+    // It would be better to use a texture atlas, and then offset the texture coordinates every 
+    // 1/30th of a second to the next frame of the animation.
+    std::vector<winrt::com_ptr<ID3D11ShaderResourceView>> m_sequence;
+    uint32_t m_currentPageInSequence; // from 0 to 119
 
     uint32_t                                m_indexCount;
     DirectX::XMFLOAT4X4                     m_projMatrix;

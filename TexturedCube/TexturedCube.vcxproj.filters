@@ -40,6 +40,9 @@
     <ClCompile Include="..\Shared\FileReader.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\WICTextureLoader.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -106,6 +109,366 @@
     <Image Include="Assets\Textures\flarealpha.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
+    <Image Include="Assets\Textures\Fire\Fire001.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire002.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire003.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire004.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire005.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire006.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire007.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire008.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire009.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire010.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire011.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire012.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire013.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire014.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire015.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire016.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire017.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire018.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire019.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire020.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire021.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire022.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire023.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire024.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire025.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire026.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire027.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire028.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire029.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire030.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire031.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire032.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire033.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire034.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire035.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire036.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire037.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire038.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire039.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire040.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire041.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire042.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire043.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire044.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire045.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire046.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire047.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire048.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire049.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire050.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire051.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire052.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire053.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire054.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire055.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire056.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire057.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire058.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire059.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire060.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire061.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire062.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire063.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire064.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire065.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire066.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire067.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire068.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire069.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire070.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire071.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire072.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire073.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire074.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire075.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire076.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire077.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire078.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire079.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire080.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire081.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire082.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire083.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire084.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire085.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire086.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire087.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire088.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire089.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire090.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire091.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire092.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire093.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire094.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire095.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire096.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire097.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire098.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire099.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire100.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire101.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire102.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire103.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire104.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire105.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire106.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire107.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire108.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire109.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire110.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire111.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire112.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire113.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire114.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire115.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire116.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire117.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire118.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire119.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Fire\Fire120.bmp">
+      <Filter>Assets\Textures\Fire</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -128,6 +491,9 @@
     </Filter>
     <Filter Include="Shared">
       <UniqueIdentifier>{ef4a33b4-b2ab-40ce-8c3f-69715953ba26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures\Fire">
+      <UniqueIdentifier>{c048047c-9044-408f-9b27-488e8f9b8ed4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

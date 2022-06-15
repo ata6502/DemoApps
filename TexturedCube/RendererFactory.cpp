@@ -15,6 +15,8 @@ RendererBase* RendererFactory::CreateRenderer(RendererType rendererType, std::sh
         return new TextureRenderer(deviceResources, TextureRendererMode::Mipmap);
     case RendererType::Multitexture:
         return new TextureRenderer(deviceResources, TextureRendererMode::Multitexture);
+    case RendererType::PageFlipping:
+        return new TextureRenderer(deviceResources, TextureRendererMode::PageFlipping);
     case RendererType::Material:
         return new MaterialRenderer(deviceResources);
     case RendererType::Color:

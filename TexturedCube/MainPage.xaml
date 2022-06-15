@@ -84,6 +84,7 @@
                             <ListBoxItem IsSelected="True">Texture Renderer</ListBoxItem>
                             <ListBoxItem>Mipmap Renderer</ListBoxItem>
                             <ListBoxItem>Multitexture Renderer</ListBoxItem>
+                            <ListBoxItem>Page Flipping Renderer</ListBoxItem>
                             <ListBoxItem>Material Renderer</ListBoxItem>
                             <ListBoxItem>Color Renderer</ListBoxItem>
                         </ListBox.Items>
