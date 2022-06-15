@@ -100,6 +100,12 @@
     <Image Include="Assets\Textures\mipmap.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
+    <Image Include="Assets\Textures\flare.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\flarealpha.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -154,6 +160,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MultitexturePixelShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

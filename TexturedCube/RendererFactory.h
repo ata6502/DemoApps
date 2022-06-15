@@ -6,8 +6,9 @@ enum class RendererType
 {
     Texture = 0,
     Mipmap = 1,
-    Material = 2,
-    Color = 3
+    Multitexture = 2,
+    Material = 3,
+    Color = 4
 };
 
 class RendererFactory

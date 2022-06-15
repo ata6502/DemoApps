@@ -6,7 +6,8 @@
 enum class TextureRendererMode
 {
     Normal,
-    Mipmap
+    Mipmap,
+    Multitexture
 };
 
 class TextureRenderer : public RendererBase
@@ -40,7 +41,9 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_constantBufferPerObject;
 
     // Direct3D objects used with textures.
-    winrt::com_ptr<ID3D11ShaderResourceView> m_texture;
+    // In multitexturing, texture1 is used for a flare and texture2 for alpha.
+    winrt::com_ptr<ID3D11ShaderResourceView> m_texture1;
+    winrt::com_ptr<ID3D11ShaderResourceView> m_texture2;
     winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
 
     uint32_t                                m_indexCount;

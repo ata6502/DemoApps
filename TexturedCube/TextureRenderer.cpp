@@ -14,7 +14,7 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr),
-    m_texture(nullptr)
+    m_texture1(nullptr)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
 
@@ -28,7 +28,9 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
 
     // [1] Load shader bytecode.
     auto vertexShaderBytecode = co_await FileReader::ReadDataAsync(L"TextureVertexShader.cso");
-    auto pixelShaderBytecode = co_await FileReader::ReadDataAsync(L"TexturePixelShader.cso");
+
+    auto pixelShaderName = m_mode == TextureRendererMode::Multitexture ? L"MultitexturePixelShader.cso" : L"TexturePixelShader.cso";
+    auto pixelShaderBytecode = co_await FileReader::ReadDataAsync(pixelShaderName);
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -163,24 +165,50 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             sizeof(cubeIndices),
             &cubeIndices));
 
-    // [12] Load a texture from a file and create the shader resource view to the texture.
-    if (m_mode == TextureRendererMode::Normal)
-        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_texture.put());
-    // [Luna] Ex.2 p.307 Create a DDS file with a mipmap chain with a different color on each level.
-    else if (m_mode == TextureRendererMode::Mipmap)
-        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\mipmap.dds", m_texture.put());
-
-    // [13] Create a sampler state.
+    // [12] Create a sampler state.
     D3D11_SAMPLER_DESC samplerDesc;
 
-    if (m_mode == TextureRendererMode::Normal)
+    // [13] Load a texture from a file and create the shader resource view to the texture.
+    switch (m_mode)
+    {
+    case TextureRendererMode::Normal:
+        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\crate.dds", m_texture1.put());
         samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    else if (m_mode == TextureRendererMode::Mipmap)
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT; // linear filtering shows mipmap levels sharply
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        break;
 
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    case TextureRendererMode::Mipmap:
+        // [Luna] Ex.2 p.307 Create a DDS file with a mipmap chain with a different color on each level.
+        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\mipmap.dds", m_texture1.put());
+
+        // Point filtering is better for visualization of mipmaps than linear filtering because
+        // it shows mipmap levels sharply.
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+        break;
+
+    case TextureRendererMode::Multitexture:
+        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\flare.dds", m_texture1.put());
+        co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\flarealpha.dds", m_texture2.put());
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+        // Use the clamp address mode rather than wrap mode to avoid artifacts when rotating texture by 45 degrees.
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        break;
+
+    default:
+        ASSERT(false);
+        break;
+    }
+
+    // [12] Create a sampler state - cont'd.
     samplerDesc.MipLODBias = 0;
     samplerDesc.MaxAnisotropy = 4; // increase MaxAnisotropy if you use the D3D11_FILTER_ANISOTROPIC filter
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
@@ -279,8 +307,28 @@ void TextureRenderer::Render()
     context->PSSetSamplers(0, 1, &pLinearSampler);
 
     // Set the shader resource view i.e. our texture.
-    ID3D11ShaderResourceView* pCrateTexture{ m_texture.get() };
-    context->PSSetShaderResources(0, 1, &pCrateTexture);
+    if (m_mode == TextureRendererMode::Multitexture)
+    {
+        // Pass both textures to a pixel shader, sample them, and component-wise 
+        // multiply the corresponding texels.
+
+        // There are two ways of passing multiple textures to a pixel shader:
+
+        // Method #1: Passing an array of textures.
+        ID3D11ShaderResourceView* textures[] = { m_texture1.get(), m_texture2.get() };
+        context->PSSetShaderResources(0, 2, textures);
+
+        // Method #2: Passing textures to separate slots.
+        //ID3D11ShaderResourceView* pTexture1{ m_texture1.get() };
+        //ID3D11ShaderResourceView* pTexture2{ m_texture2.get() };
+        //context->PSSetShaderResources(0, 1, &pTexture1);
+        //context->PSSetShaderResources(1, 1, &pTexture2);
+    }
+    else
+    {
+        ID3D11ShaderResourceView* pTexture{ m_texture1.get() };
+        context->PSSetShaderResources(0, 1, &pTexture);
+    }
 
     // Draw the cube.
     context->DrawIndexed(m_indexCount, 0, 0);
@@ -304,35 +352,62 @@ void TextureRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
+void TextureRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
     XMStoreFloat3(&constantBufferPerFrameData.EyePosition, eyePosition);
 
-    XMFLOAT4X4 textureTransform;
-    XMStoreFloat4x4(&textureTransform, XMMatrixScaling(1.f, 1.f, 0.0f) * XMMatrixTranslation(0, 0, 0));
+    // Pass the texture coordinate transform to shaders.
+    if (m_mode == TextureRendererMode::Multitexture)
+    {
+        // [Luna] Ex.3/4 p.307/308 Given two textures of the same size, combine them to obtain a new image. 
+        // Rotate the fireball texture as a function of time over each cube face.
 
-    // [Luna] Ex.1 p.307 Change the texture coordinates to reproduce the images in Figures 8.10, 8.11, 8.12, and 8.13
-    // Fig 8.10 p.298
-    //      Address mode: Wrap (D3D11_TEXTURE_ADDRESS_WRAP)
-    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(0.5f, 0.5f, 0));
-    // Fig 8.11 p.298
-    //      Address mode: Border color (D3D11_TEXTURE_ADDRESS_BORDER)
-    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
-    // Fig 8.12 p.299
-    //      Address mode: Clamp (D3D11_TEXTURE_ADDRESS_CLAMP)
-    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
-    // Fig 8.13 p.299
-    //      Address mode: Mirror (D3D11_TEXTURE_ADDRESS_MIRROR)
-    //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+        // Rotate the fireball texture as a function of time over each cube face.
+        // First, we translate the texture to the origin of the uv-coordinate system.
+        // This allows us to rotate the texture using a 2D rotation matrix.
+        // Next, translate the texture back to its original position.
+        // Note that instead of using the 2D rotation matrix we could simply use XMMatrixRotationZ(radians)
+        // as this matrix rotates objects in the xy-plane. The rotation would be in counter clockwise order though.
+        XMMATRIX matrixTranslationToOrigin = XMMatrixTranslation(-0.5f, -0.5f, 0.0f);
+        XMMATRIX matrixRotation = XMMATRIX(
+            cos(totalSeconds), -sin(totalSeconds), 0, 0,
+            sin(totalSeconds), cos(totalSeconds), 0, 0,
+            0, 0, 0, 0,
+            0, 0, 0, 1
+        );
+        XMMATRIX matrixTranslationBack = XMMatrixTranslation(0.5f, 0.5f, 0.0f);
 
-    // SetViewMatrix is called every frame. We can update texture transformation here.
-    XMStoreFloat4x4(
-        &constantBufferPerFrameData.TextureTransform,
-        XMMatrixTranspose(XMLoadFloat4x4(&textureTransform)));
+        XMStoreFloat4x4(
+            &constantBufferPerFrameData.TextureTransform,
+            XMMatrixTranspose(matrixTranslationToOrigin * matrixRotation * matrixTranslationBack));
+    }
+    else
+    {
+        XMFLOAT4X4 textureTransform;
+        XMStoreFloat4x4(&textureTransform, XMMatrixScaling(1.f, 1.f, 0.0f) * XMMatrixTranslation(0, 0, 0));
 
+        // [Luna] Ex.1 p.307 Change the texture coordinates to reproduce the images in Figures 8.10, 8.11, 8.12, and 8.13
+        // Fig 8.10 p.298
+        //      Address mode: Wrap (D3D11_TEXTURE_ADDRESS_WRAP)
+        //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(0.5f, 0.5f, 0));
+        // Fig 8.11 p.298
+        //      Address mode: Border color (D3D11_TEXTURE_ADDRESS_BORDER)
+        //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+        // Fig 8.12 p.299
+        //      Address mode: Clamp (D3D11_TEXTURE_ADDRESS_CLAMP)
+        //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+        // Fig 8.13 p.299
+        //      Address mode: Mirror (D3D11_TEXTURE_ADDRESS_MIRROR)
+        //      Transform: XMStoreFloat4x4(&textureTransform, XMMatrixScaling(3.f, 3.f, 0.0f) * XMMatrixTranslation(-0.5f, -0.5f, 0));
+
+        // SetViewMatrix is called every frame. We can update texture transformation here.
+        XMStoreFloat4x4(
+            &constantBufferPerFrameData.TextureTransform,
+            XMMatrixTranspose(XMLoadFloat4x4(&textureTransform)));
+    }
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &constantBufferPerFrameData, 0, 0);
 }
