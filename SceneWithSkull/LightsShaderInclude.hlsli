@@ -31,6 +31,7 @@ cbuffer ConstantBufferPerObject : register(b2)
     matrix World;
     matrix WorldInvTranspose;
     MaterialDesc Material;
+    matrix TextureTransform;
 };
 
 // Per-vertex data used as input to the vertex shader.

@@ -21,6 +21,7 @@ TextureRenderer::TextureRenderer(std::shared_ptr<DX::DeviceResources> const& dev
     m_rotation(0.0f)
 {
     XMStoreFloat4x4(&m_projMatrix, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_textureTransform, XMMatrixIdentity());
 
     m_meshGenerator = std::make_unique<MeshGeneratorTexture>(deviceResources);
 
@@ -104,10 +105,17 @@ winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground
             &samplerDesc,
             m_linearSampler.put()));
 
-    // [8] Create meshes using the MeshGenerator.
+    // [8] Create a texture transformation for the floor by repeating the tiles.
+    // To tile the texture, specify the WRAP address mode (which is a default value)
+    // and scale the texture coordinates by 6 using a texture transformation matrix.
+    XMStoreFloat4x4(
+        &m_textureTransform,
+        XMMatrixTranspose(XMMatrixScaling(6.f, 6.f, 0.f)));
+
+    // [9] Create meshes using the MeshGenerator.
     co_await CreateMeshes();
 
-    // [9] Define the scene.
+    // [10] Define the scene.
     DefineSceneObjects();
 
     // Inform other parts of the application that the initialization has completed.
@@ -233,15 +241,19 @@ void TextureRenderer::SetObjectData(std::string const& name, ObjectInfo const& i
     ConstantBufferPerObject constantBufferPerObjectData;
 
     auto worldMatrix = XMLoadFloat4x4(&info.WorldMatrix);
-
     if (name == "Ellipsoid")
         worldMatrix = worldMatrix * XMMatrixRotationY(m_rotation) * XMMatrixTranslation(0.0f, 3.0f, -6.0f);
+
+    auto textureTransform = XMMatrixIdentity();
+    if (name == "Floor")
+        textureTransform = XMLoadFloat4x4(&m_textureTransform);
 
     // Calculate the world inverse transpose matrix in order to properly transform normals in case there are any non-uniform or shear transformations.
     auto worldInvTranspose = InverseTranspose(worldMatrix);
 
     XMStoreFloat4x4(&constantBufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
     XMStoreFloat4x4(&constantBufferPerObjectData.WorldInvTranspose, XMMatrixTranspose(worldInvTranspose));
+    XMStoreFloat4x4(&constantBufferPerObjectData.TextureTransform, XMMatrixTranspose(textureTransform));
     constantBufferPerObjectData.Material = info.Material;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
@@ -263,7 +275,7 @@ float TextureRenderer::GetCameraPitch()
 
 winrt::Windows::Foundation::IAsyncAction TextureRenderer::CreateMeshes()
 {
-    m_meshGenerator->CreateGrid("grid", 20.0f, 30.0f, 60, 40);
+    m_meshGenerator->CreateGrid("grid", 20.0f, 25.0f, 60, 40);
     m_meshGenerator->CreateGeosphere("sphere", 1.0f, 4);
     m_meshGenerator->CreateCube("cube");
     m_meshGenerator->CreateCylinder("cylinder", 0.5f, 0.3f, 3.0f, 20, 10);

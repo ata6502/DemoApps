@@ -18,8 +18,8 @@ PixelShaderInput main(VertexShaderInput input)
     // Transform the vertex position to world space. We need that for specular light calculations.
     output.PosW = mul(float4(input.PosL, 1.0f), World).xyz;
 
-    // Pass-through texture coordinates.
-    output.Tex = input.Tex;
+    // Transform the input texture coordinates.
+    output.Tex = mul(float4(input.Tex, 0.0f, 1.0f), TextureTransform).xy;
 
     return output;
 }

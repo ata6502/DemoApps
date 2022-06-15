@@ -46,6 +46,8 @@ private:
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>           m_constantBufferPerObject;
 
+    // [Luna] Ex.7 p.310 Modify the "Lit Skull" demo by adding textures to the ground, columns, and spheres.
+
     // Direct3D objects used with textures.
     std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
     winrt::com_ptr<ID3D11SamplerState>     m_linearSampler;
@@ -54,6 +56,7 @@ private:
     std::unique_ptr<MeshGeneratorTexture>  m_meshGenerator;
     std::map<std::string, ObjectInfo>      m_objects;
     float                                  m_rotation;
+    DirectX::XMFLOAT4X4                    m_textureTransform;
 
     void SetObjectData(std::string const& name, ObjectInfo const& info);
     winrt::Windows::Foundation::IAsyncAction CreateMeshes();
