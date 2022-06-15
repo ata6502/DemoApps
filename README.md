@@ -31,6 +31,7 @@ The `TexturedCube` project extends the Hello World example by introducing the fo
     + `MaterialRenderer` - draws a solid cube lit by a single light.
     + `ColorRenderer` - draws a colored cube whose vertices are transformed dynamically in a vertex shader. Also, it uses 32-bit color values
       (`DirectX::PackedVector::XMCOLOR`) instead of a 128-bit colors.
+    + `PageFlippingRenderer` - plays a fire animation over each face of the cube using the page flipping technique. 
 * XAML control panel allows the user to turn cube rotation on and off as well as select a renderer.
 * `IndependentInput` provides means for the user to control the point of view using a mouse.
 * Directional lights include diffuse, ambient, and specular components.
