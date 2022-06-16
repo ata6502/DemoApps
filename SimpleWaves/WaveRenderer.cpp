@@ -27,7 +27,7 @@ WaveRenderer::WaveRenderer(
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction WaveRenderer::InitializeInBackground()
+winrt::fire_and_forget WaveRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

@@ -21,7 +21,7 @@ MeshRenderer::MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceRes
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction MeshRenderer::InitializeInBackground()
+winrt::fire_and_forget MeshRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

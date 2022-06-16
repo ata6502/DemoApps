@@ -14,7 +14,7 @@ public:
     ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
     ~ColorRenderer() {}
 
-    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    winrt::fire_and_forget InitializeInBackground();
     void Render();
     void ReleaseResources();
 

@@ -12,7 +12,7 @@ ThreeLightSystemController::ThreeLightSystemController(std::shared_ptr<DX::Devic
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction ThreeLightSystemController::InitializeInBackground()
+winrt::fire_and_forget ThreeLightSystemController::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

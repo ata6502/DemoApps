@@ -31,7 +31,7 @@ TextureRenderer::TextureRenderer(
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction TextureRenderer::InitializeInBackground()
+winrt::fire_and_forget TextureRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

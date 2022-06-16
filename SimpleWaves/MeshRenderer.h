@@ -10,7 +10,7 @@ public:
     MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
     ~MeshRenderer() {}
 
-    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    winrt::fire_and_forget InitializeInBackground();
     void Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition);
     void Render();
     void ReleaseResources();

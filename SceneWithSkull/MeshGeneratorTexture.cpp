@@ -1051,7 +1051,7 @@ void MeshGeneratorTexture::CreateGrid(std::string const& name, float gridWidth, 
 static int const MAX_CHARS_PER_LINE = 250;
 static int const MAX_TOKENS_PER_LINE = 10;
 
-winrt::Windows::Foundation::IAsyncAction MeshGeneratorTexture::CreateModelAsync(std::string const& name, winrt::hstring const& filename)
+winrt::Windows::Foundation::IAsyncAction MeshGeneratorTexture::CreateModelAsync(std::string name, winrt::hstring filename)
 {
     ASSERT(m_meshes.find(name) == m_meshes.end());
 

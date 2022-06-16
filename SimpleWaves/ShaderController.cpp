@@ -12,7 +12,7 @@ ShaderController::ShaderController(std::shared_ptr<DX::DeviceResources> const& d
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction ShaderController::InitializeInBackground()
+winrt::fire_and_forget ShaderController::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

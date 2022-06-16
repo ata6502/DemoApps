@@ -17,7 +17,7 @@ public:
     TextureRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources, TextureRendererMode mode);
     ~TextureRenderer() {}
 
-    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    winrt::fire_and_forget InitializeInBackground();
     void Render();
     void ReleaseResources();
 

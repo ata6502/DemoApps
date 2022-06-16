@@ -13,7 +13,7 @@ class ShaderController
 public:
     ShaderController::ShaderController(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    winrt::fire_and_forget InitializeInBackground();
     void Render();
     void ReleaseResources();
     void SetShader(ShaderType shaderType);

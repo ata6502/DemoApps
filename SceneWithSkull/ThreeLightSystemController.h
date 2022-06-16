@@ -7,7 +7,7 @@ class ThreeLightSystemController
 public:
     ThreeLightSystemController::ThreeLightSystemController(std::shared_ptr<DX::DeviceResources> const& deviceResources);
 
-    winrt::Windows::Foundation::IAsyncAction InitializeInBackground();
+    winrt::fire_and_forget InitializeInBackground();
     void Render();
     void ReleaseResources();
     void SetLightCount(int lightCount);

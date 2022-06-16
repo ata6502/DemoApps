@@ -24,7 +24,7 @@ ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction ColorRenderer::InitializeInBackground()
+winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

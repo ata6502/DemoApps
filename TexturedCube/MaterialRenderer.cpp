@@ -20,7 +20,7 @@ MaterialRenderer::MaterialRenderer(std::shared_ptr<DX::DeviceResources> const& d
     InitializeInBackground();
 }
 
-winrt::Windows::Foundation::IAsyncAction MaterialRenderer::InitializeInBackground()
+winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 

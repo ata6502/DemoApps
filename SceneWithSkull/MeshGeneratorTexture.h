@@ -18,7 +18,7 @@ public:
     void CreateSphere(std::string const& name, float radius, uint32_t sliceCount, uint32_t stackCount);
     void CreateGeosphere(std::string const& name, float radius, uint16_t subdivisionCount);
     void CreateGrid(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
-    winrt::Windows::Foundation::IAsyncAction CreateModelAsync(std::string const& name, winrt::hstring const& filename);
+    winrt::Windows::Foundation::IAsyncAction CreateModelAsync(std::string name, winrt::hstring filename);
 
     void CreateBuffers();
     void SetBuffers();
