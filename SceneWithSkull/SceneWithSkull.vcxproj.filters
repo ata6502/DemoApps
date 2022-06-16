@@ -19,9 +19,6 @@
     <ClCompile Include="ColorRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="MeshGenerator.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
@@ -52,6 +49,9 @@
     <ClCompile Include="..\Shared\MathHelper.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Camera.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -64,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="MeshGenerator.h">
       <Filter>Geometry</Filter>

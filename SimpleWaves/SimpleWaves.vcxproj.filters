@@ -22,9 +22,6 @@
     <ClCompile Include="IndependentInput.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="GridMesh.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
@@ -70,6 +67,9 @@
     <ClCompile Include="..\Shared\FileReader.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\Camera.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -79,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="ColorShaderStructures.h">
       <Filter>Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="GridMesh.h">
       <Filter>Geometry</Filter>

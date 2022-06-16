@@ -119,7 +119,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\DirectMathHelper.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="IndependentInput.h" />
@@ -171,11 +170,11 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\Camera.cpp" />
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
     <ClCompile Include="..\Shared\FileReader.cpp" />
     <ClCompile Include="..\Shared\MathHelper.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="IndependentInput.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
