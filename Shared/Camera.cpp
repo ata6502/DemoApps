@@ -4,37 +4,39 @@
 
 using namespace DirectX;
 
+const float Camera::FOV_ANGLE_Y = 70.0f * XM_PI / 180.0f;
+const float Camera::NEAR_PLANE = 0.01f;
+const float Camera::FAR_PLANE = 200.0f;
+const XMVECTORF32 Camera::LOOK_AT_POS_DEFAULT = { 0.0f, -0.1f, 0.0f, 0.0f };
+const XMVECTORF32 Camera::LOOK_AT_UP = { 0.0f, 1.0f, 0.0f, 0.0f };
+
 Camera::Camera()
 {
-    m_lookingAtPosition = XMFLOAT3(0.0f, -0.1f, 0.0f);
+    XMStoreFloat3(&m_lookAtPosition, LOOK_AT_POS_DEFAULT);
 }
 
 DirectX::XMMATRIX Camera::GetProjMatrix(winrt::Windows::Foundation::Size const& outputSize)
 {
-    static float fovAngleY = 70.0f * XM_PI / 180.0f;
-
     float aspectRatio = outputSize.Width / outputSize.Height;
 
     XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(
-        fovAngleY,
+        FOV_ANGLE_Y,
         aspectRatio,
-        0.01f,
-        300.0f);
+        NEAR_PLANE,
+        FAR_PLANE);
 
     return projMatrix;
 }
 
 DirectX::XMMATRIX Camera::GetViewMatrix(DirectX::FXMVECTOR eye)
 {
-    static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-
-    XMVECTOR at = XMLoadFloat3(&m_lookingAtPosition);
-    XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
+    XMVECTOR at = XMLoadFloat3(&m_lookAtPosition);
+    XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, LOOK_AT_UP);
 
     return viewMatrix;
 }
 
-DirectX::XMVECTOR Camera::GetLookingAtPosition() const
+DirectX::XMVECTOR Camera::GetLookAtPosition() const
 {
-    return XMLoadFloat3(&m_lookingAtPosition);
+    return XMLoadFloat3(&m_lookAtPosition);
 }
