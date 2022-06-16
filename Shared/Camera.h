@@ -5,6 +5,12 @@ class Camera
 public:
     Camera();
 
+    // Remove the default copy ctor, assignment operator, and move operations.
+    Camera(const Camera&) = delete;           
+    Camera& operator=(Camera const&) = delete;
+    Camera(Camera&&) = delete;
+    Camera& operator=(Camera&&) = delete;
+
     DirectX::XMMATRIX GetProjMatrix(winrt::Windows::Foundation::Size const& outputSize);
     DirectX::XMMATRIX GetViewMatrix(DirectX::FXMVECTOR eye);
     DirectX::XMVECTOR GetLookAtPosition() const;
