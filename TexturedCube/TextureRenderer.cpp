@@ -386,6 +386,9 @@ void TextureRenderer::ReleaseResources()
     m_pixelShader = nullptr;
     m_vertexBuffer = nullptr;
     m_indexBuffer = nullptr;
+    m_texture1 = nullptr;
+    m_texture2 = nullptr;
+    m_linearSampler = nullptr;
     m_constantBufferNeverChanges = nullptr;
     m_constantBufferPerFrame = nullptr;
     m_constantBufferPerObject = nullptr;
