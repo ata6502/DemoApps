@@ -4,11 +4,11 @@
 #include "GridMesh.h"
 #include "RendererBase.h"
 
-class MeshRenderer : public RendererBase
+class ColorRenderer : public RendererBase
 {
 public:
-    MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
-    ~MeshRenderer() {}
+    ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~ColorRenderer() {}
 
     winrt::fire_and_forget InitializeInBackground();
     void Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition);

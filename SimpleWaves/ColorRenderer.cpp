@@ -1,13 +1,13 @@
 #include "pch.h"
 
 #include "ColorShaderStructures.h"
-#include "MeshRenderer.h"
+#include "ColorRenderer.h"
 #include "Utilities.h"
 #include "VertexStructures.h"
 
 using namespace DirectX;
 
-MeshRenderer::MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+ColorRenderer::ColorRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
@@ -21,7 +21,7 @@ MeshRenderer::MeshRenderer(std::shared_ptr<DX::DeviceResources> const& deviceRes
     InitializeInBackground();
 }
 
-winrt::fire_and_forget MeshRenderer::InitializeInBackground()
+winrt::fire_and_forget ColorRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
@@ -92,17 +92,17 @@ winrt::fire_and_forget MeshRenderer::InitializeInBackground()
     IsInitialized(true);
 }
 
-void MeshRenderer::FinalizeInitialization()
+void ColorRenderer::FinalizeInitialization()
 {
 
 }
 
-void MeshRenderer::Update([[maybe_unused]] float totalSeconds, [[maybe_unused]] float elapsedSeconds, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] DirectX::FXMVECTOR lookingAtPosition)
+void ColorRenderer::Update([[maybe_unused]] float totalSeconds, [[maybe_unused]] float elapsedSeconds, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] DirectX::FXMVECTOR lookingAtPosition)
 {
 
 }
 
-void MeshRenderer::Render()
+void ColorRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -128,7 +128,7 @@ void MeshRenderer::Render()
     m_gridMesh->Draw();
 }
 
-void MeshRenderer::ReleaseResources()
+void ColorRenderer::ReleaseResources()
 {
     IsInitialized(false);
     m_gridMesh->ReleaseResources();
@@ -140,12 +140,12 @@ void MeshRenderer::ReleaseResources()
     m_constantBufferPerObject = nullptr;
 }
 
-void MeshRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+void ColorRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void MeshRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
+void ColorRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, [[maybe_unused]] DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     ConstantBufferPerFrame constantBufferPerFrameData;
     XMStoreFloat4x4(&constantBufferPerFrameData.ViewProj,

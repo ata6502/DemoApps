@@ -31,9 +31,6 @@
     <ClCompile Include="..\Shared\Utilities.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Renderers</Filter>
-    </ClCompile>
     <ClCompile Include="WaveRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
@@ -70,6 +67,9 @@
     <ClCompile Include="..\Shared\Camera.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="ColorRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -82,9 +82,6 @@
     </ClInclude>
     <ClInclude Include="GridMesh.h">
       <Filter>Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="WaveRenderer.h">
       <Filter>Renderers</Filter>
@@ -117,6 +114,9 @@
       <Filter>Converters</Filter>
     </ClInclude>
     <ClInclude Include="TextureRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

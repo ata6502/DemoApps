@@ -85,7 +85,7 @@
                         <ListBox.Items>
                             <ListBoxItem IsSelected="True">Wave Renderer</ListBoxItem>
                             <ListBoxItem>Texture Renderer</ListBoxItem>
-                            <ListBoxItem>Mesh Renderer</ListBoxItem>
+                            <ListBoxItem>Color Renderer</ListBoxItem>
                         </ListBox.Items>
                     </ListBox>
 

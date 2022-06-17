@@ -1,7 +1,6 @@
 #include "pch.h"
 
-#include "MaterialController.h"
-#include "MeshRenderer.h"
+#include "ColorRenderer.h"
 #include "RendererFactory.h"
 #include "TextureRenderer.h"
 #include "WaveRenderer.h"
@@ -18,8 +17,8 @@ RendererBase* RendererFactory::CreateRenderer(
         return new WaveRenderer(deviceResources, materialController, lightsController);
     case RendererType::Texture:
         return new TextureRenderer(deviceResources, materialController, lightsController);
-    case RendererType::Mesh:
-        return new MeshRenderer(deviceResources);
+    case RendererType::Color:
+        return new ColorRenderer(deviceResources);
     default:
         return nullptr;
     }

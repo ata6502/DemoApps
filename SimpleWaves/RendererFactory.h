@@ -9,7 +9,7 @@ enum class RendererType
 {
     Wave = 0,
     Texture = 1,
-    Mesh = 2
+    Color = 2
 };
 
 class RendererFactory
