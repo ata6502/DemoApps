@@ -177,7 +177,7 @@
     <ClCompile Include="..\Shared\DeviceResources.cpp" />
     <ClCompile Include="..\Shared\FileReader.cpp" />
     <ClCompile Include="..\Shared\MathHelper.cpp" />
-    <ClCompile Include="..\Shared\RasterizerStateManager.cpp" />
+    <ClCompile Include="..\Shared\StateManager.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="ColorRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />

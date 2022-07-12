@@ -5,9 +5,9 @@
 #include "IndependentInput.h"
 #include "LightsController.h"
 #include "MaterialController.h"
-#include "RasterizerStateManager.h"
 #include "RendererBase.h"
 #include "ShaderController.h"
+#include "StateManager.h"
 #include "StepTimer.h"
 
 class DemoMain : public DX::IDeviceNotify
@@ -66,7 +66,7 @@ private:
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
     std::unique_ptr<ShaderController>        m_shaderController;
-    std::unique_ptr<RasterizerStateManager>  m_rasterizerStateManager;
+    std::unique_ptr<StateManager>            m_stateManager;
     std::string                              m_currentFillMode;
     std::shared_ptr<MaterialController>      m_materialController;
     std::shared_ptr<LightsController>        m_lightsController;

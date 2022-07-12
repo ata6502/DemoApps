@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "RasterizerStateManager.h"
+#include "StateManager.h"
 
-RasterizerStateManager::RasterizerStateManager(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+StateManager::StateManager(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources)
 {
 }
 
-void RasterizerStateManager::AddRasterizerState(std::string name, RasterizerState::FillMode fillMode, RasterizerState::CullMode cullMode, RasterizerState::WindingOrder windingOrder)
+void StateManager::AddRasterizerState(std::string name, RasterizerState::FillMode fillMode, RasterizerState::CullMode cullMode, RasterizerState::WindingOrder windingOrder)
 {
     using namespace RasterizerState;
 
@@ -67,14 +67,24 @@ void RasterizerStateManager::AddRasterizerState(std::string name, RasterizerStat
             m_rasterizerStates[name].put()));
 }
 
-void RasterizerStateManager::SetRasterizerState(std::string name)
+void StateManager::SetRasterizerState(std::string name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
     context->RSSetState(m_rasterizerStates[name].get());
 }
 
-void RasterizerStateManager::ReleaseResources()
+void StateManager::AddBlendState(std::string name, BlendState::Blending blending)
+{
+
+}
+
+void StateManager::SetBlendState(std::string name)
+{
+
+}
+
+void StateManager::ReleaseResources()
 {
     for (auto& state : m_rasterizerStates)
         state.second = nullptr;

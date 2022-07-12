@@ -25,11 +25,11 @@ DemoMain::DemoMain() :
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
-    m_rasterizerStateManager = std::make_unique<RasterizerStateManager>(m_deviceResources);
+    m_stateManager = std::make_unique<StateManager>(m_deviceResources);
 
     // Create rasterizer states.
-    m_rasterizerStateManager->AddRasterizerState("solid", RasterizerState::FillMode::Solid, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
-    m_rasterizerStateManager->AddRasterizerState("wireframe", RasterizerState::FillMode::Wireframe, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
+    m_stateManager->AddRasterizerState("solid", RasterizerState::FillMode::Solid, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
+    m_stateManager->AddRasterizerState("wireframe", RasterizerState::FillMode::Wireframe, RasterizerState::CullMode::CullBack, RasterizerState::WindingOrder::Clockwise);
 }
 
 DemoMain::~DemoMain()
@@ -167,7 +167,7 @@ void DemoMain::Render()
     context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
 
     // Set the rasterizer state.
-    m_rasterizerStateManager->SetRasterizerState(m_currentFillMode);
+    m_stateManager->SetRasterizerState(m_currentFillMode);
 
     m_shaderController->Render();
     m_renderer->Render();
@@ -177,7 +177,7 @@ void DemoMain::ReleaseResources()
 {
     m_renderer->ReleaseResources();
     m_shaderController->ReleaseResources();
-    m_rasterizerStateManager->ReleaseResources();
+    m_stateManager->ReleaseResources();
 }
 
 void DemoMain::SetRenderer(int32_t rendererIndex)

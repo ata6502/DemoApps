@@ -43,9 +43,6 @@
     <ClCompile Include="..\Shared\MathHelper.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\RasterizerStateManager.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="ColorRenderer.cpp">
       <Filter>Renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Shared\StateManager.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
