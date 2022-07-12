@@ -32,6 +32,11 @@ namespace BlendState
         Transparent,
         Test
     };
+
+    struct BlendFactors
+    {
+        float Factors[4];
+    };
 }
 
 class StateManager
@@ -49,5 +54,6 @@ private:
     std::shared_ptr<DX::DeviceResources> m_deviceResources;
     std::map<std::string, winrt::com_ptr<ID3D11RasterizerState2>> m_rasterizerStates;
     std::map<std::string, winrt::com_ptr<ID3D11BlendState>> m_blendStates;
+    std::map<std::string, BlendState::BlendFactors> m_blendFactors;
 };
 
