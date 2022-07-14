@@ -85,21 +85,44 @@ void StateManager::AddBlendState(std::string name, BlendState::Blending blending
     D3D11_BLEND_DESC bsDesc;
     ZeroMemory(&bsDesc, sizeof(D3D11_BLEND_DESC));
 
+    // Alpha-to-coverage is a multisampling technique used to render textures such as foliage or gates.
+    // It requires multisampling to be enabled i.e., the back and depth buffer need to specify multisampling.
     bsDesc.AlphaToCoverageEnable = blending == Blending::AlphaToCoverage;
+
+    // Used with multiple render targets. Direct3D 11 supports rendering to up to 8 render targets simultaneously. 
+    // When this flag is set to true, each render target can have different blend factors, operations, etc. 
+    // If it is false, all the render targets are blended the same way as described by the first element in 
+    // the D3D11_BLEND_DESC::RenderTarget array.  
     bsDesc.IndependentBlendEnable = false;
 
     switch (blending)
     {
     case Blending::Transparent:
+        // RenderTarget is an array of eight D3D11_RENDER_TARGET_BLEND_DESC elements, where the i-th element describes 
+        // how blending is done for the i-th render target.
+
+        // True enables blending; false disables it.
         bsDesc.RenderTarget[0].BlendEnable = true;
 
+        // The source blend factor for RGB blending.
         bsDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+
+        // The destination blend factor for RGB blending.
         bsDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+
+        // The RGB blending operator.
         bsDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 
-        // TODO: LT: Alpha channels are completely opaque for land and waves (=1.0) hence we don't really need to care about alpha channel blending.
+        // For Blending::Transparent we assume that alpha channels of all objects are opaque (=1.0)
+        // Because of that we just set default values for alpha channel blending.
+
+        // The destination blend factor for alpha blending.
         bsDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+
+        // The destination blend factor for alpha blending.
         bsDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+
+        // The alpha blending operator.
         bsDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
         break;
     case Blending::Test:
@@ -118,19 +141,21 @@ void StateManager::AddBlendState(std::string name, BlendState::Blending blending
         break;
     }
 
+    // Set up color channels in the back buffer that are written to after blending. For example, to disable 
+    // writes to the RGB channels, and only write to the alpha channel, specify D3D11_COLOR_WRITE_ENABLE_ALPHA.
     bsDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
     switch (blending)
     {
     case Blending::AlphaToCoverage:
     case Blending::Transparent:
-        m_blendFactors[name] = { 0.f, 0.f, 0.f, 0.f };
+        m_blendFactor[name] = { 0.f, 0.f, 0.f, 0.f };
         break;
     case Blending::Test:
-        m_blendFactors[name] = { 1.f, 0.f, 0.f, 0.f }; // (*)
+        m_blendFactor[name] = { 1.f, 0.f, 0.f, 0.f }; // (*)
         break;
     default:
-        m_blendFactors[name] = { 0.f, 0.f, 0.f, 0.f };
+        m_blendFactor[name] = { 0.f, 0.f, 0.f, 0.f };
         break;
     }
 
@@ -144,8 +169,13 @@ void StateManager::SetBlendState(std::string name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    auto blendFactor = m_blendFactors[name];
-    context->OMSetBlendState(m_blendStates[name].get(), blendFactor.Factors, 0xffffffff);
+    const auto& blendFactor = m_blendFactor[name];
+
+    // Bind a blend state object to the output merger stage.
+    context->OMSetBlendState(
+        m_blendStates[name].get(),      // a pointer to a blend state to enable
+        blendFactor.Factor,             // an array of four floats defining an RGBA color vector used as a blend factor when D3D11_BLEND_BLEND_FACTOR or D3D11_BLEND_INV_BLEND_FACTOR is specified
+        0xffffffff);                    // 32-bit sample mask (multisampling can take up to 32 samples); 0xffffffff does not disable any samples
 }
 
 void StateManager::ReleaseResources()
