@@ -46,8 +46,12 @@ public:
 
     void AddRasterizerState(std::string name, RasterizerState::FillMode fillMode, RasterizerState::CullMode cullMode, RasterizerState::WindingOrder windingOrder);
     void SetRasterizerState(std::string name);
+    void DisableRasterizerState();
+
     void AddBlendState(std::string name, BlendState::Blending blending);
     void SetBlendState(std::string name);
+    void DisableBlendState();
+    
     void ReleaseResources();
 
 private:

@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "StateManager.h"
 
+// Direct3D states are organized in state blocks: RasterizerState, BlendState, etc.
+// - Each state has a default state. For example, a default blend state is "blending disabled".
+// - Calling a Set method with null, restores the default state. For example: OMSetBlendState(null)
+
 StateManager::StateManager(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources)
 {
@@ -73,6 +77,13 @@ void StateManager::SetRasterizerState(std::string name)
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
     context->RSSetState(m_rasterizerStates[name].get());
+}
+
+void StateManager::DisableRasterizerState()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    context->RSSetState(nullptr);
 }
 
 void StateManager::AddBlendState(std::string name, BlendState::Blending blending)
@@ -165,6 +176,8 @@ void StateManager::AddBlendState(std::string name, BlendState::Blending blending
             m_blendStates[name].put()));
 }
 
+// Note: blending requires per-pixel work. Enable it only when you need it, and turn it
+// off when you are done.
 void StateManager::SetBlendState(std::string name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
@@ -176,6 +189,16 @@ void StateManager::SetBlendState(std::string name)
         m_blendStates[name].get(),      // a pointer to a blend state to enable
         blendFactor.Factor,             // an array of four floats defining an RGBA color vector used as a blend factor when D3D11_BLEND_BLEND_FACTOR or D3D11_BLEND_INV_BLEND_FACTOR is specified
         0xffffffff);                    // 32-bit sample mask (multisampling can take up to 32 samples); 0xffffffff does not disable any samples
+}
+
+void StateManager::DisableBlendState()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    UINT sampleMask = 0xffffffff;
+
+    context->OMSetBlendState(nullptr, blendFactor, sampleMask);
 }
 
 void StateManager::ReleaseResources()
