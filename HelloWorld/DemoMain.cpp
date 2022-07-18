@@ -249,7 +249,7 @@ void DemoMain::OnDeviceRestored()
 
 void DemoMain::Update()
 {
-    m_rotation = (m_rotation + m_timer.GetElapsedSeconds());
+    m_rotation = (m_rotation + static_cast<float>(m_timer.GetElapsedSeconds()));
     if (m_rotation > XM_2PI)
         m_rotation = fmod(m_rotation, XM_2PI);
 
