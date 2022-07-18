@@ -9,7 +9,8 @@ enum class RendererType
 {
     Material = 0,
     Texture = 1,
-    Color = 2
+    Blending = 2,
+    Color = 3
 };
 
 class RendererFactory

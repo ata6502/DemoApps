@@ -85,6 +85,7 @@
                         <ListBox.Items>
                             <ListBoxItem IsSelected="True">Material Renderer</ListBoxItem>
                             <ListBoxItem>Texture Renderer</ListBoxItem>
+                            <ListBoxItem>Blending Renderer</ListBoxItem>
                             <ListBoxItem>Color Renderer</ListBoxItem>
                         </ListBox.Items>
                     </ListBox>

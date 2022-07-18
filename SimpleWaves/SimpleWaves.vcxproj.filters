@@ -70,6 +70,9 @@
     <ClCompile Include="MaterialRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="BlendingRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -117,6 +120,9 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="MaterialRenderer.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendingRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

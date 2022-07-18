@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "BlendingRenderer.h"
 #include "ColorRenderer.h"
 #include "MaterialRenderer.h"
 #include "RendererFactory.h"
@@ -17,6 +18,8 @@ RendererBase* RendererFactory::CreateRenderer(
         return new MaterialRenderer(deviceResources, materialController, lightsController);
     case RendererType::Texture:
         return new TextureRenderer(deviceResources, materialController, lightsController);
+    case RendererType::Blending:
+        return new BlendingRenderer(deviceResources, materialController, lightsController);
     case RendererType::Color:
         return new ColorRenderer(deviceResources);
     default:

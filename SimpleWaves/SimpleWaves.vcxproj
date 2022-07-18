@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BlendingRenderer.h" />
     <ClInclude Include="ColorRenderer.h" />
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="..\Shared\MathHelper.cpp" />
     <ClCompile Include="..\Shared\StateManager.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
+    <ClCompile Include="BlendingRenderer.cpp" />
     <ClCompile Include="ColorRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="GridMesh.cpp" />
