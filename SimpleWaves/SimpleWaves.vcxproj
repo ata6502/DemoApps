@@ -132,6 +132,7 @@
     <ClInclude Include="LightsController.h" />
     <ClInclude Include="LightsShaderStructures.h" />
     <ClInclude Include="MaterialController.h" />
+    <ClInclude Include="MaterialRenderer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -145,7 +146,6 @@
     <ClInclude Include="SpotlightConeHalfAngleConverter.h" />
     <ClInclude Include="TextureRenderer.h" />
     <ClInclude Include="VertexStructures.h" />
-    <ClInclude Include="WaveRenderer.h" />
     <ClInclude Include="Waves.h" />
   </ItemGroup>
   <ItemGroup>
@@ -185,6 +185,7 @@
     <ClCompile Include="IndependentInput.cpp" />
     <ClCompile Include="LightsController.cpp" />
     <ClCompile Include="MaterialController.cpp" />
+    <ClCompile Include="MaterialRenderer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -199,7 +200,6 @@
     <ClCompile Include="ShaderController.cpp" />
     <ClCompile Include="SpotlightConeHalfAngleConverter.cpp" />
     <ClCompile Include="TextureRenderer.cpp" />
-    <ClCompile Include="WaveRenderer.cpp" />
     <ClCompile Include="Waves.cpp" />
   </ItemGroup>
   <ItemGroup>

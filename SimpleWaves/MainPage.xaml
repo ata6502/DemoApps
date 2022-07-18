@@ -83,7 +83,7 @@
                              BorderThickness="1"
                              SelectionChanged="RendererListBox_SelectionChanged">
                         <ListBox.Items>
-                            <ListBoxItem IsSelected="True">Wave Renderer</ListBoxItem>
+                            <ListBoxItem IsSelected="True">Material Renderer</ListBoxItem>
                             <ListBoxItem>Texture Renderer</ListBoxItem>
                             <ListBoxItem>Color Renderer</ListBoxItem>
                         </ListBox.Items>

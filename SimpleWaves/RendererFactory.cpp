@@ -1,9 +1,9 @@
 #include "pch.h"
 
 #include "ColorRenderer.h"
+#include "MaterialRenderer.h"
 #include "RendererFactory.h"
 #include "TextureRenderer.h"
-#include "WaveRenderer.h"
 
 RendererBase* RendererFactory::CreateRenderer(
     RendererType rendererType, 
@@ -13,8 +13,8 @@ RendererBase* RendererFactory::CreateRenderer(
 {
     switch (rendererType)
     {
-    case RendererType::Wave:
-        return new WaveRenderer(deviceResources, materialController, lightsController);
+    case RendererType::Material:
+        return new MaterialRenderer(deviceResources, materialController, lightsController);
     case RendererType::Texture:
         return new TextureRenderer(deviceResources, materialController, lightsController);
     case RendererType::Color:

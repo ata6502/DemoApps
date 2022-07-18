@@ -4,6 +4,7 @@
 // Direct3D states are organized in state blocks: RasterizerState, BlendState, etc.
 // - Each state has a default state. For example, a default blend state is "blending disabled".
 // - Calling a Set method with null, restores the default state. For example: OMSetBlendState(null)
+// - Create state blocks at application initialization, and then just switch between the states as needed.
 
 StateManager::StateManager(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources)

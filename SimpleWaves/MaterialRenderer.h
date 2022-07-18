@@ -8,14 +8,14 @@
 #include "RendererBase.h"
 #include "Waves.h"
 
-class WaveRenderer : public RendererBase
+class MaterialRenderer : public RendererBase
 {
 public:
-    WaveRenderer(
+    MaterialRenderer(
         std::shared_ptr<DX::DeviceResources> const& deviceResources, 
         std::shared_ptr<MaterialController> const& materialController,
         std::shared_ptr<LightsController> const& lightsController);
-    ~WaveRenderer() {}
+    ~MaterialRenderer() {}
 
     winrt::fire_and_forget InitializeInBackground();
     void Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition);

@@ -7,7 +7,7 @@
 
 enum class RendererType
 {
-    Wave = 0,
+    Material = 0,
     Texture = 1,
     Color = 2
 };

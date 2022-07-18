@@ -21,7 +21,7 @@ DemoMain::DemoMain() :
     m_materialController = std::make_shared<MaterialController>();
     m_lightsController = std::make_shared<LightsController>();
 
-    auto renderer = RendererFactory::CreateRenderer(RendererType::Wave, m_deviceResources, m_materialController, m_lightsController);
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Material, m_deviceResources, m_materialController, m_lightsController);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
@@ -143,8 +143,12 @@ void DemoMain::Update()
     auto viewMatrix = m_camera->GetViewMatrix(eye);
     XMVECTOR at = m_camera->GetLookAtPosition();
 
-    m_renderer->SetViewMatrix(viewMatrix, eye, m_timer.GetTotalSeconds());
-    m_renderer->Update(m_timer.GetTotalSeconds(), m_timer.GetElapsedSeconds(), eye, at);
+    m_renderer->SetViewMatrix(viewMatrix, eye, static_cast<float>(m_timer.GetTotalSeconds()));
+    m_renderer->Update(
+        static_cast<float>(m_timer.GetTotalSeconds()), 
+        static_cast<float>(m_timer.GetElapsedSeconds()),
+        eye, 
+        at);
 }
 
 /// <summary>

@@ -2,13 +2,13 @@
 
 #include "LightsShaderStructures.h"
 #include "MathHelper.h"
-#include "WaveRenderer.h"
+#include "MaterialRenderer.h"
 #include "Utilities.h"
 #include "VertexStructures.h"
 
 using namespace DirectX;
 
-WaveRenderer::WaveRenderer(
+MaterialRenderer::MaterialRenderer(
     std::shared_ptr<DX::DeviceResources> const& deviceResources, 
     std::shared_ptr<MaterialController> const& materialController,
     std::shared_ptr<LightsController> const& lightsController) :
@@ -27,7 +27,7 @@ WaveRenderer::WaveRenderer(
     InitializeInBackground();
 }
 
-winrt::fire_and_forget WaveRenderer::InitializeInBackground()
+winrt::fire_and_forget MaterialRenderer::InitializeInBackground()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
@@ -159,12 +159,12 @@ winrt::fire_and_forget WaveRenderer::InitializeInBackground()
     IsInitialized(true);
 }
 
-float const WaveRenderer::GetHillHeight(float x, float z)
+float const MaterialRenderer::GetHillHeight(float x, float z)
 {
     return 0.3f * z * sinf(0.1f * x) + 0.3f * x * cosf(0.1f * z);
 }
 
-DirectX::XMFLOAT3 const WaveRenderer::GetHillNormal(float x, float z)
+DirectX::XMFLOAT3 const MaterialRenderer::GetHillNormal(float x, float z)
 {
     // n = (-df/dx, 1, -df/dz)
     XMFLOAT3 n(
@@ -181,7 +181,7 @@ DirectX::XMFLOAT3 const WaveRenderer::GetHillNormal(float x, float z)
 /// <summary>
 /// Device context dependent initialization.
 /// </summary>
-void WaveRenderer::FinalizeInitialization()
+void MaterialRenderer::FinalizeInitialization()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
     auto context{ m_deviceResources->GetD3DDeviceContext() };
@@ -208,7 +208,7 @@ void WaveRenderer::FinalizeInitialization()
 }
 
 // Animate waves.
-void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition)
+void MaterialRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXMVECTOR eyePosition, DirectX::FXMVECTOR lookingAtPosition)
 {
     // Every quarter second, generate a random wave.
     static float t_base = 0.0f;
@@ -261,7 +261,7 @@ void WaveRenderer::Update(float totalSeconds, float elapsedSeconds, DirectX::FXM
         XMVector3Normalize(lookingAtPosition - eyePosition)); // the spot light's direction
 }
 
-void WaveRenderer::Render()
+void MaterialRenderer::Render()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -308,7 +308,7 @@ void WaveRenderer::Render()
     context->DrawIndexed(3 * m_waves.TriangleCount(), 0, 0);
 }
 
-void WaveRenderer::ReleaseResources()
+void MaterialRenderer::ReleaseResources()
 {
     IsInitialized(false);
     m_terrainMesh->ReleaseResources();
@@ -322,12 +322,12 @@ void WaveRenderer::ReleaseResources()
     m_constantBufferPerObject = nullptr;
 }
 
-void WaveRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
+void MaterialRenderer::SetProjMatrix(DirectX::FXMMATRIX projMatrix)
 {
     XMStoreFloat4x4(&m_projMatrix, projMatrix);
 }
 
-void WaveRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
+void MaterialRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, [[maybe_unused]] float totalSeconds)
 {
     XMStoreFloat4x4(&m_constantBufferPerFrameData.ViewProj,
         XMMatrixTranspose(viewMatrix * XMLoadFloat4x4(&m_projMatrix)));
