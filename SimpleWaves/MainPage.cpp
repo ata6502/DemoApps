@@ -147,7 +147,7 @@ namespace winrt::SimpleWaves::implementation
             return;
 
         // Set specular component of terrain and waves.
-        m_main->SetSpecularComponent(args.NewValue());
+        m_main->SetSpecularComponent(static_cast<int>(args.NewValue()));
     }
 
     void MainPage::SpotlightConeHalfAngleSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)

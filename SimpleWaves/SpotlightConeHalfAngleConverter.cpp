@@ -4,7 +4,7 @@
 
 namespace winrt::SimpleWaves::implementation
 {
-    Windows::Foundation::IInspectable SpotlightConeHalfAngleConverter::Convert(Windows::Foundation::IInspectable const& value, Windows::UI::Xaml::Interop::TypeName const& targetType, Windows::Foundation::IInspectable const& parameter, hstring const& language)
+    Windows::Foundation::IInspectable SpotlightConeHalfAngleConverter::Convert(Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, [[maybe_unused]] Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)
     {
         // Spotlight's cone half-angles are estimated using the following formula:
         // halfAngle = (acos(pow(0.06, 1.0 / p)) * 180.0) / XM_PI, where p is a specular power.
@@ -13,13 +13,13 @@ namespace winrt::SimpleWaves::implementation
         auto angles = std::vector<hstring>{ L"8°", L"12°", L"16°", L"20°", L"30°", L"45°", L"60°", L"75°", L"90°" };
         auto index = static_cast<int>(value.as<double>());
 
-        if (index >= angles.size())
+        if (index >= (int)angles.size())
             return winrt::box_value(hstring{ L"Undefined" });
 
         return winrt::box_value(angles[index]);
     }
 
-    Windows::Foundation::IInspectable SpotlightConeHalfAngleConverter::ConvertBack(Windows::Foundation::IInspectable const& value, Windows::UI::Xaml::Interop::TypeName const& targetType, Windows::Foundation::IInspectable const& parameter, hstring const& language)
+    Windows::Foundation::IInspectable SpotlightConeHalfAngleConverter::ConvertBack([[maybe_unused]] Windows::Foundation::IInspectable const& value, [[maybe_unused]] Windows::UI::Xaml::Interop::TypeName const& targetType, [[maybe_unused]] Windows::Foundation::IInspectable const& parameter, [[maybe_unused]] hstring const& language)
     {
         throw hresult_not_implemented();
     }

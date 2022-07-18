@@ -39,7 +39,7 @@ void LightsController::UpdateSpotLight(DirectX::FXMVECTOR const& position, Direc
 void LightsController::SetSpotlightConeHalfAngle(int halfAngleIndex)
 {
     auto halfAnglePowers = std::vector<int>{ 256, 128, 64, 32, 16, 8, 4, 2, 1 };
-    ASSERT(halfAngleIndex < halfAnglePowers.size());
+    ASSERT(halfAngleIndex < (int)halfAnglePowers.size());
 
-    m_spotLight.Spot = halfAnglePowers[halfAngleIndex];
+    m_spotLight.Spot = static_cast<float>(halfAnglePowers[halfAngleIndex]);
 }

@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include "LightsShaderStructures.h"
 #include "MathHelper.h"
 #include "MaterialRenderer.h"
 #include "Utilities.h"

@@ -139,11 +139,11 @@ void DemoMain::Update()
     static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
     static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
-    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye, m_timer.GetTotalSeconds());
+    m_renderer->SetViewMatrix(XMMatrixLookAtLH(eye, at, up), eye, static_cast<float>(m_timer.GetTotalSeconds()));
 
     if (m_rotationEnabled)
     {
-        m_rotation = (m_rotation + m_timer.GetElapsedSeconds());
+        m_rotation = (m_rotation + static_cast<float>(m_timer.GetElapsedSeconds()));
         if (m_rotation > XM_2PI)
             m_rotation = fmod(m_rotation, XM_2PI);
     }
