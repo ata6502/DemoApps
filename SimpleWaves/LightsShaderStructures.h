@@ -61,6 +61,12 @@ struct ConstantBufferPerFrame
     PointLightDesc PointLight;
     SpotLightDesc SpotLight;
     DirectX::XMFLOAT3 EyePosition;
+    float Pad1;
+
+    DirectX::XMFLOAT4 FogColor;
+    float FogStart;
+    float FogRange;
+    DirectX::XMFLOAT2 Pad2;
 };
 
 struct ConstantBufferPerObject

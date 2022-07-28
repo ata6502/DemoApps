@@ -54,7 +54,12 @@ cbuffer ConstantBufferPerFrame : register(b1)
     PointLightDesc PointLight;
     SpotLightDesc SpotLight;
     float3 EyePosition;
-    float Pad;
+    float Pad1;
+
+    float4 FogColor;
+    float FogStart;
+    float FogRange;
+    float2 Pad2; // padding to complement two floats to float4
 };
 
 cbuffer ConstantBufferPerObject : register(b2)

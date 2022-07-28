@@ -37,7 +37,7 @@ winrt::fire_and_forget BlendingRenderer::InitializeInBackground()
 
     // [1] Load shader bytecode.
     auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"TextureVertexShader.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"TexturePixelShader.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"BlendingPixelShader.cso");
 
     // [2] Create vertex shader.
     winrt::check_hresult(
@@ -419,6 +419,12 @@ void BlendingRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXM
 
     // Copy the spot light description to the per frame constant buffer.
     m_constantBufferPerFrameData.SpotLight = m_lightsController->GetSpotLight();
+
+    // Set fog parameters.
+    // TODO: Control fog parameters.
+    m_constantBufferPerFrameData.FogColor = XMFLOAT4(.4f, .4f, .4f, 1.0f);
+    m_constantBufferPerFrameData.FogStart = 20.0f;
+    m_constantBufferPerFrameData.FogRange = 175.0f;
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
 }
