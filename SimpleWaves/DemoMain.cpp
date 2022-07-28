@@ -232,8 +232,7 @@ bool DemoMain::AreLightParametersSupported() const
 
 void DemoMain::SetSpecularComponent(int specularComponent)
 {
-    m_materialController->SetTerrainSpecularComponent(specularComponent);
-    m_materialController->SetWaveSpecularComponent(specularComponent);
+    m_materialController->SetSpecularComponent(specularComponent);
 }
 
 void DemoMain::SetSpotlightConeHalfAngle(int halfAngleIndex)

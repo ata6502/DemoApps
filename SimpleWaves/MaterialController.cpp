@@ -5,18 +5,17 @@ using namespace DirectX;
 
 void MaterialController::CreateMaterials()
 {
-    float specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_TERRAIN_SPECULAR_COMPONENT);
+    float specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_SPECULAR_COMPONENT);
     m_terrainMaterial.Ambient = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
     m_terrainMaterial.Diffuse = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
     m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, specularPower);
 
-    specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_WAVE_SPECULAR_COMPONENT);
+    specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_SPECULAR_COMPONENT);
     m_waveMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
     m_waveMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 0.5f); // the diffuse component of the wave material has alpha < 1.0f, i.e. it is transparent
     m_waveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, specularPower);
 
-    // TODO: Control spec component for box.
-    specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_WAVE_SPECULAR_COMPONENT);
+    specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_SPECULAR_COMPONENT);
     m_boxMaterial.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     m_boxMaterial.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     m_boxMaterial.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, specularPower);
@@ -27,16 +26,12 @@ void MaterialController::CreateMaterials()
 /// which controls the "shininess" of the surface. 
 /// </summary>
 /// <param name="specularPower">A number between 1 and 7 representig the specular power material component</param>
-void MaterialController::SetTerrainSpecularComponent(int specularComponent)
+void MaterialController::SetSpecularComponent(int specularComponent)
 {
     float specularPower = ConvertSpecularComponentToSpecularPowerValue(specularComponent);
     m_terrainMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, specularPower);
-}
-
-void MaterialController::SetWaveSpecularComponent(int specularComponent)
-{
-    float specularPower = ConvertSpecularComponentToSpecularPowerValue(specularComponent);
     m_waveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, specularPower);
+    m_boxMaterial.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, specularPower);
 }
 
 float MaterialController::ConvertSpecularComponentToSpecularPowerValue(int specularComponent) const
