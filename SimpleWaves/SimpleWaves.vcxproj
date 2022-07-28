@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BlendingRenderer.h" />
+    <ClInclude Include="BoxMesh.h" />
     <ClInclude Include="ColorRenderer.h" />
     <ClInclude Include="ColorShaderStructures.h" />
     <ClInclude Include="DemoMain.h" />
@@ -171,6 +172,7 @@
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\Textures\grass.dds" />
     <Image Include="Assets\Textures\water.dds" />
+    <Image Include="Assets\Textures\wire.dds" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +183,7 @@
     <ClCompile Include="..\Shared\StateManager.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="BlendingRenderer.cpp" />
+    <ClCompile Include="BoxMesh.cpp" />
     <ClCompile Include="ColorRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="GridMesh.cpp" />

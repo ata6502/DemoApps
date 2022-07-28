@@ -12,8 +12,14 @@ void MaterialController::CreateMaterials()
 
     specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_WAVE_SPECULAR_COMPONENT);
     m_waveMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
-    m_waveMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
+    m_waveMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 0.5f); // the diffuse component of the wave material has alpha < 1.0f, i.e. it is transparent
     m_waveMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, specularPower);
+
+    // TODO: Control spec component for box.
+    specularPower = ConvertSpecularComponentToSpecularPowerValue(DEFAULT_WAVE_SPECULAR_COMPONENT);
+    m_boxMaterial.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    m_boxMaterial.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    m_boxMaterial.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, specularPower);
 }
 
 /// <summary>

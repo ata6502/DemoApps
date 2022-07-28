@@ -73,6 +73,9 @@
     <ClCompile Include="BlendingRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="BoxMesh.cpp">
+      <Filter>Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -125,6 +128,9 @@
     <ClInclude Include="VertexStructures.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="BoxMesh.h">
+      <Filter>Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -152,6 +158,9 @@
       <Filter>Assets\Textures</Filter>
     </Image>
     <Image Include="Assets\Textures\water.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\wire.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>

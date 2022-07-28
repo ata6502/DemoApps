@@ -175,6 +175,8 @@ void DemoMain::Render()
 
     m_shaderController->Render();
     m_renderer->Render();
+
+    m_stateManager->DisableRasterizerState();
 }
 
 void DemoMain::ReleaseResources()

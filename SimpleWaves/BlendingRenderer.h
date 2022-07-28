@@ -1,11 +1,13 @@
 #pragma once
 
+#include "BoxMesh.h"
 #include "DeviceResources.h"
 #include "GridMesh.h"
 #include "LightsController.h"
 #include "LightsShaderStructures.h"
 #include "MaterialController.h"
 #include "RendererBase.h"
+#include "StateManager.h"
 #include "Waves.h"
 
 class BlendingRenderer : public RendererBase
@@ -61,10 +63,15 @@ private:
 
     DirectX::XMFLOAT4X4                     m_projMatrix;
     std::unique_ptr<GridMesh>               m_terrainMesh;
+    std::unique_ptr<BoxMesh>                m_boxMesh;
+    std::unique_ptr<StateManager>           m_stateManager;
     Waves                                   m_waves; // wave simulation
 
     // Helper functions.
     DirectX::XMFLOAT3 const GetHillNormal(float x, float z);
     float const GetHillHeight(float x, float z);
+    void RenderTerrain();
+    void RenderBox();
+    void RenderWaves();
 };
 
