@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "DeviceResources.h"
+#include "FogController.h"
 #include "IndependentInput.h"
 #include "LightsController.h"
 #include "MaterialController.h"
@@ -33,19 +34,24 @@ public:
     void SetRenderer(int32_t rendererIndex);
     void SetShader(ShaderType shaderType);
 
-    // Shader management.
+    // Shader control.
     bool IsToonShaderSupported() const;
     bool AreLightParametersSupported() const;
 
-    // Rasterizer state management.
+    // Rasterizer state control.
     void SetWireframeFillMode();
     void SetSolidFillMode();
 
-    // Material management.
+    // Material control.
     void SetSpecularComponent(int specularComponent);
 
-    // Light management.
+    // Light control.
     void SetSpotlightConeHalfAngle(int halfAngleIndex);
+
+    // Fog control.
+    bool IsFogSupported() const;
+    void SetFogStart(float fogStart);
+    void SetFogRange(float fogRange);
 
     // IDeviceNotify
     virtual void OnDeviceLost();
@@ -65,10 +71,13 @@ private:
     std::unique_ptr<IndependentInput>        m_input;
     std::unique_ptr<Camera>                  m_camera;
     std::unique_ptr<RendererBase>            m_renderer;
-    std::unique_ptr<ShaderController>        m_shaderController;
     std::unique_ptr<StateManager>            m_stateManager;
     std::string                              m_currentFillMode;
+
+    // Controllers
+    std::unique_ptr<ShaderController>        m_shaderController;
     std::shared_ptr<MaterialController>      m_materialController;
     std::shared_ptr<LightsController>        m_lightsController;
+    std::shared_ptr<FogController>           m_fogController;
 };
 

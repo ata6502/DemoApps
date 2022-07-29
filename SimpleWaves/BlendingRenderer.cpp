@@ -12,10 +12,12 @@ using namespace DirectX;
 BlendingRenderer::BlendingRenderer(
     std::shared_ptr<DX::DeviceResources> const& deviceResources, 
     std::shared_ptr<MaterialController> const& materialController,
-    std::shared_ptr<LightsController> const& lightsController) :
+    std::shared_ptr<LightsController> const& lightsController,
+    std::shared_ptr<FogController> const& fogController) :
     m_deviceResources(deviceResources),
     m_materialController(materialController),
     m_lightsController(lightsController),
+    m_fogController(fogController),
     m_constantBufferPerFrame(nullptr),
     m_constantBufferPerObject(nullptr),
     m_constantBufferNeverChanges(nullptr)
@@ -352,8 +354,6 @@ void BlendingRenderer::Render()
     ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
     context->PSSetSamplers(0, 1, &pLinearSampler);
 
-    // TODO: Do we need to set different pixel shaders for NoClipping (terrain and waves) and WithClipping (box)?
-
     // [1] Draw the objects that do not require blending: the terrain and the box.
     RenderTerrain();
     RenderBox();
@@ -416,8 +416,7 @@ void BlendingRenderer::RenderBox()
     // Send the per object cbuffer to GPU.
     context->UpdateSubresource(m_constantBufferPerObject.get(), 0, nullptr, &constantBufferPerObjectData, 0, 0);
 
-    // Set NoCulling rasterizer state. We need to set the NoCulling state for objects 
-    // that have an alpha channel as their back triangles may be see through after clipping.
+    // We need to disable back face culling because we can see through the wire texture of the box.
     m_stateManager->SetRasterizerState("NoCulling");
 
     // Draw the box.
@@ -499,10 +498,9 @@ void BlendingRenderer::SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXM
     m_constantBufferPerFrameData.SpotLight = m_lightsController->GetSpotLight();
 
     // Set fog parameters.
-    // TODO: Control fog parameters.
-    m_constantBufferPerFrameData.FogColor = XMFLOAT4(.4f, .4f, .4f, 1.0f);
-    m_constantBufferPerFrameData.FogStart = 20.0f;
-    m_constantBufferPerFrameData.FogRange = 175.0f;
+    m_constantBufferPerFrameData.FogColor = m_fogController->GetFogColor();
+    m_constantBufferPerFrameData.FogStart = m_fogController->GetFogStart();
+    m_constantBufferPerFrameData.FogRange = m_fogController->GetFogRange();
 
     m_deviceResources->GetD3DDeviceContext()->UpdateSubresource(m_constantBufferPerFrame.get(), 0, nullptr, &m_constantBufferPerFrameData, 0, 0);
 }

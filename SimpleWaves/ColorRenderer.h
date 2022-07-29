@@ -20,6 +20,7 @@ public:
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     bool IsToonShaderSupported() const { return false; }
     bool AreLightParametersSupported() const { return false; }
+    bool IsFogSupported() const { return false; }
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;

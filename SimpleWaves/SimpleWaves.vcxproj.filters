@@ -76,6 +76,9 @@
     <ClCompile Include="BoxMesh.cpp">
       <Filter>Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="FogController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="BoxMesh.h">
       <Filter>Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="FogController.h">
+      <Filter>Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

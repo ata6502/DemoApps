@@ -20,8 +20,9 @@ DemoMain::DemoMain() :
     m_camera = std::make_unique<Camera>();
     m_materialController = std::make_shared<MaterialController>();
     m_lightsController = std::make_shared<LightsController>();
+    m_fogController = std::make_shared<FogController>();
 
-    auto renderer = RendererFactory::CreateRenderer(RendererType::Material, m_deviceResources, m_materialController, m_lightsController);
+    auto renderer = RendererFactory::CreateRenderer(RendererType::Material, m_deviceResources, m_materialController, m_lightsController, m_fogController);
     m_renderer = std::unique_ptr<RendererBase>(renderer);
 
     m_shaderController = std::make_unique<ShaderController>(m_deviceResources);
@@ -197,7 +198,7 @@ void DemoMain::SetRenderer(int32_t rendererIndex)
 
     m_renderer->ReleaseResources();
 
-    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources, m_materialController, m_lightsController);
+    auto renderer = RendererFactory::CreateRenderer((RendererType)rendererIndex, m_deviceResources, m_materialController, m_lightsController, m_fogController);
     m_renderer.reset();
     m_renderer.reset(renderer);
 
@@ -238,4 +239,19 @@ void DemoMain::SetSpecularComponent(int specularComponent)
 void DemoMain::SetSpotlightConeHalfAngle(int halfAngleIndex)
 {
     m_lightsController->SetSpotlightConeHalfAngle(halfAngleIndex);
+}
+
+bool DemoMain::IsFogSupported() const
+{
+    return m_renderer->IsFogSupported();
+}
+
+void DemoMain::SetFogStart(float fogStart)
+{
+    m_fogController->SetFogStart(fogStart);
+}
+
+void DemoMain::SetFogRange(float fogRange)
+{
+    m_fogController->SetFogRange(fogRange);
 }

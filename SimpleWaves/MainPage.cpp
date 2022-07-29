@@ -159,6 +159,23 @@ namespace winrt::SimpleWaves::implementation
         m_main->SetSpotlightConeHalfAngle(halfAngleIndex);
     }
 
+    void MainPage::FogStartSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        m_main->SetFogStart(static_cast<float>(args.NewValue()));
+    }
+
+
+    void MainPage::FogRangeSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (m_main == nullptr)
+            return;
+
+        m_main->SetFogRange(static_cast<float>(args.NewValue()));
+    }
+
     void MainPage::InitializePanels()
     {
         if (m_main->IsToonShaderSupported())
@@ -170,6 +187,11 @@ namespace winrt::SimpleWaves::implementation
             LightControlPanel().Visibility(Visibility::Visible);
         else
             LightControlPanel().Visibility(Visibility::Collapsed);
+
+        if (m_main->IsFogSupported())
+            FogControlPanel().Visibility(Visibility::Visible);
+        else
+            FogControlPanel().Visibility(Visibility::Collapsed);
     }
 
     void MainPage::SetShader()

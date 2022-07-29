@@ -20,6 +20,7 @@ public:
         RendererType rendererType, 
         std::shared_ptr<DX::DeviceResources> const& deviceResources,
         std::shared_ptr<MaterialController> const& materialController,
-        std::shared_ptr<LightsController> const& lightsController);
+        std::shared_ptr<LightsController> const& lightsController,
+        std::shared_ptr<FogController> const& fogController);
 };
 

@@ -2,6 +2,7 @@
 
 #include "BoxMesh.h"
 #include "DeviceResources.h"
+#include "FogController.h"
 #include "GridMesh.h"
 #include "LightsController.h"
 #include "LightsShaderStructures.h"
@@ -16,7 +17,8 @@ public:
     BlendingRenderer(
         std::shared_ptr<DX::DeviceResources> const& deviceResources, 
         std::shared_ptr<MaterialController> const& materialController,
-        std::shared_ptr<LightsController> const& lightsController);
+        std::shared_ptr<LightsController> const& lightsController,
+        std::shared_ptr<FogController> const& fogController);
     ~BlendingRenderer() {}
 
     winrt::fire_and_forget InitializeInBackground();
@@ -29,11 +31,13 @@ public:
     void SetViewMatrix(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float totalSeconds);
     bool IsToonShaderSupported() const { return false; }
     bool AreLightParametersSupported() const { return true; }
+    bool IsFogSupported() const { return true; }
 
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
     std::shared_ptr<MaterialController>     m_materialController;
     std::shared_ptr<LightsController>       m_lightsController;
+    std::shared_ptr<FogController>       m_fogController;
 
     // Direct3D resources.
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
