@@ -1,0 +1,81 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35004.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleBoids", "SimpleBoids\SimpleBoids.vcxproj", "{BB0788C8-B405-4476-B468-D6516F51CA1D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{9344D7EA-E7E5-4F4F-BCA5-41F0D47CE298}"
+	ProjectSection(SolutionItems) = preProject
+		Shared\ColorMeshGenerator.cpp = Shared\ColorMeshGenerator.cpp
+		Shared\ColorMeshGenerator.h = Shared\ColorMeshGenerator.h
+		Shared\DeviceResources.cpp = Shared\DeviceResources.cpp
+		Shared\DeviceResources.h = Shared\DeviceResources.h
+		Shared\FileReader.cpp = Shared\FileReader.cpp
+		Shared\FileReader.h = Shared\FileReader.h
+		Shared\FileReaderStructures.h = Shared\FileReaderStructures.h
+		Shared\IndependentInput.cpp = Shared\IndependentInput.cpp
+		Shared\IndependentInput.h = Shared\IndependentInput.h
+		Shared\RandomNumberHelper.cpp = Shared\RandomNumberHelper.cpp
+		Shared\RandomNumberHelper.h = Shared\RandomNumberHelper.h
+		Shared\RenderStates.cpp = Shared\RenderStates.cpp
+		Shared\RenderStates.h = Shared\RenderStates.h
+		Shared\StepTimer.h = Shared\StepTimer.h
+		Shared\TextureMeshGenerator.cpp = Shared\TextureMeshGenerator.cpp
+		Shared\TextureMeshGenerator.h = Shared\TextureMeshGenerator.h
+		Shared\Utilities.cpp = Shared\Utilities.cpp
+		Shared\Utilities.h = Shared\Utilities.h
+		Shared\VertexStructures.h = Shared\VertexStructures.h
+		Shared\WICTextureLoader.cpp = Shared\WICTextureLoader.cpp
+		Shared\WICTextureLoader.h = Shared\WICTextureLoader.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{E776F72F-D4A6-4585-9CEC-00DC15E82CE5}"
+	ProjectSection(SolutionItems) = preProject
+		Docs\Notes.txt = Docs\Notes.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|ARM.ActiveCfg = Debug|ARM
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|ARM.Build.0 = Debug|ARM
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|ARM.Deploy.0 = Debug|ARM
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|ARM64.Build.0 = Debug|ARM64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|x64.ActiveCfg = Debug|x64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|x64.Build.0 = Debug|x64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|x64.Deploy.0 = Debug|x64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|x86.ActiveCfg = Debug|Win32
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|x86.Build.0 = Debug|Win32
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Debug|x86.Deploy.0 = Debug|Win32
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|ARM.ActiveCfg = Release|ARM
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|ARM.Build.0 = Release|ARM
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|ARM.Deploy.0 = Release|ARM
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|ARM64.ActiveCfg = Release|ARM64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|ARM64.Build.0 = Release|ARM64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|ARM64.Deploy.0 = Release|ARM64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|x64.ActiveCfg = Release|x64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|x64.Build.0 = Release|x64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|x64.Deploy.0 = Release|x64
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|x86.ActiveCfg = Release|Win32
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|x86.Build.0 = Release|Win32
+		{BB0788C8-B405-4476-B468-D6516F51CA1D}.Release|x86.Deploy.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3D5BA619-EB93-4E00-834D-BF4D2D5CB9F8}
+	EndGlobalSection
+EndGlobal

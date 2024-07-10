@@ -1,0 +1,159 @@
+﻿<Page
+    x:Class="SimpleBoids.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Storyboard x:Key="ShowControlPanelStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ControlPanel"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                             EnableDependentAnimation="True"
+                             FillBehavior="HoldEnd"
+                             AutoReverse="False"
+                             RepeatBehavior="1x"
+                             BeginTime="0:0:0"
+                             SpeedRatio="3"
+                             From="-250"
+                             To="0"
+                             Duration="0:0:1.6">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="HideControlPanelStoryboard">
+            <DoubleAnimation Storyboard.TargetName="ControlPanel"
+                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                             EnableDependentAnimation="True"
+                             FillBehavior="HoldEnd"
+                             AutoReverse="False"
+                             RepeatBehavior="1x"
+                             BeginTime="0:0:0"
+                             SpeedRatio="3"
+                             From="0"
+                             To="-250"
+                             Duration="0:0:0.8">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseIn" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
+    <SwapChainPanel x:Name="DXSwapChainPanel">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!-- the "hamburger" menu button -->
+            <ContentControl Grid.Row="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Margin="16,12,0,12"
+                            Tapped="ContentControl_Tapped">
+                <FontIcon Glyph="&#xE700;" FontSize="25" />
+            </ContentControl>
+
+            <Border x:Name="ControlPanel"
+                    Grid.Row="1"
+                    Width="250"
+                    Margin="0,0,0,0"
+                    Background="GhostWhite"
+                    Opacity="0.8"
+                    HorizontalAlignment="Left"
+                    BorderBrush="Black"
+                    BorderThickness="0 1 1 0">
+
+                <Border.RenderTransform>
+                    <TranslateTransform X="-250" />
+                </Border.RenderTransform>
+
+                <StackPanel Margin="12,12,12,0">
+                    <Button x:Name="RestartSimulationButton" 
+                            Content="Restart Simulation" 
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,0"
+                            Click="RestartSimulationButton_Click"/>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="AddBoidsButton"
+                                Content="Add Boids"
+                                Margin="0,0,4,0"
+                                HorizontalAlignment="Stretch"
+                                Click="AddBoidsButton_Click" />
+                        <Button x:Name="RemoveBoidsButton"
+                                Grid.Column="1"
+                                Content="Remove Boids"
+                                Margin="4,0,0,0"
+                                HorizontalAlignment="Stretch"
+                                Click="RemoveBoidsButton_Click" />                        
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                Grid.Column="1"
+                                Margin="0,8,0,0">
+                        <TextBlock Text="Boid count:"
+                                   Margin="0,0,4,0" />
+                        <TextBlock x:Name="BoidCountTextBlock" />
+                    </StackPanel>
+
+                    <TextBlock Margin="0,8,0,0"
+                               Text="Boid shape:" />
+                    <ListBox x:Name="BoidShapeListBox"
+                             Margin="0,8,0,0"
+                             Background="White"
+                             BorderBrush="Black"
+                             BorderThickness="1"
+                             SelectionChanged="BoidShapeListBox_SelectionChanged"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             VerticalAlignment="Stretch">
+                        <ListBox.Items>
+                            <ListBoxItem IsSelected="True">Sphere</ListBoxItem>
+                            <ListBoxItem>Cone</ListBoxItem>
+                        </ListBox.Items>
+                    </ListBox>
+
+                    <StackPanel Margin="0,16,0,0">
+                        <TextBlock Text="Minimum distance between boids:" />
+                        <Slider x:Name="MinimumDistanceSlider"
+                                Header=""
+                                IsEnabled="True"
+                                Minimum="0.0"
+                                Maximum="6.0"
+                                Value="0" 
+                                Padding="0,0,0,0"
+                                StepFrequency="0.25"
+                                TickFrequency="1"
+                                TickPlacement="TopLeft"                                
+                                ValueChanged="MinimumDistanceSlider_ValueChanged" />
+                    </StackPanel>
+
+                    <StackPanel Margin="0,16,0,0">
+                        <TextBlock Text="Adjustment of average velocity:" />
+                        <Slider x:Name="MatchingFactorSlider"
+                                Header=""
+                                IsEnabled="True"
+                                Minimum="0.0"
+                                Maximum="1.0"
+                                Value="0" 
+                                Padding="0,0,0,0"
+                                StepFrequency="0.1"
+                                TickFrequency="0.1"
+                                TickPlacement="TopLeft"                                
+                                ValueChanged="MatchingFactorSlider_ValueChanged" />
+                    </StackPanel>
+                </StackPanel>
+                
+            </Border>
+        </Grid>
+    </SwapChainPanel>
+</Page>

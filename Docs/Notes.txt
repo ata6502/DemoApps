@@ -1,0 +1,20 @@
+
+Boid Links
+==========
+
+Code:
+https://github.com/beneater/boids/blob/master/boids.js (JavaScript)
+http://www.kfish.org/boids/pseudocode.html (Pseudocode)
+https://github.com/Cultrarius/Swarmz (C++)
+https://github.com/topics/boids?l=c%2B%2B (more C++)
+https://swharden.com/csdv/simulations/boids/ (C#)
+https://github.com/swharden/Csharp-Data-Visualization (C#)
+https://processing.org/examples/flocking.html (JavaScript)
+https://github.com/Unity-Technologies/EntityComponentSystemSamples/tree/master/ECSSamples/Assets/Advanced/Boids (Unity)
+
+Info:
+https://www.red3d.com/cwr/boids/ (Craig Reynolds)
+
+Simulations:
+https://eater.net/boids
+http://www.harmendeweerd.nl/boids/
