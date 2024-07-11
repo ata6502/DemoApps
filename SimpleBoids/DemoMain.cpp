@@ -10,6 +10,7 @@ const float DemoMain::BOID_RADIUS = 1.5f;
 const float DemoMain::BOID_MIN_DISTANCE = 2.0f;
 const float DemoMain::BOID_MATCHING_FACTOR = 0.2f;
 const float DemoMain::MAX_BOID_SPEED = 0.6f;
+const float DemoMain::BOID_MOVE_TO_CENTER_FACTOR = 0.01f;
 
 const float DemoMain::INPUT_RADIUS = 250.f;
 const float DemoMain::INPUT_YAW = -0.5f * DirectX::XM_PI;
@@ -33,7 +34,12 @@ DemoMain::DemoMain() :
     m_input->SetInputPitch(INPUT_PITCH);
     m_input->SetInputStep(INPUT_STEP);
 
-    m_swarm = std::make_unique<Swarm>(BOID_RADIUS, BOID_MIN_DISTANCE, BOID_MATCHING_FACTOR, MAX_BOID_SPEED);
+    m_swarm = std::make_unique<Swarm>(
+        BOID_RADIUS, 
+        BOID_MIN_DISTANCE, 
+        BOID_MATCHING_FACTOR, 
+        MAX_BOID_SPEED,
+        BOID_MOVE_TO_CENTER_FACTOR);
     m_swarm->AddBoids(INITIAL_BOID_COUNT);
 
     Initialize();

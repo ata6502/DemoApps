@@ -10,11 +10,13 @@ Swarm::Swarm(
     float boidRadius, 
     float boidMinDistance, 
     float boidMatchingFactor, 
-    float maxBoidSpeed) :
+    float maxBoidSpeed,
+    float boidMoveToCenterFactor) :
     m_boidRadius(boidRadius),
     m_boidMinDistance(boidRadius + boidMinDistance),
     m_boidMatchingFactor(boidMatchingFactor),
-    m_maxBoidSpeed(maxBoidSpeed)
+    m_maxBoidSpeed(maxBoidSpeed),
+    m_boidMoveToCenterFactor(boidMoveToCenterFactor)
 {
     m_rand = std::make_unique<RandomNumberHelper>();
 }
@@ -116,7 +118,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule1(int boidIndex)
     size_t boidCount = Size() - 1; // all the boids minus the current boid
     XMVECTOR centre = sum / (static_cast<float>(boidCount));
     XMVECTOR boidPosition = m_boids[boidIndex]->GetPosition();
-    XMVECTOR v = XMVectorSubtract(centre, boidPosition) * BOID_MOVE_TO_CENTER_FACTOR;
+    XMVECTOR v = XMVectorSubtract(centre, boidPosition) * m_boidMoveToCenterFactor;
 
     return v;
 }

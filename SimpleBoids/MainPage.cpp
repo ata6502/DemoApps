@@ -52,6 +52,7 @@ namespace winrt::SimpleBoids::implementation
         MinimumDistanceSlider().Value(m_main->GetBoidMinDistance());
         MatchingFactorSlider().Value(m_main->GetBoidMatchingFactor());
         MaximumSpeedSlider().Value(m_main->GetMaxBoidSpeed());
+        MovingToCenterFactorSlider().Value(m_main->GetBoidMoveToCenterFactor());
     }
 
     /// <summary>
@@ -150,24 +151,24 @@ namespace winrt::SimpleBoids::implementation
         storyboard.Begin();
     }
 
-    void MainPage::RestartSimulationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    void MainPage::RestartSimulationButton_Click([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         m_main->RestartSimulation();
     }
 
-    void MainPage::AddBoidsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    void MainPage::AddBoidsButton_Click([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         m_main->AddBoids();
         BoidCountTextBlock().Text(std::to_wstring(m_main->GetSwarmSize()));
     }
 
-    void MainPage::RemoveBoidsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& e)
+    void MainPage::RemoveBoidsButton_Click([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         m_main->RemoveBoids();
         BoidCountTextBlock().Text(std::to_wstring(m_main->GetSwarmSize()));
     }
 
-    void MainPage::BoidShapeListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+    void MainPage::BoidShapeListBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
     {
         auto listBox = sender.as<ListBox>();
         if (!listBox.IsLoaded())
@@ -177,7 +178,7 @@ namespace winrt::SimpleBoids::implementation
         m_main->SetBoidShape(boidShapeIndex);
     }
 
-    void MainPage::MinimumDistanceSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    void MainPage::MinimumDistanceSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
     {
         if (!MinimumDistanceSlider().IsLoaded())
             return;
@@ -186,7 +187,7 @@ namespace winrt::SimpleBoids::implementation
         m_main->SetBoidMinDistance(boidMinDistance);
     }
 
-    void MainPage::MatchingFactorSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    void MainPage::MatchingFactorSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
     {
         if (!MatchingFactorSlider().IsLoaded())
             return;
@@ -195,12 +196,21 @@ namespace winrt::SimpleBoids::implementation
         m_main->SetBoidMatchingFactor(boidMatchingFactor);
     }
 
-    void winrt::SimpleBoids::implementation::MainPage::MaximumSpeedSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    void MainPage::MaximumSpeedSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
     {
         if (!MaximumSpeedSlider().IsLoaded())
             return;
 
         float maxBoidSpeed = static_cast<float>(MaximumSpeedSlider().Value());
         m_main->SetMaxBoidSpeed(maxBoidSpeed);
+    }
+
+    void MainPage::MovingToCenterFactorSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (!MovingToCenterFactorSlider().IsLoaded())
+            return;
+
+        float boidMoveToCenterFactor = static_cast<float>(MovingToCenterFactorSlider().Value());
+        m_main->SetBoidMoveToCenterFactor(boidMoveToCenterFactor);
     }
 }

@@ -30,12 +30,14 @@ public:
     float GetBoidMinDistance() const { return m_swarm->GetBoidMinDistance(); }
     float GetBoidMatchingFactor() const { return m_swarm->GetBoidMatchingFactor(); }
     float GetMaxBoidSpeed() const { return m_swarm->GetMaxBoidSpeed(); }
+    float GetBoidMoveToCenterFactor() const { return m_swarm->GetBoidMoveToCenterFactor(); }
 
     // Setters
     void SetBoidShape(int32_t boidShapeIndex) { m_boidShapeIndex = boidShapeIndex; }
     void SetBoidMinDistance(float boidMinDistance) { m_swarm->SetBoidMinDistance(boidMinDistance); }
     void SetBoidMatchingFactor(float boidMatchingFactor) { m_swarm->SetBoidMatchingFactor(boidMatchingFactor); }
     void SetMaxBoidSpeed(float maxBoidSpeed) { m_swarm->SetMaxBoidSpeed(maxBoidSpeed); }
+    void SetBoidMoveToCenterFactor(float boidMoveToCenterFactor) { m_swarm->SetBoidMoveToCenterFactor(boidMoveToCenterFactor); }
 
     // App-specific methods.
     void RestartSimulation();
@@ -52,9 +54,10 @@ private:
     static const int BOID_COUNT_TO_REMOVE = 10;
     static const float BOID_RADIUS;
     static const int BOID_SUBDIVISION_COUNT = 3;
-    static const float BOID_MIN_DISTANCE;       // the minimum distance between boids
-    static const float BOID_MATCHING_FACTOR;    // adjustment of average velocity as % (boid matching factor)
-    static const float MAX_BOID_SPEED;          // the max length of the velocity vector
+    static const float BOID_MIN_DISTANCE;           // the minimum distance between boids
+    static const float BOID_MATCHING_FACTOR;        // adjustment of average velocity as % (boid matching factor)
+    static const float MAX_BOID_SPEED;              // the max length of the velocity vector
+    static const float BOID_MOVE_TO_CENTER_FACTOR;  // determines how to move a boid towards the center (percentage)
 
     // Input constants.
     static const float INPUT_RADIUS;            // the distance from the eye
