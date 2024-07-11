@@ -29,11 +29,13 @@ public:
     size_t GetSwarmSize() const { return m_swarm->Size(); }
     float GetBoidMinDistance() const { return m_swarm->GetBoidMinDistance(); }
     float GetBoidMatchingFactor() const { return m_swarm->GetBoidMatchingFactor(); }
+    float GetMaxBoidSpeed() const { return m_swarm->GetMaxBoidSpeed(); }
 
     // Setters
     void SetBoidShape(int32_t boidShapeIndex) { m_boidShapeIndex = boidShapeIndex; }
     void SetBoidMinDistance(float boidMinDistance) { m_swarm->SetBoidMinDistance(boidMinDistance); }
     void SetBoidMatchingFactor(float boidMatchingFactor) { m_swarm->SetBoidMatchingFactor(boidMatchingFactor); }
+    void SetMaxBoidSpeed(float maxBoidSpeed) { m_swarm->SetMaxBoidSpeed(maxBoidSpeed); }
 
     // App-specific methods.
     void RestartSimulation();
@@ -52,12 +54,12 @@ private:
     static const int BOID_SUBDIVISION_COUNT = 3;
     static const float BOID_MIN_DISTANCE;       // the minimum distance between boids
     static const float BOID_MATCHING_FACTOR;    // adjustment of average velocity as % (boid matching factor)
-
+    static const float MAX_BOID_SPEED;          // the max length of the velocity vector
 
     // Input constants.
-    static const float INPUT_RADIUS; // the distance from the eye
-    static const float INPUT_YAW;    // "horizontal" angle
-    static const float INPUT_PITCH;  // "vertical" angle
+    static const float INPUT_RADIUS;            // the distance from the eye
+    static const float INPUT_YAW;               // "horizontal" angle
+    static const float INPUT_PITCH;             // "vertical" angle
     static const float INPUT_STEP;
 
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;

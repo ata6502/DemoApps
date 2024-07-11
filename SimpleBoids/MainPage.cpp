@@ -51,6 +51,7 @@ namespace winrt::SimpleBoids::implementation
         BoidCountTextBlock().Text(std::to_wstring(m_main->GetSwarmSize()));
         MinimumDistanceSlider().Value(m_main->GetBoidMinDistance());
         MatchingFactorSlider().Value(m_main->GetBoidMatchingFactor());
+        MaximumSpeedSlider().Value(m_main->GetMaxBoidSpeed());
     }
 
     /// <summary>
@@ -192,5 +193,14 @@ namespace winrt::SimpleBoids::implementation
 
         float boidMatchingFactor = static_cast<float>(MatchingFactorSlider().Value());
         m_main->SetBoidMatchingFactor(boidMatchingFactor);
+    }
+
+    void winrt::SimpleBoids::implementation::MainPage::MaximumSpeedSlider_ValueChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
+    {
+        if (!MaximumSpeedSlider().IsLoaded())
+            return;
+
+        float maxBoidSpeed = static_cast<float>(MaximumSpeedSlider().Value());
+        m_main->SetMaxBoidSpeed(maxBoidSpeed);
     }
 }

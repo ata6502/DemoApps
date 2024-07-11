@@ -9,7 +9,11 @@
 class Swarm
 {
 public:
-    Swarm(float boidRadius, float boidMinDistance, float boidMatchingFactor);
+    Swarm(
+        float boidRadius, 
+        float boidMinDistance, 
+        float boidMatchingFactor, 
+        float maxBoidSpeed);
 
     // Creates or destroys the given number of boids.
     void AddBoids(int count);
@@ -28,10 +32,12 @@ public:
     size_t Size() const { return m_boids.size(); }
     float GetBoidMinDistance() const { return m_boidMinDistance; }
     float GetBoidMatchingFactor() const { return m_boidMatchingFactor; }
+    float GetMaxBoidSpeed() const { return m_maxBoidSpeed; }
 
     // Setters
     void SetBoidMinDistance(float boidMinDistance) { m_boidMinDistance = m_boidRadius + boidMinDistance; }
     void SetBoidMatchingFactor(float boidMatchingFactor) { m_boidMatchingFactor = boidMatchingFactor; }
+    void SetMaxBoidSpeed(float maxBoidSpeed);
 
 private:
     Concurrency::critical_section               m_criticalSection;
@@ -40,6 +46,7 @@ private:
     float                                       m_boidRadius;
     float                                       m_boidMinDistance; 
     float                                       m_boidMatchingFactor;
+    float                                       m_maxBoidSpeed;
 
     DirectX::XMVECTOR ExecuteRule1(int boidIndex);
     DirectX::XMVECTOR ExecuteRule2(int boidIndex);

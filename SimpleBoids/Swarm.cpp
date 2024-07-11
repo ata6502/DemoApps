@@ -6,10 +6,15 @@
 using namespace Concurrency;
 using namespace DirectX;
 
-Swarm::Swarm(float boidRadius, float boidMinDistance, float boidMatchingFactor) :
+Swarm::Swarm(
+    float boidRadius, 
+    float boidMinDistance, 
+    float boidMatchingFactor, 
+    float maxBoidSpeed) :
     m_boidRadius(boidRadius),
     m_boidMinDistance(boidRadius + boidMinDistance),
-    m_boidMatchingFactor(boidMatchingFactor)
+    m_boidMatchingFactor(boidMatchingFactor),
+    m_maxBoidSpeed(maxBoidSpeed)
 {
     m_rand = std::make_unique<RandomNumberHelper>();
 }
@@ -21,7 +26,7 @@ void Swarm::AddBoids(int count)
     for (auto i = 0; i < count; ++i)
     {
         auto [randomPosition, randomVelocity] = GetRandomPositionAndVelocity();
-        m_boids.emplace_back(std::make_unique<Boid>(randomPosition, randomVelocity, MAX_BOID_SPEED));
+        m_boids.emplace_back(std::make_unique<Boid>(randomPosition, randomVelocity, m_maxBoidSpeed));
     }
 }
 
@@ -83,6 +88,17 @@ void Swarm::Iterate(std::function<void(DirectX::XMMATRIX)> function)
     for (auto i = 0; i < Size(); ++i)
     {
         function(m_boids[i]->GetWorldMatrix());
+    }
+}
+
+void Swarm::SetMaxBoidSpeed(float maxBoidSpeed)
+{ 
+    m_maxBoidSpeed = maxBoidSpeed;
+
+    // Update max speed of all boids in the swarm.
+    for (auto i = 0; i < Size(); ++i)
+    {
+        m_boids[i]->SetMaxSpeed(m_maxBoidSpeed);
     }
 }
 
@@ -221,7 +237,7 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR> Swarm::GetRandomPositionAndVelo
         m_rand->GetFloat(2.5f * BOUNDARY_Z_MIN, 10 * BOUNDARY_Z_MIN),
         0);
 
-    XMVECTOR randomVelocity = MAX_BOID_SPEED *
+    XMVECTOR randomVelocity = m_maxBoidSpeed *
         XMVector4Normalize(
             XMVectorSet(
                 m_rand->GetFloat(-1, 1),
