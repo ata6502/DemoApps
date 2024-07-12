@@ -1,4 +1,6 @@
 ﻿#include "pch.h"
+
+#include "BoidParameter.h"
 #include "MainPage.h"
 #include "MainPage.g.cpp"
 
@@ -49,10 +51,10 @@ namespace winrt::SimpleBoids::implementation
         m_main->SetSwapChainPanel(DXSwapChainPanel());
 
         BoidCountTextBlock().Text(std::to_wstring(m_main->GetSwarmSize()));
-        MinimumDistanceSlider().Value(m_main->GetBoidMinDistance());
-        MatchingFactorSlider().Value(m_main->GetBoidMatchingFactor());
-        MaximumSpeedSlider().Value(m_main->GetMaxBoidSpeed());
-        MovingToCenterFactorSlider().Value(m_main->GetBoidMoveToCenterFactor());
+        MinimumDistanceSlider().Value(m_main->GetBoidParameter(BoidParameter::MinDistance));
+        MatchingFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::MatchingFactor));
+        MaximumSpeedSlider().Value(m_main->GetBoidParameter(BoidParameter::MaxSpeed));
+        MovingToCenterFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::MoveToCenterFactor));
     }
 
     /// <summary>
@@ -184,7 +186,7 @@ namespace winrt::SimpleBoids::implementation
             return;
 
         float boidMinDistance = static_cast<float>(MinimumDistanceSlider().Value());
-        m_main->SetBoidMinDistance(boidMinDistance);
+        m_main->SetBoidParameter(BoidParameter::MinDistance, boidMinDistance);
     }
 
     void MainPage::MatchingFactorSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
@@ -193,7 +195,7 @@ namespace winrt::SimpleBoids::implementation
             return;
 
         float boidMatchingFactor = static_cast<float>(MatchingFactorSlider().Value());
-        m_main->SetBoidMatchingFactor(boidMatchingFactor);
+        m_main->SetBoidParameter(BoidParameter::MatchingFactor, boidMatchingFactor);
     }
 
     void MainPage::MaximumSpeedSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
@@ -202,7 +204,7 @@ namespace winrt::SimpleBoids::implementation
             return;
 
         float maxBoidSpeed = static_cast<float>(MaximumSpeedSlider().Value());
-        m_main->SetMaxBoidSpeed(maxBoidSpeed);
+        m_main->SetBoidParameter(BoidParameter::MaxSpeed, maxBoidSpeed);
     }
 
     void MainPage::MovingToCenterFactorSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
@@ -211,6 +213,6 @@ namespace winrt::SimpleBoids::implementation
             return;
 
         float boidMoveToCenterFactor = static_cast<float>(MovingToCenterFactorSlider().Value());
-        m_main->SetBoidMoveToCenterFactor(boidMoveToCenterFactor);
+        m_main->SetBoidParameter(BoidParameter::MoveToCenterFactor, boidMoveToCenterFactor);
     }
 }

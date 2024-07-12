@@ -12,12 +12,13 @@ Swarm::Swarm(
     float boidMatchingFactor, 
     float maxBoidSpeed,
     float boidMoveToCenterFactor) :
-    m_boidRadius(boidRadius),
-    m_boidMinDistance(boidRadius + boidMinDistance),
-    m_boidMatchingFactor(boidMatchingFactor),
-    m_maxBoidSpeed(maxBoidSpeed),
-    m_boidMoveToCenterFactor(boidMoveToCenterFactor)
+    m_boidRadius(boidRadius)
 {
+    m_boidParameters[BoidParameter::MinDistance] = m_boidRadius + boidMinDistance;
+    m_boidParameters[BoidParameter::MatchingFactor] = boidMatchingFactor;
+    m_boidParameters[BoidParameter::MaxSpeed] = maxBoidSpeed;
+    m_boidParameters[BoidParameter::MoveToCenterFactor] = boidMoveToCenterFactor;
+
     m_rand = std::make_unique<RandomNumberHelper>();
 }
 
@@ -28,7 +29,7 @@ void Swarm::AddBoids(int count)
     for (auto i = 0; i < count; ++i)
     {
         auto [randomPosition, randomVelocity] = GetRandomPositionAndVelocity();
-        m_boids.emplace_back(std::make_unique<Boid>(randomPosition, randomVelocity, m_maxBoidSpeed));
+        m_boids.emplace_back(std::make_unique<Boid>(randomPosition, randomVelocity, m_boidParameters[BoidParameter::MaxSpeed]));
     }
 }
 
@@ -93,14 +94,24 @@ void Swarm::Iterate(std::function<void(DirectX::XMMATRIX)> function)
     }
 }
 
-void Swarm::SetMaxBoidSpeed(float maxBoidSpeed)
-{ 
-    m_maxBoidSpeed = maxBoidSpeed;
+float Swarm::GetBoidParameter(BoidParameter parameter)
+{
+    return m_boidParameters[parameter];
+}
 
-    // Update max speed of all boids in the swarm.
-    for (auto i = 0; i < Size(); ++i)
+void Swarm::SetBoidParameter(BoidParameter parameter, float value)
+{
+    switch (parameter)
     {
-        m_boids[i]->SetMaxSpeed(m_maxBoidSpeed);
+    case BoidParameter::MinDistance:
+        m_boidParameters[BoidParameter::MinDistance] = m_boidRadius + value;
+        break;
+    case BoidParameter::MaxSpeed:
+        SetMaxBoidSpeed(value);
+        break;
+    default:
+        m_boidParameters[parameter] = value;
+        break;
     }
 }
 
@@ -118,7 +129,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule1(int boidIndex)
     size_t boidCount = Size() - 1; // all the boids minus the current boid
     XMVECTOR centre = sum / (static_cast<float>(boidCount));
     XMVECTOR boidPosition = m_boids[boidIndex]->GetPosition();
-    XMVECTOR v = XMVectorSubtract(centre, boidPosition) * m_boidMoveToCenterFactor;
+    XMVECTOR v = XMVectorSubtract(centre, boidPosition) * m_boidParameters[BoidParameter::MoveToCenterFactor];
 
     return v;
 }
@@ -138,7 +149,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule2(int boidIndex)
             auto distance = XMVectorGetX(XMVector3Length(diff));
 
             // Accumulate the displacement of each boid that is nearby.
-            if (distance < m_boidMinDistance)
+            if (distance < m_boidParameters[BoidParameter::MinDistance])
                 moveDelta = XMVectorSubtract(moveDelta, diff);
         }
     }
@@ -149,6 +160,8 @@ DirectX::XMVECTOR Swarm::ExecuteRule2(int boidIndex)
 
 DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
 {
+    float matchingFactor = m_boidParameters[BoidParameter::MatchingFactor];
+
     // Method #1: Take into account all boids.
     if (allBoids)
     {
@@ -163,7 +176,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
         size_t boidCount = Size() - 1; // all the boids minus the current boid
         XMVECTOR centre = avg / static_cast<float>(boidCount);
         XMVECTOR boidVelocity = m_boids[boidIndex]->GetVelocity();
-        XMVECTOR v = XMVectorSubtract(centre, boidVelocity) * m_boidMatchingFactor;
+        XMVECTOR v = XMVectorSubtract(centre, boidVelocity) * matchingFactor;
 
         return v;
     }
@@ -197,7 +210,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
         {
             XMVECTOR centre = avg / static_cast<float>(neighborCount);
             XMVECTOR boidVelocity = m_boids[boidIndex]->GetVelocity();
-            v = XMVectorSubtract(centre, boidVelocity) * m_boidMatchingFactor;
+            v = XMVectorSubtract(centre, boidVelocity) * matchingFactor;
         }
 
         return v;
@@ -239,7 +252,7 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR> Swarm::GetRandomPositionAndVelo
         m_rand->GetFloat(2.5f * BOUNDARY_Z_MIN, 10 * BOUNDARY_Z_MIN),
         0);
 
-    XMVECTOR randomVelocity = m_maxBoidSpeed *
+    XMVECTOR randomVelocity = m_boidParameters[BoidParameter::MaxSpeed] *
         XMVector4Normalize(
             XMVectorSet(
                 m_rand->GetFloat(-1, 1),
@@ -248,5 +261,16 @@ std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR> Swarm::GetRandomPositionAndVelo
                 0));
 
     return { randomPosition, randomVelocity };
+}
+
+void Swarm::SetMaxBoidSpeed(float maxBoidSpeed)
+{
+    m_boidParameters[BoidParameter::MaxSpeed] = maxBoidSpeed;
+
+    // Update max speed of all boids in the swarm.
+    for (auto i = 0; i < Size(); ++i)
+    {
+        m_boids[i]->SetMaxSpeed(maxBoidSpeed);
+    }
 }
     

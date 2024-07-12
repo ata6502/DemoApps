@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Boid.h"
+#include "BoidParameter.h"
 #include "RandomNumberHelper.h"
 
 #include <functional>
+#include <map>
 #include <tuple>
 
 class Swarm
@@ -29,28 +31,17 @@ public:
     // Iterates over all boids executing a given function.
     void Iterate(std::function<void(DirectX::XMMATRIX)> function);
 
-    // Getters
+    // Accessors
     size_t Size() const { return m_boids.size(); }
-    float GetBoidMinDistance() const { return m_boidMinDistance; }
-    float GetBoidMatchingFactor() const { return m_boidMatchingFactor; }
-    float GetMaxBoidSpeed() const { return m_maxBoidSpeed; }
-    float GetBoidMoveToCenterFactor() const { return m_boidMoveToCenterFactor; }
-
-    // Setters
-    void SetBoidMinDistance(float boidMinDistance) { m_boidMinDistance = m_boidRadius + boidMinDistance; }
-    void SetBoidMatchingFactor(float boidMatchingFactor) { m_boidMatchingFactor = boidMatchingFactor; }
-    void SetMaxBoidSpeed(float maxBoidSpeed);
-    void SetBoidMoveToCenterFactor(float boidMoveToCenterFactor) { m_boidMoveToCenterFactor = boidMoveToCenterFactor; }
+    float GetBoidParameter(BoidParameter parameter);
+    void SetBoidParameter(BoidParameter parameter, float value);
 
 private:
     Concurrency::critical_section               m_criticalSection;
     std::vector<std::unique_ptr<Boid>>          m_boids;
     std::unique_ptr<RandomNumberHelper>         m_rand;
     float                                       m_boidRadius;
-    float                                       m_boidMinDistance; 
-    float                                       m_boidMatchingFactor;
-    float                                       m_maxBoidSpeed;
-    float                                       m_boidMoveToCenterFactor;
+    std::map<BoidParameter, float>              m_boidParameters;
 
     DirectX::XMVECTOR ExecuteRule1(int boidIndex);
     DirectX::XMVECTOR ExecuteRule2(int boidIndex);
@@ -58,5 +49,6 @@ private:
     DirectX::XMVECTOR ExecuteRule4(int boidIndex);
 
     std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR> GetRandomPositionAndVelocity();
+    void SetMaxBoidSpeed(float maxBoidSpeed);
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BoidParameter.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "Renderer.h"
@@ -27,17 +28,11 @@ public:
 
     // Getters
     size_t GetSwarmSize() const { return m_swarm->Size(); }
-    float GetBoidMinDistance() const { return m_swarm->GetBoidMinDistance(); }
-    float GetBoidMatchingFactor() const { return m_swarm->GetBoidMatchingFactor(); }
-    float GetMaxBoidSpeed() const { return m_swarm->GetMaxBoidSpeed(); }
-    float GetBoidMoveToCenterFactor() const { return m_swarm->GetBoidMoveToCenterFactor(); }
+    float GetBoidParameter(BoidParameter parameter) const { return m_swarm->GetBoidParameter(parameter); }
 
     // Setters
     void SetBoidShape(int32_t boidShapeIndex) { m_boidShapeIndex = boidShapeIndex; }
-    void SetBoidMinDistance(float boidMinDistance) { m_swarm->SetBoidMinDistance(boidMinDistance); }
-    void SetBoidMatchingFactor(float boidMatchingFactor) { m_swarm->SetBoidMatchingFactor(boidMatchingFactor); }
-    void SetMaxBoidSpeed(float maxBoidSpeed) { m_swarm->SetMaxBoidSpeed(maxBoidSpeed); }
-    void SetBoidMoveToCenterFactor(float boidMoveToCenterFactor) { m_swarm->SetBoidMoveToCenterFactor(boidMoveToCenterFactor); }
+    void SetBoidParameter(BoidParameter parameter, float value) { m_swarm->SetBoidParameter(parameter, value); }
 
     // App-specific methods.
     void RestartSimulation();
