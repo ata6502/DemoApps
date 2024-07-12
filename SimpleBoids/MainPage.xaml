@@ -122,65 +122,38 @@
                         </ListBox.Items>
                     </ListBox>
 
-                    <StackPanel Margin="0,16,0,0">
-                        <TextBlock Text="Minimum distance between boids:" />
-                        <Slider x:Name="MinimumDistanceSlider"
-                                Header=""
-                                IsEnabled="True"
-                                Minimum="0.0"
-                                Maximum="6.0"
-                                Value="0" 
-                                Padding="0,0,0,0"
-                                StepFrequency="0.25"
-                                TickFrequency="1"
-                                TickPlacement="TopLeft"                                
-                                ValueChanged="MinimumDistanceSlider_ValueChanged" />
-                    </StackPanel>
+                    <Slider x:Name="MinimumDistanceSlider"
+                            Header="Minimum distance between boids:"
+                            Margin="0,16,0,0"
+                            Minimum="0.0"
+                            Maximum="6.0"
+                            Value="0" 
+                            StepFrequency="0.25"
+                            TickFrequency="1"
+                            TickPlacement="TopLeft"                                
+                            ValueChanged="MinimumDistanceSlider_ValueChanged" />
 
-                    <StackPanel Margin="0,12,0,0">
-                        <TextBlock Text="Average velocity adjustment:" />
-                        <Slider x:Name="MatchingFactorSlider"
-                                Header=""
-                                IsEnabled="True"
-                                Minimum="0.0"
-                                Maximum="1.0"
-                                Value="0" 
-                                Padding="0,0,0,0"
-                                StepFrequency="0.1"
-                                TickFrequency="0.1"
-                                TickPlacement="TopLeft"                                
-                                ValueChanged="MatchingFactorSlider_ValueChanged" />
-                    </StackPanel>
+                    <Slider x:Name="MaximumSpeedSlider"
+                            Header="Maximum boid speed:"
+                            Margin="0,12,0,0"
+                            Minimum="0.1"
+                            Maximum="1.0"
+                            Value="0" 
+                            StepFrequency="0.1"
+                            TickFrequency="0.1"
+                            TickPlacement="TopLeft"                                
+                            ValueChanged="MaximumSpeedSlider_ValueChanged" />
 
-                    <StackPanel Margin="0,12,0,0">
-                        <TextBlock Text="Maximum boid speed:" />
-                        <Slider x:Name="MaximumSpeedSlider"
-                                Header=""
-                                IsEnabled="True"
-                                Minimum="0.1"
-                                Maximum="1.0"
-                                Value="0" 
-                                Padding="0,0,0,0"
-                                StepFrequency="0.1"
-                                TickFrequency="0.1"
-                                TickPlacement="TopLeft"                                
-                                ValueChanged="MaximumSpeedSlider_ValueChanged" />
-                    </StackPanel>
-
-                    <StackPanel Margin="0,12,0,0">
-                        <TextBlock Text="Tendency to keep boids together:" />
-                        <Slider x:Name="MovingToCenterFactorSlider"
-                                Header=""
-                                IsEnabled="True"
-                                Minimum="0.01"
-                                Maximum="0.1"
-                                Value="0" 
-                                Padding="0,0,0,0"
-                                StepFrequency="0.01"
-                                TickFrequency="0.01"
-                                TickPlacement="TopLeft"                                
-                                ValueChanged="MovingToCenterFactorSlider_ValueChanged" />
-                    </StackPanel>
+                    <Slider x:Name="MovingToCenterFactorSlider"
+                            Header="Tendency to keep boids together:"
+                            Margin="0,12,0,0"
+                            Minimum="0.01"
+                            Maximum="0.1"
+                            Value="0" 
+                            StepFrequency="0.01"
+                            TickFrequency="0.01"
+                            TickPlacement="TopLeft"                                
+                            ValueChanged="MovingToCenterFactorSlider_ValueChanged" />
                     
                 </StackPanel>
             </Border>

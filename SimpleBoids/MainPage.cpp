@@ -52,7 +52,6 @@ namespace winrt::SimpleBoids::implementation
 
         BoidCountTextBlock().Text(std::to_wstring(m_main->GetSwarmSize()));
         MinimumDistanceSlider().Value(m_main->GetBoidParameter(BoidParameter::MinDistance));
-        MatchingFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::MatchingFactor));
         MaximumSpeedSlider().Value(m_main->GetBoidParameter(BoidParameter::MaxSpeed));
         MovingToCenterFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::MoveToCenterFactor));
     }
@@ -187,15 +186,6 @@ namespace winrt::SimpleBoids::implementation
 
         float boidMinDistance = static_cast<float>(MinimumDistanceSlider().Value());
         m_main->SetBoidParameter(BoidParameter::MinDistance, boidMinDistance);
-    }
-
-    void MainPage::MatchingFactorSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)
-    {
-        if (!MatchingFactorSlider().IsLoaded())
-            return;
-
-        float boidMatchingFactor = static_cast<float>(MatchingFactorSlider().Value());
-        m_main->SetBoidParameter(BoidParameter::MatchingFactor, boidMatchingFactor);
     }
 
     void MainPage::MaximumSpeedSlider_ValueChanged([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args)

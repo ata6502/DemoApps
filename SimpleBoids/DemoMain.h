@@ -50,7 +50,7 @@ private:
     static const float BOID_RADIUS;
     static const int BOID_SUBDIVISION_COUNT = 3;
     static const float BOID_MIN_DISTANCE;           // the minimum distance between boids
-    static const float BOID_MATCHING_FACTOR;        // adjustment of average velocity as % (boid matching factor)
+    static const float BOID_MATCHING_FACTOR;        // adjustment of average velocity as % (matching factor)
     static const float MAX_BOID_SPEED;              // the max length of the velocity vector
     static const float BOID_MOVE_TO_CENTER_FACTOR;  // determines how to move a boid towards the center (percentage)
 
