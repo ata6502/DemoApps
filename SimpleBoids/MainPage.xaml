@@ -122,8 +122,9 @@
                         </ListBox.Items>
                     </ListBox>
 
-                    <Slider x:Name="MinimumDistanceSlider"
+                    <Slider x:Name="MinDistanceSlider"
                             Header="Minimum distance between boids:"
+                            Tag="MinDistance"
                             Margin="0,16,0,0"
                             Minimum="0.0"
                             Maximum="6.0"
@@ -131,10 +132,11 @@
                             StepFrequency="0.25"
                             TickFrequency="1"
                             TickPlacement="TopLeft"                                
-                            ValueChanged="MinimumDistanceSlider_ValueChanged" />
+                            ValueChanged="BoidParameterChanged" />
 
-                    <Slider x:Name="MaximumSpeedSlider"
+                    <Slider x:Name="MaxSpeedSlider"
                             Header="Maximum boid speed:"
+                            Tag="MaxSpeed"
                             Margin="0,12,0,0"
                             Minimum="0.1"
                             Maximum="1.0"
@@ -142,10 +144,11 @@
                             StepFrequency="0.1"
                             TickFrequency="0.1"
                             TickPlacement="TopLeft"                                
-                            ValueChanged="MaximumSpeedSlider_ValueChanged" />
+                            ValueChanged="BoidParameterChanged" />
 
-                    <Slider x:Name="MovingToCenterFactorSlider"
+                    <Slider x:Name="MoveToCenterFactorSlider"
                             Header="Tendency to keep boids together:"
+                            Tag="MoveToCenterFactor"
                             Margin="0,12,0,0"
                             Minimum="0.01"
                             Maximum="0.1"
@@ -153,7 +156,7 @@
                             StepFrequency="0.01"
                             TickFrequency="0.01"
                             TickPlacement="TopLeft"                                
-                            ValueChanged="MovingToCenterFactorSlider_ValueChanged" />
+                            ValueChanged="BoidParameterChanged" />
                     
                 </StackPanel>
             </Border>
