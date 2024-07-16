@@ -11,12 +11,18 @@ Swarm::Swarm(
     float boidMinDistance, 
     float boidMatchingFactor, 
     float maxBoidSpeed,
+    float boidAvoidFactor,
+    float boidTurnFactor,
+    float boidVisualRange,
     float boidMoveToCenterFactor) :
     m_boidRadius(boidRadius)
 {
     m_boidParameters[BoidParameter::MinDistance] = m_boidRadius + boidMinDistance;
     m_boidParameters[BoidParameter::MatchingFactor] = boidMatchingFactor;
     m_boidParameters[BoidParameter::MaxSpeed] = maxBoidSpeed;
+    m_boidParameters[BoidParameter::AvoidFactor] = boidAvoidFactor;
+    m_boidParameters[BoidParameter::TurnFactor] = boidTurnFactor;
+    m_boidParameters[BoidParameter::VisualRange] = boidVisualRange;
     m_boidParameters[BoidParameter::MoveToCenterFactor] = boidMoveToCenterFactor;
 
     m_rand = std::make_unique<RandomNumberHelper>();
@@ -154,7 +160,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule2(int boidIndex)
         }
     }
 
-    XMVECTOR v = BOID_AVOID_FACTOR * moveDelta;
+    XMVECTOR v = m_boidParameters[BoidParameter::AvoidFactor] * moveDelta;
     return v;
 }
 
@@ -185,6 +191,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
     {
         XMVECTOR avg{ XMVectorZero() };
         int neighborCount = 0;
+        float visualRange = m_boidParameters[BoidParameter::VisualRange];
 
         for (int i = 0; i < Size(); ++i)
         {
@@ -196,7 +203,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
                 auto diff = XMVectorSubtract(p2, p1);
                 auto distance = XMVectorGetX(XMVector3Length(diff));
 
-                if (distance < BOID_VISUAL_RANGE)
+                if (distance < visualRange)
                 {
                     avg = XMVectorAdd(avg, m_boids[i]->GetVelocity());
                     ++neighborCount;
@@ -225,21 +232,23 @@ DirectX::XMVECTOR Swarm::ExecuteRule4(int boidIndex)
     ZeroMemory(&pos, sizeof(pos));
     XMStoreFloat3(&pos, m_boids[boidIndex]->GetPosition());
 
+    float turnFactor = m_boidParameters[BoidParameter::TurnFactor];
+
     // Keeps the boid within bounds. The boids can fly out of boundaries, but then slowly turn back, avoiding any harsh motions
     if (pos.x < BOUNDARY_X_MIN)
-        v.x = BOID_TURN_FACTOR;
+        v.x = turnFactor;
     else if (pos.x > BOUNDARY_X_MAX)
-        v.x = -BOID_TURN_FACTOR;
+        v.x = -turnFactor;
 
     if (pos.y < BOUNDARY_Y_MIN)
-        v.y = BOID_TURN_FACTOR;
+        v.y = turnFactor;
     else if (pos.y > BOUNDARY_Y_MAX)
-        v.y = -BOID_TURN_FACTOR;
+        v.y = -turnFactor;
 
     if (pos.z < BOUNDARY_Z_MIN)
-        v.z = BOID_TURN_FACTOR;
+        v.z = turnFactor;
     else if (pos.z > BOUNDARY_Z_MAX)
-        v.z = -BOID_TURN_FACTOR;
+        v.z = -turnFactor;
 
     return XMLoadFloat3(&v);
 }

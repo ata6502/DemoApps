@@ -10,6 +10,9 @@ const float DemoMain::BOID_RADIUS = 1.5f;
 const float DemoMain::BOID_MIN_DISTANCE = 2.0f;
 const float DemoMain::BOID_MATCHING_FACTOR = 0.2f;
 const float DemoMain::MAX_BOID_SPEED = 0.6f;
+const float DemoMain::BOID_AVOID_FACTOR = 0.3f;
+const float DemoMain::BOID_TURN_FACTOR = 0.5f;
+const float DemoMain::BOID_VISUAL_RANGE = 3.0f;
 const float DemoMain::BOID_MOVE_TO_CENTER_FACTOR = 0.01f;
 
 const float DemoMain::INPUT_RADIUS = 250.f;
@@ -39,6 +42,9 @@ DemoMain::DemoMain() :
         BOID_MIN_DISTANCE, 
         BOID_MATCHING_FACTOR, 
         MAX_BOID_SPEED,
+        BOID_AVOID_FACTOR,
+        BOID_TURN_FACTOR,
+        BOID_VISUAL_RANGE,
         BOID_MOVE_TO_CENTER_FACTOR);
     m_swarm->AddBoids(INITIAL_BOID_COUNT);
 

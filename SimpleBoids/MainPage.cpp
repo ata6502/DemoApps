@@ -56,6 +56,9 @@ namespace winrt::SimpleBoids::implementation
         MinDistanceSlider().Value(m_main->GetBoidParameter(BoidParameter::MinDistance));
         MaxSpeedSlider().Value(m_main->GetBoidParameter(BoidParameter::MaxSpeed));
         MoveToCenterFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::MoveToCenterFactor));
+        AvoidFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::AvoidFactor));
+        TurnFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::TurnFactor)); 
+        VisualRangeSlider().Value(m_main->GetBoidParameter(BoidParameter::VisualRange));
     }
 
     /// <summary>
@@ -188,6 +191,9 @@ namespace winrt::SimpleBoids::implementation
             {"MinDistance", BoidParameter::MinDistance},
             {"MaxSpeed", BoidParameter::MaxSpeed},
             {"MoveToCenterFactor", BoidParameter::MoveToCenterFactor},
+            {"AvoidFactor", BoidParameter::AvoidFactor},
+            {"TurnFactor", BoidParameter::TurnFactor},
+            {"VisualRange", BoidParameter::VisualRange},
         };
 
         auto slider = sender.as<Slider>();

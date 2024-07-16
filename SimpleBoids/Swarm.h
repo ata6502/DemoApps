@@ -16,6 +16,9 @@ public:
         float boidMinDistance, 
         float boidMatchingFactor, 
         float maxBoidSpeed,
+        float boidAvoidFactor,
+        float boidTurnFactor,
+        float boidVisualRange,
         float boidMoveToCenterFactor);
 
     // Creates or destroys the given number of boids.
