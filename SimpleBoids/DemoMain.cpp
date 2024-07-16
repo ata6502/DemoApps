@@ -26,12 +26,10 @@ DemoMain::DemoMain() :
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
-
     m_renderer = std::make_unique<Renderer>(m_deviceResources);
 
-    m_input = std::make_unique<IndependentInput>();
-
     // Configure input.
+    m_input = std::make_unique<IndependentInput>();
     m_input->SetInputRadius(INPUT_RADIUS);
     m_input->SetInputYaw(INPUT_YAW);
     m_input->SetInputPitch(INPUT_PITCH);
@@ -244,11 +242,9 @@ void DemoMain::Update()
 
             XMVECTOR eye = m_input->GetPosition();
             XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
-
             m_renderer->Update(eye, viewMatrix);
 
             float timeDelta{ static_cast<float>(m_timer.GetElapsedSeconds()) };
-
             m_swarm->Update(timeDelta);
         });
 }

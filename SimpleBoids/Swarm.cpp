@@ -56,21 +56,23 @@ void Swarm::Update(float timeDelta)
 {
     critical_section::scoped_lock lock(m_criticalSection);
 
+    XMVECTOR v1, v2, v3, v4;
+
     for (int i = 0; i < Size(); ++i)
     {
         // Perform vector operations on the positions of the boids. Operations are independent from each other.
 
         // Rule 1: Make boids fly towards the centre of the mass of neighbouring boids.
-        XMVECTOR v1 = ExecuteRule1(i);
+        v1 = ExecuteRule1(i);
 
         // Rule 2: Move away from other boids that are too close to avoid colliding.
-        XMVECTOR v2 = ExecuteRule2(i);
+        v2 = ExecuteRule2(i);
 
         // Rule 3: Find the average velocity (speed and direction) of the other boids and adjust velocity slightly to match.
-        XMVECTOR v3 = ExecuteRule3(i, true);
+        v3 = ExecuteRule3(i, true);
 
         // Rule 4: Encourage boids to stay within rough boundaries.
-        XMVECTOR v4 = ExecuteRule4(i);
+        v4 = ExecuteRule4(i);
 
         XMVECTOR velocityDelta = timeDelta * (v1 + v2 + v3 + v4);
 
@@ -121,11 +123,11 @@ void Swarm::SetBoidParameter(BoidParameter parameter, float value)
     }
 }
 
+// Move the boid toward its 'perceived centre', which is the centre of all the other boids, not including itself.
 DirectX::XMVECTOR Swarm::ExecuteRule1(int boidIndex)
 {
-    // Move the boid toward its 'perceived centre', which is the centre of all the other boids, not including itself.
+    // Add all boids' positions except the boid with the boidIndex.
     XMVECTOR sum{ XMVectorZero() };
-
     for (int i = 0; i < Size(); ++i)
     {
         if (boidIndex != i)
@@ -133,13 +135,14 @@ DirectX::XMVECTOR Swarm::ExecuteRule1(int boidIndex)
     }
 
     size_t boidCount = Size() - 1; // all the boids minus the current boid
-    XMVECTOR centre = sum / (static_cast<float>(boidCount));
+    XMVECTOR centre = sum / (static_cast<float>(boidCount)); // the center of mass
     XMVECTOR boidPosition = m_boids[boidIndex]->GetPosition();
     XMVECTOR v = XMVectorSubtract(centre, boidPosition) * m_boidParameters[BoidParameter::MoveToCenterFactor];
 
     return v;
 }
 
+// Move away from other boids that are too close to avoid colliding.
 DirectX::XMVECTOR Swarm::ExecuteRule2(int boidIndex)
 {
     XMVECTOR moveDelta{ XMVectorZero() };
@@ -164,6 +167,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule2(int boidIndex)
     return v;
 }
 
+// Adjust the boid's velocity to match the average velocity of the other boids.
 DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
 {
     float matchingFactor = m_boidParameters[BoidParameter::MatchingFactor];
@@ -171,16 +175,16 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
     // Method #1: Take into account all boids.
     if (allBoids)
     {
-        XMVECTOR avg{ XMVectorZero() };
+        XMVECTOR sum{ XMVectorZero() };
 
         for (int i = 0; i < Size(); ++i)
         {
             if (boidIndex != i)
-                avg = XMVectorAdd(avg, m_boids[i]->GetVelocity());
+                sum = XMVectorAdd(sum, m_boids[i]->GetVelocity());
         }
 
         size_t boidCount = Size() - 1; // all the boids minus the current boid
-        XMVECTOR centre = avg / static_cast<float>(boidCount);
+        XMVECTOR centre = sum / static_cast<float>(boidCount);
         XMVECTOR boidVelocity = m_boids[boidIndex]->GetVelocity();
         XMVECTOR v = XMVectorSubtract(centre, boidVelocity) * matchingFactor;
 
@@ -224,6 +228,7 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
     }
 }
 
+// Keeps the boid within bounds. The boids can fly out of boundaries, but then slowly turn back, avoiding any harsh motions
 DirectX::XMVECTOR Swarm::ExecuteRule4(int boidIndex)
 {
     XMFLOAT3 v;
@@ -234,7 +239,6 @@ DirectX::XMVECTOR Swarm::ExecuteRule4(int boidIndex)
 
     float turnFactor = m_boidParameters[BoidParameter::TurnFactor];
 
-    // Keeps the boid within bounds. The boids can fly out of boundaries, but then slowly turn back, avoiding any harsh motions
     if (pos.x < BOUNDARY_X_MIN)
         v.x = turnFactor;
     else if (pos.x > BOUNDARY_X_MAX)

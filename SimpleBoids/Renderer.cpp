@@ -113,6 +113,7 @@ winrt::Windows::Foundation::IAsyncAction Renderer::CreateDeviceResourcesAsync()
             m_linearSampler.put()));
 }
 
+// TODO: Remove FinalizeCreateDeviceResources if not needed.
 // Create context-dependent resources.
 void Renderer::FinalizeCreateDeviceResources()
 {

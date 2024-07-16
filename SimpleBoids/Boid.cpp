@@ -37,7 +37,22 @@ DirectX::XMVECTOR Boid::GetVelocity() const
 
 DirectX::XMMATRIX Boid::GetWorldMatrix() const
 {
-    return XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+    // Adjust the boid orientation.
+
+    // Compute the angle between the current velocity and the initial boid orientation v0.
+    XMVECTOR v0 = XMVectorSet(0.f, 0.f, 1.f, 1.f);
+    XMVECTOR v1 = XMVector3Normalize(XMLoadFloat3(&m_velocity));
+    float angle = acos(XMVectorGetX(XMVector3Dot(v0, v1)));
+
+    // Compute rotation axis.
+    XMVECTOR rotAxis = XMVector3Normalize(XMVector3Cross(v0, v1));
+
+    // Compute rotation matrix.
+    XMMATRIX rotMatrix = XMMatrixRotationAxis(rotAxis, angle);
+
+    return XMMatrixRotationX(XM_PIDIV2) * // initial boid orientation
+        rotMatrix * 
+        XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 }
 
 void Boid::SetPosition(DirectX::FXMVECTOR position)
