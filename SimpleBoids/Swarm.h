@@ -5,8 +5,8 @@
 #include "RandomNumberHelper.h"
 
 #include <functional>
-#include <map>
 #include <tuple>
+#include <unordered_map>
 
 class Swarm
 {
@@ -19,7 +19,8 @@ public:
         float boidAvoidFactor,
         float boidTurnFactor,
         float boidVisualRange,
-        float boidMoveToCenterFactor);
+        float boidMoveToCenterFactor,
+        float boxEdgeLength);
 
     // Creates or destroys the given number of boids.
     void AddBoids(int count);
@@ -36,7 +37,7 @@ public:
 
     // Accessors
     size_t Size() const { return m_boids.size(); }
-    float GetBoidParameter(BoidParameter parameter);
+    float GetBoidParameter(BoidParameter parameter) { return m_boidParameters[parameter]; }
     void SetBoidParameter(BoidParameter parameter, float value);
 
 private:
@@ -44,7 +45,8 @@ private:
     std::vector<std::unique_ptr<Boid>>          m_boids;
     std::unique_ptr<RandomNumberHelper>         m_rand;
     float                                       m_boidRadius;
-    std::map<BoidParameter, float>              m_boidParameters;
+    std::unordered_map<BoidParameter, float>    m_boidParameters;
+    float                                       m_boxEdgeLength;
 
     DirectX::XMVECTOR ExecuteRule1(int boidIndex);
     DirectX::XMVECTOR ExecuteRule2(int boidIndex);

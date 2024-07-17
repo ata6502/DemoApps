@@ -7,13 +7,15 @@ using namespace Concurrency;
 using namespace DirectX;
 
 const float DemoMain::BOID_RADIUS = 1.5f;
-const float DemoMain::BOID_MIN_DISTANCE = 2.0f;
+const float DemoMain::BOID_MIN_DISTANCE = 1.0f;
 const float DemoMain::BOID_MATCHING_FACTOR = 0.2f;
-const float DemoMain::MAX_BOID_SPEED = 0.6f;
+const float DemoMain::MAX_BOID_SPEED = 0.7f;
 const float DemoMain::BOID_AVOID_FACTOR = 0.3f;
-const float DemoMain::BOID_TURN_FACTOR = 0.5f;
+const float DemoMain::BOID_TURN_FACTOR = 0.6f;
 const float DemoMain::BOID_VISUAL_RANGE = 3.0f;
 const float DemoMain::BOID_MOVE_TO_CENTER_FACTOR = 0.01f;
+
+const float DemoMain::BOX_EDGE_LENGTH = 45.0f;
 
 const float DemoMain::INPUT_RADIUS = 250.f;
 const float DemoMain::INPUT_YAW = -0.5f * DirectX::XM_PI;
@@ -43,7 +45,8 @@ DemoMain::DemoMain() :
         BOID_AVOID_FACTOR,
         BOID_TURN_FACTOR,
         BOID_VISUAL_RANGE,
-        BOID_MOVE_TO_CENTER_FACTOR);
+        BOID_MOVE_TO_CENTER_FACTOR,
+        BOX_EDGE_LENGTH);
     m_swarm->AddBoids(INITIAL_BOID_COUNT);
 
     Initialize();
@@ -266,27 +269,27 @@ void DemoMain::DrawScene()
 
     // Vertical edges along the y-axis.
     m_renderer->SetTextureTransform(XMMatrixTranspose(XMMatrixRotationZ(-XM_PIDIV2)));
-    scaling = XMMatrixScaling(BOUNDARY_THICKNESS, BOUNDARY_Y_MAX - BOUNDARY_Y_MIN + BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MIN, 0.f, BOUNDARY_Z_MIN)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MAX, 0.f, BOUNDARY_Z_MIN)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MIN, 0.f, BOUNDARY_Z_MAX)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MAX, 0.f, BOUNDARY_Z_MAX)));
+    scaling = XMMatrixScaling(BOUNDARY_THICKNESS, 2 * BOX_EDGE_LENGTH + BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, 0.f, BOX_EDGE_LENGTH)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, 0.f, BOX_EDGE_LENGTH)));
 
     // Horizontal edges along the x-axis.
     m_renderer->SetTextureTransform(XMMatrixIdentity());
-    scaling = XMMatrixScaling(BOUNDARY_X_MAX - BOUNDARY_X_MIN, BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOUNDARY_Y_MIN, BOUNDARY_Z_MIN)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOUNDARY_Y_MAX, BOUNDARY_Z_MIN)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOUNDARY_Y_MIN, BOUNDARY_Z_MAX)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOUNDARY_Y_MAX, BOUNDARY_Z_MAX)));
+    scaling = XMMatrixScaling(2 * BOX_EDGE_LENGTH, BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH, BOX_EDGE_LENGTH)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOX_EDGE_LENGTH, BOX_EDGE_LENGTH)));
 
     // Horizontal edges along the z-axis.
     m_renderer->SetTextureTransform(XMMatrixIdentity());
-    scaling = XMMatrixScaling(BOUNDARY_THICKNESS, BOUNDARY_THICKNESS, BOUNDARY_Z_MAX - BOUNDARY_Z_MIN);
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MIN, BOUNDARY_Y_MIN, 0.f)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MIN, BOUNDARY_Y_MAX, 0.f)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MAX, BOUNDARY_Y_MAX, 0.f)));
-    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOUNDARY_X_MAX, BOUNDARY_Y_MIN, 0.f)));
+    scaling = XMMatrixScaling(BOUNDARY_THICKNESS, BOUNDARY_THICKNESS, 2 * BOX_EDGE_LENGTH);
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH, 0.f)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, BOX_EDGE_LENGTH, 0.f)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, BOX_EDGE_LENGTH, 0.f)));
+    DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH, 0.f)));
 
     // Draw the swarm of boids.
     m_renderer->SetMaterial("boid");

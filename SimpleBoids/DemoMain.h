@@ -57,6 +57,9 @@ private:
     static const float BOID_VISUAL_RANGE;           // used in calculating boid's velocity while taking into account only boids in a certain range
     static const float BOID_MOVE_TO_CENTER_FACTOR;  // determines how to move a boid towards the center (percentage)
 
+    // Boundary constant.
+    static const float BOX_EDGE_LENGTH;
+
     // Input constants.
     static const float INPUT_RADIUS;            // the distance from the eye
     static const float INPUT_YAW;               // "horizontal" angle
