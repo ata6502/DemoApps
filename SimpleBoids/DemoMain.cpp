@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include "Constants.h"
 #include "DemoMain.h"
 
 using namespace Concurrency;
@@ -16,6 +15,7 @@ const float DemoMain::BOID_VISUAL_RANGE = 3.0f;
 const float DemoMain::BOID_MOVE_TO_CENTER_FACTOR = 0.01f;
 
 const float DemoMain::BOX_EDGE_LENGTH = 45.0f;
+const float DemoMain::BOUNDARY_THICKNESS = 2.f;
 
 const float DemoMain::INPUT_RADIUS = 250.f;
 const float DemoMain::INPUT_YAW = -0.5f * DirectX::XM_PI;

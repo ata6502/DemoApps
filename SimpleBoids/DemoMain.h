@@ -47,6 +47,7 @@ public:
 
 private:
     // Boid constants.
+    static const int INITIAL_BOID_COUNT = 200;
     static const int BOID_COUNT_TO_ADD = 20;
     static const int BOID_COUNT_TO_REMOVE = 10;
     static const float BOID_RADIUS;
@@ -59,8 +60,9 @@ private:
     static const float BOID_VISUAL_RANGE;           // used in calculating boid's velocity while taking into account only boids in a certain range
     static const float BOID_MOVE_TO_CENTER_FACTOR;  // determines how to move a boid towards the center (percentage)
 
-    // Boundary constant.
+    // Boundary constants.
     static const float BOX_EDGE_LENGTH;
+    static const float BOUNDARY_THICKNESS;
 
     // Input constants.
     static const float INPUT_RADIUS;            // the distance from the eye

@@ -98,7 +98,6 @@
     <ClInclude Include="Swarm.h">
       <Filter>Boids</Filter>
     </ClInclude>
-    <ClInclude Include="Constants.h" />
     <ClInclude Include="..\Shared\RandomNumberHelper.h">
       <Filter>Shared</Filter>
     </ClInclude>
