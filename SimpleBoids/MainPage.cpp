@@ -59,6 +59,7 @@ namespace winrt::SimpleBoids::implementation
         AvoidFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::AvoidFactor));
         TurnFactorSlider().Value(m_main->GetBoidParameter(BoidParameter::TurnFactor)); 
         VisualRangeSlider().Value(m_main->GetBoidParameter(BoidParameter::VisualRange));
+        VisualRangeSlider().IsEnabled(m_main->GetIsVisualRangeEnabled());
     }
 
     /// <summary>
@@ -206,4 +207,16 @@ namespace winrt::SimpleBoids::implementation
         float value = static_cast<float>(slider.Value());
         m_main->SetBoidParameter(parameterMap[boidParameterAsString], value);
     }
+
+    void MainPage::VisualRangeToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    {
+        if (!VisualRangeToggle().IsLoaded())
+            return;
+
+        bool isVisualRangeEnabled = VisualRangeToggle().IsOn();
+        m_main->SetIsVisualRangeEnabled(isVisualRangeEnabled);
+        VisualRangeSlider().IsEnabled(isVisualRangeEnabled);
+    }
 }
+
+

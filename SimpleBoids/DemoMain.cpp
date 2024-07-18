@@ -11,7 +11,7 @@ const float DemoMain::BOID_MIN_DISTANCE = 1.0f;
 const float DemoMain::BOID_MATCHING_FACTOR = 0.2f;
 const float DemoMain::MAX_BOID_SPEED = 0.7f;
 const float DemoMain::BOID_AVOID_FACTOR = 0.3f;
-const float DemoMain::BOID_TURN_FACTOR = 0.6f;
+const float DemoMain::BOID_TURN_FACTOR = 0.5f;
 const float DemoMain::BOID_VISUAL_RANGE = 3.0f;
 const float DemoMain::BOID_MOVE_TO_CENTER_FACTOR = 0.01f;
 

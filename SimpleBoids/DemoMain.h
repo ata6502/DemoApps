@@ -29,10 +29,12 @@ public:
     // Getters
     size_t GetSwarmSize() const { return m_swarm->Size(); }
     float GetBoidParameter(BoidParameter parameter) const { return m_swarm->GetBoidParameter(parameter); }
+    bool GetIsVisualRangeEnabled() const { return m_swarm->IsVisualRangeEnabled(); }
 
     // Setters
     void SetBoidShape(int32_t boidShapeIndex) { m_boidShapeIndex = boidShapeIndex; }
     void SetBoidParameter(BoidParameter parameter, float value) { m_swarm->SetBoidParameter(parameter, value); }
+    void SetIsVisualRangeEnabled(bool enabled) { m_swarm->IsVisualRangeEnabled(enabled); }
 
     // App-specific methods.
     void RestartSimulation();

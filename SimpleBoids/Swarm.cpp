@@ -17,6 +17,7 @@ Swarm::Swarm(
     float boidMoveToCenterFactor,
     float boxEdgeLength) :
     m_boidRadius(boidRadius),
+    m_isVisualRangeEnabled(false),
     m_boxEdgeLength(boxEdgeLength)
 {
     m_boidParameters[BoidParameter::MinDistance] = boidMinDistance;
@@ -71,7 +72,7 @@ void Swarm::Update(float timeDelta)
         v2 = ExecuteRule2(i);
 
         // Rule 3: Find the average velocity (speed and direction) of the other boids and adjust velocity slightly to match.
-        v3 = ExecuteRule3(i, true);
+        v3 = ExecuteRule3(i);
 
         // Rule 4: Encourage boids to stay within rough boundaries.
         v4 = ExecuteRule4(i);
@@ -158,30 +159,12 @@ DirectX::XMVECTOR Swarm::ExecuteRule2(int boidIndex)
 }
 
 // Adjust the boid's velocity to match the average velocity of the other boids.
-DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
+DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex)
 {
     float matchingFactor = GetBoidParameter(BoidParameter::MatchingFactor);
 
-    // Method #1: Take into account all boids.
-    if (allBoids)
-    {
-        XMVECTOR sum{ XMVectorZero() };
-
-        for (int i = 0; i < Size(); ++i)
-        {
-            if (boidIndex != i)
-                sum = XMVectorAdd(sum, m_boids[i]->GetVelocity());
-        }
-
-        size_t boidCount = Size() - 1; // all the boids minus the current boid
-        XMVECTOR centre = sum / static_cast<float>(boidCount);
-        XMVECTOR boidVelocity = m_boids[boidIndex]->GetVelocity();
-        XMVECTOR v = XMVectorSubtract(centre, boidVelocity) * matchingFactor;
-
-        return v;
-    }
-    // Method #2: Take into account only boids in a certain range from a given boid.
-    else
+    // Take into account only boids in a certain range from a given boid.
+    if (m_isVisualRangeEnabled)
     {
         XMVECTOR avg{ XMVectorZero() };
         int neighborCount = 0;
@@ -213,6 +196,26 @@ DirectX::XMVECTOR Swarm::ExecuteRule3(int boidIndex, bool allBoids)
             XMVECTOR boidVelocity = m_boids[boidIndex]->GetVelocity();
             v = XMVectorSubtract(centre, boidVelocity) * matchingFactor;
         }
+
+        return v;
+
+
+    }
+    // Take into account all boids.
+    else
+    {
+        XMVECTOR sum{ XMVectorZero() };
+
+        for (int i = 0; i < Size(); ++i)
+        {
+            if (boidIndex != i)
+                sum = XMVectorAdd(sum, m_boids[i]->GetVelocity());
+        }
+
+        size_t boidCount = Size() - 1; // all the boids minus the current boid
+        XMVECTOR centre = sum / static_cast<float>(boidCount);
+        XMVECTOR boidVelocity = m_boids[boidIndex]->GetVelocity();
+        XMVECTOR v = XMVectorSubtract(centre, boidVelocity) * matchingFactor;
 
         return v;
     }

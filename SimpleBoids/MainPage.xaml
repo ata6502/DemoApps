@@ -182,11 +182,28 @@
                             TickPlacement="TopLeft"
                             ValueChanged="BoidParameterChanged" />
 
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.6*" />
+                            <ColumnDefinition Width="0.4*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                       Text="Enable visual range:"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,8,4" />
+                        <ToggleSwitch x:Name="VisualRangeToggle"
+                                      Grid.Column="1"
+                                      OnContent=""
+                                      OffContent=""
+                                      IsOn="False"
+                                      Toggled="VisualRangeToggle_Toggled" />
+                    </Grid>
+                    
                     <Slider x:Name="VisualRangeSlider"
                             Header="Boids' visual range:"
                             Tag="VisualRange"
                             Margin="0,12,0,0"
-                            Minimum="1.0"
+                            Minimum="0.1"
                             Maximum="5.0"
                             Value="0" 
                             StepFrequency="0.1"

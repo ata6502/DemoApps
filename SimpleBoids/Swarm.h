@@ -39,6 +39,8 @@ public:
     size_t Size() const { return m_boids.size(); }
     float GetBoidParameter(BoidParameter parameter) { return m_boidParameters[parameter]; }
     void SetBoidParameter(BoidParameter parameter, float value);
+    bool IsVisualRangeEnabled() const { return m_isVisualRangeEnabled; }
+    void IsVisualRangeEnabled(bool enabled) { m_isVisualRangeEnabled = enabled; }
 
 private:
     Concurrency::critical_section               m_criticalSection;
@@ -46,11 +48,12 @@ private:
     std::unique_ptr<RandomNumberHelper>         m_rand;
     float                                       m_boidRadius;
     std::unordered_map<BoidParameter, float>    m_boidParameters;
+    bool                                        m_isVisualRangeEnabled;
     float                                       m_boxEdgeLength;
 
     DirectX::XMVECTOR ExecuteRule1(int boidIndex);
     DirectX::XMVECTOR ExecuteRule2(int boidIndex);
-    DirectX::XMVECTOR ExecuteRule3(int boidIndex, bool allBoids = true);
+    DirectX::XMVECTOR ExecuteRule3(int boidIndex);
     DirectX::XMVECTOR ExecuteRule4(int boidIndex);
 
     std::tuple<DirectX::XMVECTOR, DirectX::XMVECTOR> GetRandomPositionAndVelocity();
