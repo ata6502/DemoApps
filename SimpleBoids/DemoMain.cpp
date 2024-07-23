@@ -15,7 +15,7 @@ const float DemoMain::BOID_VISUAL_RANGE = 3.0f;
 const float DemoMain::BOID_MOVE_TO_CENTER_FACTOR = 0.01f;
 
 const float DemoMain::BOX_EDGE_LENGTH = 45.0f;
-const float DemoMain::BOUNDARY_THICKNESS = 2.f;
+const float DemoMain::BOX_EDGE_THICKNESS = 2.f;
 
 const float DemoMain::INPUT_RADIUS = 250.f;
 const float DemoMain::INPUT_YAW = -0.5f * DirectX::XM_PI;
@@ -275,7 +275,7 @@ void DemoMain::DrawScene()
     // Vertical edges along the y-axis.
     XMMATRIX scaling;
     m_renderer->SetTextureTransform(XMMatrixTranspose(XMMatrixRotationZ(-XM_PIDIV2)));
-    scaling = XMMatrixScaling(BOUNDARY_THICKNESS, 2 * BOX_EDGE_LENGTH + BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
+    scaling = XMMatrixScaling(BOX_EDGE_THICKNESS, 2 * BOX_EDGE_LENGTH + BOX_EDGE_THICKNESS, BOX_EDGE_THICKNESS);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, 0.f, BOX_EDGE_LENGTH)));
@@ -283,7 +283,7 @@ void DemoMain::DrawScene()
 
     // Horizontal edges along the x-axis.
     m_renderer->SetTextureTransform(XMMatrixIdentity());
-    scaling = XMMatrixScaling(2 * BOX_EDGE_LENGTH, BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
+    scaling = XMMatrixScaling(2 * BOX_EDGE_LENGTH, BOX_EDGE_THICKNESS, BOX_EDGE_THICKNESS);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH, BOX_EDGE_LENGTH)));
@@ -291,7 +291,7 @@ void DemoMain::DrawScene()
 
     // Horizontal edges along the z-axis.
     m_renderer->SetTextureTransform(XMMatrixIdentity());
-    scaling = XMMatrixScaling(BOUNDARY_THICKNESS, BOUNDARY_THICKNESS, 2 * BOX_EDGE_LENGTH);
+    scaling = XMMatrixScaling(BOX_EDGE_THICKNESS, BOX_EDGE_THICKNESS, 2 * BOX_EDGE_LENGTH);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH, 0.f)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, BOX_EDGE_LENGTH, 0.f)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, BOX_EDGE_LENGTH, 0.f)));
@@ -326,7 +326,7 @@ void DemoMain::DrawScene()
     m_renderer->SetMaterial("floor");
     m_renderer->SetTexture("floor");
     m_renderer->SetTextureTransform(XMLoadFloat4x4(&m_floorTextureTransform));
-    m_renderer->SetWorldMatrix(XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH - 0.5f * BOUNDARY_THICKNESS - 0.2f, 0.f));
+    m_renderer->SetWorldMatrix(XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH - 0.5f * BOX_EDGE_THICKNESS - 0.2f, 0.f));
     m_renderer->RenderMesh("floor");
 }
 

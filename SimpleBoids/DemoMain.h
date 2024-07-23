@@ -62,12 +62,12 @@ private:
 
     // Boundary constants.
     static const float BOX_EDGE_LENGTH;
-    static const float BOUNDARY_THICKNESS; // TODO: rename BOX_EDGE_THICKNESS
+    static const float BOX_EDGE_THICKNESS; 
 
     // Input constants.
-    static const float INPUT_RADIUS;            // the distance from the eye
-    static const float INPUT_YAW;               // "horizontal" angle
-    static const float INPUT_PITCH;             // "vertical" angle
+    static const float INPUT_RADIUS;                // the distance from the eye
+    static const float INPUT_YAW;                   // "horizontal" angle
+    static const float INPUT_PITCH;                 // "vertical" angle
     static const float INPUT_STEP;
 
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;
