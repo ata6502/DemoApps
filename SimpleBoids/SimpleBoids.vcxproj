@@ -208,6 +208,7 @@
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\Textures\floor.dds" />
     <Image Include="Assets\Textures\marble.dds" />
     <Image Include="Assets\Textures\wood.dds" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />

@@ -62,7 +62,7 @@ private:
 
     // Boundary constants.
     static const float BOX_EDGE_LENGTH;
-    static const float BOUNDARY_THICKNESS;
+    static const float BOUNDARY_THICKNESS; // TODO: rename BOX_EDGE_THICKNESS
 
     // Input constants.
     static const float INPUT_RADIUS;            // the distance from the eye
@@ -79,6 +79,7 @@ private:
     bool                                        m_hasFocus;
     std::unique_ptr<Swarm>                      m_swarm;
     int32_t                                     m_boidShapeIndex;
+    DirectX::XMFLOAT4X4                         m_floorTextureTransform;
 
     // Private helper methods.
     void StartRenderLoop();

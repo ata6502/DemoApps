@@ -61,6 +61,7 @@ public:
     void CreateSphereMesh(std::string const& name, float radius, uint16_t subdivisionCount);
     void CreateConeMesh(std::string const& name);
     void CreateCubeMesh(std::string const& name);
+    void CreateGridMesh(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
     void FinalizeCreateMeshes();
 
     // Rendering methods.

@@ -238,12 +238,17 @@ void Renderer::CreateSphereMesh(std::string const& name, float radius, uint16_t 
 
 void Renderer::CreateConeMesh(std::string const& name)
 {
-    m_meshGenerator->CreateCylinder(name, 2.f, 0.f, 5.f, 12, 4);
+    m_meshGenerator->CreateCylinder(name, 2.f, 0.f, 5.f, 12, 4); // TODO: use consts or pass from DemoMain
 }
 
 void Renderer::CreateCubeMesh(std::string const& name)
 {
     m_meshGenerator->CreateCube(name);
+}
+
+void Renderer::CreateGridMesh(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+{
+    m_meshGenerator->CreateGrid(name, gridWidth, gridDepth, quadCountHoriz, quadCountDepth);
 }
 
 void Renderer::FinalizeCreateMeshes()

@@ -29,6 +29,7 @@ DemoMain::DemoMain() :
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
     m_renderer = std::make_unique<Renderer>(m_deviceResources);
+    XMStoreFloat4x4(&m_floorTextureTransform, XMMatrixIdentity());
 
     // Configure input.
     m_input = std::make_unique<IndependentInput>();
@@ -69,6 +70,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_renderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
     m_renderer->CreateConeMesh("coneMesh");
     m_renderer->CreateCubeMesh("cube");
+    m_renderer->CreateGridMesh("floor", 800.0f, 800.0f, 80, 80); // TODO: adjust the values
     m_renderer->FinalizeCreateMeshes();
 
     // Create materials.
@@ -86,9 +88,21 @@ winrt::fire_and_forget DemoMain::Initialize()
     cubeMaterial.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f); // w = SpecularPower
     m_renderer->AddMaterial("cube", cubeMaterial);
 
+    MaterialDesc floorMaterial;
+    floorMaterial.Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+    floorMaterial.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+    floorMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 8.0f); // w = SpecularPower
+    m_renderer->AddMaterial("floor", floorMaterial);
+
     // Create textures.
     m_renderer->AddTexture("boid", L"Assets\\Textures\\marble.dds");
     m_renderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
+    m_renderer->AddTexture("floor", L"Assets\\Textures\\floor.dds");
+
+    // Create a texture transformation for the floor by repeating the tiles.
+    XMStoreFloat4x4(
+        &m_floorTextureTransform,
+        XMMatrixScaling(12.f, 12.f, 0.f));
 
     // The subsequent methods use DeviceContext. We need to sync the threads.
     critical_section::scoped_lock lock(m_criticalSection);
@@ -252,22 +266,14 @@ void DemoMain::Update()
         });
 }
 
-void DemoMain::DrawCube(DirectX::FXMMATRIX worldMatrix)
-{
-    m_renderer->SetWorldMatrix(worldMatrix);
-    m_renderer->RenderMesh("cube");
-}
-
 void DemoMain::DrawScene()
 {
     // Draw the boundary for boids as a wired box.
-
     m_renderer->SetMaterial("cube");
     m_renderer->SetTexture("cube");
 
-    XMMATRIX scaling;
-
     // Vertical edges along the y-axis.
+    XMMATRIX scaling;
     m_renderer->SetTextureTransform(XMMatrixTranspose(XMMatrixRotationZ(-XM_PIDIV2)));
     scaling = XMMatrixScaling(BOUNDARY_THICKNESS, 2 * BOX_EDGE_LENGTH + BOUNDARY_THICKNESS, BOUNDARY_THICKNESS);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
@@ -315,6 +321,19 @@ void DemoMain::DrawScene()
             m_renderer->SetWorldMatrix(worldMatrix);
             m_renderer->RenderMesh(meshName);
         });
+
+    // Draw the floor.
+    m_renderer->SetMaterial("floor");
+    m_renderer->SetTexture("floor");
+    m_renderer->SetTextureTransform(XMLoadFloat4x4(&m_floorTextureTransform));
+    m_renderer->SetWorldMatrix(XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH - 0.5f * BOUNDARY_THICKNESS - 0.2f, 0.f));
+    m_renderer->RenderMesh("floor");
+}
+
+void DemoMain::DrawCube(DirectX::FXMMATRIX worldMatrix)
+{
+    m_renderer->SetWorldMatrix(worldMatrix);
+    m_renderer->RenderMesh("cube");
 }
 
 void DemoMain::RestartSimulation()
