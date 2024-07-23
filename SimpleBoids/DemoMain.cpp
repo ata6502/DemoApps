@@ -68,9 +68,9 @@ winrt::fire_and_forget DemoMain::Initialize()
 
     co_await m_renderer->CreateDeviceResourcesAsync();
     m_renderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
-    m_renderer->CreateConeMesh("coneMesh");
+    m_renderer->CreateCylinderMesh("coneMesh", 2.f, 0.f, 5.f, 12, 4);
     m_renderer->CreateCubeMesh("cube");
-    m_renderer->CreateGridMesh("floor", 800.0f, 800.0f, 80, 80); // TODO: adjust the values
+    m_renderer->CreateGridMesh("floor", 800.0f, 800.0f, 80, 80); // TODO: adjust the floor parameters
     m_renderer->FinalizeCreateMeshes();
 
     // Create materials.

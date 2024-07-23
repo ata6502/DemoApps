@@ -59,7 +59,7 @@ public:
 
     // Mesh methods.
     void CreateSphereMesh(std::string const& name, float radius, uint16_t subdivisionCount);
-    void CreateConeMesh(std::string const& name);
+    void CreateCylinderMesh(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount);
     void CreateCubeMesh(std::string const& name);
     void CreateGridMesh(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth);
     void FinalizeCreateMeshes();

@@ -236,9 +236,9 @@ void Renderer::CreateSphereMesh(std::string const& name, float radius, uint16_t 
     m_meshGenerator->CreateGeosphere(name, radius, subdivisionCount);
 }
 
-void Renderer::CreateConeMesh(std::string const& name)
+void Renderer::CreateCylinderMesh(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
-    m_meshGenerator->CreateCylinder(name, 2.f, 0.f, 5.f, 12, 4); // TODO: use consts or pass from DemoMain
+    m_meshGenerator->CreateCylinder(name, bottomRadius, topRadius, cylinderHeight, sliceCount, stackCount);
 }
 
 void Renderer::CreateCubeMesh(std::string const& name)
