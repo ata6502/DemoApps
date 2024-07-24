@@ -1,6 +1,4 @@
 #include "pch.h"
-
-#include "Constants.h"
 #include "Swarm.h"
 
 using namespace Concurrency;

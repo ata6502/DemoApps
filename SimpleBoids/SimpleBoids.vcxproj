@@ -169,7 +169,6 @@
     <ClInclude Include="..\Shared\FileReaderStructures.h" />
     <ClInclude Include="..\Shared\IndependentInput.h" />
     <ClInclude Include="..\Shared\RandomNumberHelper.h" />
-    <ClInclude Include="..\Shared\RenderStates.h" />
     <ClInclude Include="..\Shared\StepTimer.h" />
     <ClInclude Include="..\Shared\TextureMeshGenerator.h" />
     <ClInclude Include="..\Shared\Utilities.h" />
@@ -219,7 +218,6 @@
     <ClCompile Include="..\Shared\FileReader.cpp" />
     <ClCompile Include="..\Shared\IndependentInput.cpp" />
     <ClCompile Include="..\Shared\RandomNumberHelper.cpp" />
-    <ClCompile Include="..\Shared\RenderStates.cpp" />
     <ClCompile Include="..\Shared\TextureMeshGenerator.cpp" />
     <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="..\Shared\WICTextureLoader.cpp" />

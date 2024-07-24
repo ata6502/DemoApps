@@ -208,7 +208,7 @@ namespace winrt::SimpleBoids::implementation
         m_main->SetBoidParameter(parameterMap[boidParameterAsString], value);
     }
 
-    void MainPage::VisualRangeToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
+    void MainPage::VisualRangeToggle_Toggled([[maybe_unused]] winrt::Windows::Foundation::IInspectable const& sender, [[maybe_unused]] winrt::Windows::UI::Xaml::RoutedEventArgs const& args)
     {
         if (!VisualRangeToggle().IsLoaded())
             return;

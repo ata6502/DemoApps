@@ -27,9 +27,6 @@
     <ClCompile Include="..\Shared\IndependentInput.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\RenderStates.cpp">
-      <Filter>Shared</Filter>
-    </ClCompile>
     <ClCompile Include="..\Shared\TextureMeshGenerator.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
@@ -68,9 +65,6 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\IndependentInput.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Shared\RenderStates.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\Shared\StepTimer.h">
