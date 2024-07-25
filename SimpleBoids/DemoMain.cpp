@@ -99,11 +99,6 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_renderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
     m_renderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
-    // Create a texture transformation for the water by repeating the tiles.
-    XMStoreFloat4x4(
-        &m_waterTextureTransform,
-        XMMatrixScaling(12.f, 12.f, 0.f));
-
     // The subsequent methods use DeviceContext. We need to sync the threads.
     critical_section::scoped_lock lock(m_criticalSection);
 
@@ -262,7 +257,24 @@ void DemoMain::Update()
             m_renderer->Update(eye, viewMatrix);
 
             float timeDelta{ static_cast<float>(m_timer.GetElapsedSeconds()) };
+
             m_swarm->Update(timeDelta);
+
+            //
+            // Animate water texture coordinates.
+            //
+            static XMFLOAT2 waterTextureOffset = XMFLOAT2(0, 0);
+
+            // Tile the water texture.
+            XMMATRIX wavesScale = XMMatrixScaling(12.0f, 12.0f, 0.0f);
+
+            // Scroll the water texture over the water geometry as a function of time.
+            waterTextureOffset.y += 0.03f * timeDelta;
+            waterTextureOffset.x += 0.08f * timeDelta;
+            XMMATRIX wavesOffset = XMMatrixTranslation(waterTextureOffset.x, waterTextureOffset.y, 0.0f);
+
+            // Combine scale and translation.
+            XMStoreFloat4x4(&m_waterTextureTransform, wavesScale * wavesOffset);
         });
 }
 
