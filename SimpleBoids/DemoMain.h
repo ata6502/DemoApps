@@ -79,7 +79,7 @@ private:
     bool                                        m_hasFocus;
     std::unique_ptr<Swarm>                      m_swarm;
     int32_t                                     m_boidShapeIndex;
-    DirectX::XMFLOAT4X4                         m_floorTextureTransform;
+    DirectX::XMFLOAT4X4                         m_waterTextureTransform;
 
     // Private helper methods.
     void StartRenderLoop();

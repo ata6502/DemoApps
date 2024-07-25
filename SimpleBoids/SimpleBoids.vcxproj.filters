@@ -127,7 +127,7 @@
     <Image Include="Assets\Textures\wood.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
-    <Image Include="Assets\Textures\floor.dds">
+    <Image Include="Assets\Textures\water.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>

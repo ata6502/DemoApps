@@ -19,7 +19,8 @@ Renderer::Renderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
     m_cbufferPerFrame(nullptr),
     m_cbufferPerObject(nullptr),
     m_linearSampler(nullptr),
-    m_cbufferPerObjectData()
+    m_cbufferPerObjectData(),
+    m_transparentBlendState(nullptr)
 {
     m_meshGenerator = std::make_unique<TextureMeshGenerator>(m_deviceResources);
 }
@@ -111,6 +112,25 @@ winrt::Windows::Foundation::IAsyncAction Renderer::CreateDeviceResourcesAsync()
         device->CreateSamplerState(
             &samplerDesc,
             m_linearSampler.put()));
+
+    // Create the transparent blend state.
+    D3D11_BLEND_DESC blendDesc;
+    ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+    blendDesc.AlphaToCoverageEnable = false;
+    blendDesc.IndependentBlendEnable = false;
+    blendDesc.RenderTarget[0].BlendEnable = true;
+    blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+    winrt::check_hresult(
+        device->CreateBlendState(
+            &blendDesc,
+            m_transparentBlendState.put()));
 }
 
 // TODO: Remove FinalizeCreateDeviceResources if not needed.
@@ -229,6 +249,7 @@ void Renderer::ReleaseDeviceDependentResources()
     m_cbufferPerFrame = nullptr;
     m_cbufferPerObject = nullptr;
     m_linearSampler = nullptr;
+    m_transparentBlendState = nullptr;
 }
 
 void Renderer::CreateSphereMesh(std::string const& name, float radius, uint16_t subdivisionCount)
@@ -314,4 +335,28 @@ void Renderer::SetTexture(std::string const& name)
 void Renderer::SetTextureTransform(DirectX::FXMMATRIX textureTransform)
 {
     XMStoreFloat4x4(&m_cbufferPerObjectData.TextureTransform, XMMatrixTranspose(textureTransform)); 
+}
+
+// Binds the transparent blend state object to the output merger stage.
+void Renderer::SetTransparentBlendState()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    // An array of four floats defining an RGBA color vector used as a blend factor when D3D11_BLEND_BLEND_FACTOR or D3D11_BLEND_INV_BLEND_FACTOR is specified.
+    float blendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
+
+    context->OMSetBlendState(
+        m_transparentBlendState.get(),  // a pointer to a blend state to enable
+        blendFactor,                    
+        0xffffffff);
+}
+
+void Renderer::ClearTransparentBlendState()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+    float blendFactor[4] = { 0.f, 0.f, 0.f, 0.f };
+
+    // Set the default blend state.
+    UINT sampleMask = 0xffffffff;
+    context->OMSetBlendState(nullptr, blendFactor, sampleMask);
 }

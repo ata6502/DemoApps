@@ -82,6 +82,10 @@ public:
     void SetTexture(std::string const& name);
     void SetTextureTransform(DirectX::FXMMATRIX textureTransform);
 
+    // Blend state methods.
+    void SetTransparentBlendState();
+    void ClearTransparentBlendState();
+
 private:
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
     bool                                    m_initialized;
@@ -97,6 +101,7 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_cbufferPerObject;
     std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
     winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
+    winrt::com_ptr<ID3D11BlendState>        m_transparentBlendState;
 
     // Data structures.
     CBufferPerObject                        m_cbufferPerObjectData;

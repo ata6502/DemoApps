@@ -29,7 +29,7 @@ DemoMain::DemoMain() :
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
     m_renderer = std::make_unique<Renderer>(m_deviceResources);
-    XMStoreFloat4x4(&m_floorTextureTransform, XMMatrixIdentity());
+    XMStoreFloat4x4(&m_waterTextureTransform, XMMatrixIdentity());
 
     // Configure input.
     m_input = std::make_unique<IndependentInput>();
@@ -70,7 +70,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_renderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
     m_renderer->CreateCylinderMesh("coneMesh", 2.f, 0.f, 5.f, 12, 4);
     m_renderer->CreateCubeMesh("cube");
-    m_renderer->CreateGridMesh("floor", 800.0f, 800.0f, 80, 80); // TODO: adjust the floor parameters
+    m_renderer->CreateGridMesh("water", 800.0f, 800.0f, 80, 80); // TODO: adjust the water parameters
     m_renderer->FinalizeCreateMeshes();
 
     // Create materials.
@@ -88,20 +88,20 @@ winrt::fire_and_forget DemoMain::Initialize()
     cubeMaterial.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f); // w = SpecularPower
     m_renderer->AddMaterial("cube", cubeMaterial);
 
-    MaterialDesc floorMaterial;
-    floorMaterial.Ambient = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-    floorMaterial.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-    floorMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 8.0f); // w = SpecularPower
-    m_renderer->AddMaterial("floor", floorMaterial);
+    MaterialDesc waterMaterial;
+    waterMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
+    waterMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 0.5f); // 0.5f is a semi-transparent diffuse component
+    waterMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f); // w = SpecularPower
+    m_renderer->AddMaterial("water", waterMaterial);
 
     // Create textures.
     m_renderer->AddTexture("boid", L"Assets\\Textures\\marble.dds");
     m_renderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
-    m_renderer->AddTexture("floor", L"Assets\\Textures\\floor.dds");
+    m_renderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
-    // Create a texture transformation for the floor by repeating the tiles.
+    // Create a texture transformation for the water by repeating the tiles.
     XMStoreFloat4x4(
-        &m_floorTextureTransform,
+        &m_waterTextureTransform,
         XMMatrixScaling(12.f, 12.f, 0.f));
 
     // The subsequent methods use DeviceContext. We need to sync the threads.
@@ -322,12 +322,14 @@ void DemoMain::DrawScene()
             m_renderer->RenderMesh(meshName);
         });
 
-    // Draw the floor.
-    m_renderer->SetMaterial("floor");
-    m_renderer->SetTexture("floor");
-    m_renderer->SetTextureTransform(XMLoadFloat4x4(&m_floorTextureTransform));
+    // Draw water.
+    m_renderer->SetMaterial("water");
+    m_renderer->SetTexture("water");
+    m_renderer->SetTextureTransform(XMLoadFloat4x4(&m_waterTextureTransform));
     m_renderer->SetWorldMatrix(XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH - 0.5f * BOX_EDGE_THICKNESS - 0.2f, 0.f));
-    m_renderer->RenderMesh("floor");
+    m_renderer->SetTransparentBlendState();
+    m_renderer->RenderMesh("water");
+    m_renderer->ClearTransparentBlendState();
 }
 
 void DemoMain::DrawCube(DirectX::FXMMATRIX worldMatrix)
