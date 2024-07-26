@@ -176,6 +176,7 @@
     <ClInclude Include="..\Shared\WICTextureLoader.h" />
     <ClInclude Include="Boid.h" />
     <ClInclude Include="BoidParameter.h" />
+    <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">

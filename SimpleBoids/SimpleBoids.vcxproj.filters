@@ -104,6 +104,9 @@
     <ClInclude Include="SkyRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="ConstantBuffers.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
