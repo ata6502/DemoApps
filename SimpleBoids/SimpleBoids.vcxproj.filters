@@ -38,7 +38,7 @@
     </ClCompile>
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="SceneRenderer.cpp">
-      <Filter>Renderer</Filter>
+      <Filter>Renderers</Filter>
     </ClCompile>
     <ClCompile Include="Boid.cpp">
       <Filter>Boids</Filter>
@@ -84,7 +84,7 @@
     </ClInclude>
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="SceneRenderer.h">
-      <Filter>Renderer</Filter>
+      <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="Boid.h">
       <Filter>Boids</Filter>
@@ -141,9 +141,6 @@
     <Filter Include="Shared">
       <UniqueIdentifier>{be585756-83a4-430f-8221-9a7515184ebf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Renderer">
-      <UniqueIdentifier>{3298b646-3df4-4cb9-a071-0a6823370e97}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Textures">
       <UniqueIdentifier>{79a09ccb-66c0-4e46-b84f-668fd397c5da}</UniqueIdentifier>
     </Filter>
@@ -153,23 +150,26 @@
     <Filter Include="Sky">
       <UniqueIdentifier>{7231a63c-75d5-4db5-a9ac-13c459d471d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Renderers">
+      <UniqueIdentifier>{3298b646-3df4-4cb9-a071-0a6823370e97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
     <None Include="ConstantBuffers.hlsli">
-      <Filter>Renderer</Filter>
+      <Filter>Renderers</Filter>
     </None>
     <None Include="ComputeDirectionalLight.hlsli">
-      <Filter>Renderer</Filter>
+      <Filter>Renderers</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="TexturePS.hlsl">
-      <Filter>Renderer</Filter>
+    <FxCompile Include="ScenePS.hlsl">
+      <Filter>Renderers</Filter>
     </FxCompile>
-    <FxCompile Include="TextureVS.hlsl">
-      <Filter>Renderer</Filter>
+    <FxCompile Include="SceneVS.hlsl">
+      <Filter>Renderers</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

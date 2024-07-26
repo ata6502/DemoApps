@@ -36,8 +36,8 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsy
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // Load shader bytecode.
-    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"TextureVS.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"TexturePS.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"SceneVS.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"ScenePS.cso");
 
     // Create vertex shader.
     winrt::check_hresult(
