@@ -37,7 +37,7 @@
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="DemoMain.cpp" />
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="SceneRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Boid.cpp">
@@ -83,7 +83,7 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="DemoMain.h" />
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="SceneRenderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Boid.h">
@@ -150,6 +150,9 @@
     <Filter Include="Boids">
       <UniqueIdentifier>{d5aa2468-9238-47b3-8c7e-d27baa018226}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sky">
+      <UniqueIdentifier>{7231a63c-75d5-4db5-a9ac-13c459d471d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
@@ -162,10 +165,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="MaterialPS.hlsl">
+    <FxCompile Include="TexturePS.hlsl">
       <Filter>Renderer</Filter>
     </FxCompile>
-    <FxCompile Include="MaterialVS.hlsl">
+    <FxCompile Include="TextureVS.hlsl">
       <Filter>Renderer</Filter>
     </FxCompile>
   </ItemGroup>

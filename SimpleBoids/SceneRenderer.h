@@ -44,11 +44,11 @@ struct CBufferPerObject
     DirectX::XMFLOAT4X4 TextureTransform;
 };
 
-class Renderer
+class SceneRenderer
 {
 public:
-    Renderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
-    ~Renderer();
+    SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
+    ~SceneRenderer();
 
     winrt::Windows::Foundation::IAsyncAction CreateDeviceResourcesAsync();
     void FinalizeCreateDeviceResources();

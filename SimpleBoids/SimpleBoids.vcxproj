@@ -184,7 +184,7 @@
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SceneRenderer.h" />
     <ClInclude Include="Swarm.h" />
   </ItemGroup>
   <ItemGroup>
@@ -233,7 +233,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SceneRenderer.cpp" />
     <ClCompile Include="Swarm.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -251,7 +251,7 @@
     <None Include="PropertySheet.props" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="MaterialPS.hlsl">
+    <FxCompile Include="TexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
@@ -261,7 +261,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="MaterialVS.hlsl">
+    <FxCompile Include="TextureVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>

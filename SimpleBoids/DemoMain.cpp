@@ -28,7 +28,7 @@ DemoMain::DemoMain() :
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
-    m_renderer = std::make_unique<Renderer>(m_deviceResources);
+    m_sceneRenderer = std::make_unique<SceneRenderer>(m_deviceResources);
     XMStoreFloat4x4(&m_waterTextureTransform, XMMatrixIdentity());
 
     // Configure input.
@@ -66,12 +66,12 @@ winrt::fire_and_forget DemoMain::Initialize()
 {
     auto lifetime = get_strong();
 
-    co_await m_renderer->CreateDeviceResourcesAsync();
-    m_renderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
-    m_renderer->CreateCylinderMesh("coneMesh", 2.f, 0.f, 5.f, 12, 4);
-    m_renderer->CreateCubeMesh("cube");
-    m_renderer->CreateGridMesh("water", 800.0f, 800.0f, 80, 80); // TODO: adjust the water parameters
-    m_renderer->FinalizeCreateMeshes();
+    co_await m_sceneRenderer->CreateDeviceResourcesAsync();
+    m_sceneRenderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
+    m_sceneRenderer->CreateCylinderMesh("coneMesh", 2.f, 0.f, 5.f, 12, 4);
+    m_sceneRenderer->CreateCubeMesh("cube");
+    m_sceneRenderer->CreateGridMesh("water", 800.0f, 800.0f, 80, 80); // TODO: adjust the water parameters
+    m_sceneRenderer->FinalizeCreateMeshes();
 
     // Create materials.
     MaterialDesc boidMaterial;
@@ -79,25 +79,25 @@ winrt::fire_and_forget DemoMain::Initialize()
     boidMaterial.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     boidMaterial.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     boidMaterial.Specular = XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f); // w = SpecularPower
-    m_renderer->AddMaterial("boid", boidMaterial);
+    m_sceneRenderer->AddMaterial("boid", boidMaterial);
 
     MaterialDesc cubeMaterial;
     ZeroMemory(&cubeMaterial, sizeof(cubeMaterial));
     cubeMaterial.Ambient = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     cubeMaterial.Diffuse = XMFLOAT4(0.9f, 0.9f, 0.9f, 1.0f);
     cubeMaterial.Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f); // w = SpecularPower
-    m_renderer->AddMaterial("cube", cubeMaterial);
+    m_sceneRenderer->AddMaterial("cube", cubeMaterial);
 
     MaterialDesc waterMaterial;
     waterMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
     waterMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 0.5f); // 0.5f is a semi-transparent diffuse component
     waterMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f); // w = SpecularPower
-    m_renderer->AddMaterial("water", waterMaterial);
+    m_sceneRenderer->AddMaterial("water", waterMaterial);
 
     // Create textures.
-    m_renderer->AddTexture("boid", L"Assets\\Textures\\marble.dds");
-    m_renderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
-    m_renderer->AddTexture("water", L"Assets\\Textures\\water.dds");
+    m_sceneRenderer->AddTexture("boid", L"Assets\\Textures\\marble.dds");
+    m_sceneRenderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
+    m_sceneRenderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
     // The subsequent methods use DeviceContext. We need to sync the threads.
     critical_section::scoped_lock lock(m_criticalSection);
@@ -109,9 +109,9 @@ winrt::fire_and_forget DemoMain::Initialize()
     light.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     light.Direction = XMFLOAT3(0.51451f, -0.51451f, 0.68601f);
-    m_renderer->SetLight(light);
+    m_sceneRenderer->SetLight(light);
 
-    m_renderer->FinalizeCreateDeviceResources();
+    m_sceneRenderer->FinalizeCreateDeviceResources();
 
     CreateWindowSizeDependentResources();
 }
@@ -136,7 +136,7 @@ void DemoMain::StartRenderLoop()
                 critical_section::scoped_lock lock(m_criticalSection);
 
                 Update();
-                m_renderer->PrepareRender();
+                m_sceneRenderer->PrepareRender();
                 DrawScene();
                 m_deviceResources->Present();
 
@@ -229,7 +229,7 @@ void DemoMain::SetSwapChainPanel(winrt::Windows::UI::Xaml::Controls::SwapChainPa
 void DemoMain::OnDeviceLost()
 {
     StopRenderLoop();
-    m_renderer->ReleaseDeviceDependentResources();
+    m_sceneRenderer->ReleaseDeviceDependentResources();
 }
 
 void DemoMain::OnDeviceRestored()
@@ -242,7 +242,7 @@ void DemoMain::OnDeviceRestored()
 
 void DemoMain::CreateWindowSizeDependentResources()
 {
-    m_renderer->CreateWindowSizeDependentResources();
+    m_sceneRenderer->CreateWindowSizeDependentResources();
 }
 
 void DemoMain::Update()
@@ -254,7 +254,7 @@ void DemoMain::Update()
 
             XMVECTOR eye = m_input->GetPosition();
             XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
-            m_renderer->Update(eye, viewMatrix);
+            m_sceneRenderer->Update(eye, viewMatrix);
 
             float timeDelta{ static_cast<float>(m_timer.GetElapsedSeconds()) };
 
@@ -269,8 +269,8 @@ void DemoMain::Update()
             XMMATRIX wavesScale = XMMatrixScaling(12.0f, 12.0f, 0.0f);
 
             // Scroll the water texture over the water geometry as a function of time.
-            waterTextureOffset.y += 0.03f * timeDelta;
-            waterTextureOffset.x += 0.08f * timeDelta;
+            waterTextureOffset.y += 0.02f * timeDelta;
+            waterTextureOffset.x += 0.05f * timeDelta;
             XMMATRIX wavesOffset = XMMatrixTranslation(waterTextureOffset.x, waterTextureOffset.y, 0.0f);
 
             // Combine scale and translation.
@@ -281,12 +281,12 @@ void DemoMain::Update()
 void DemoMain::DrawScene()
 {
     // Draw the boundary for boids as a wired box.
-    m_renderer->SetMaterial("cube");
-    m_renderer->SetTexture("cube");
+    m_sceneRenderer->SetMaterial("cube");
+    m_sceneRenderer->SetTexture("cube");
 
     // Vertical edges along the y-axis.
     XMMATRIX scaling;
-    m_renderer->SetTextureTransform(XMMatrixTranspose(XMMatrixRotationZ(-XM_PIDIV2)));
+    m_sceneRenderer->SetTextureTransform(XMMatrixTranspose(XMMatrixRotationZ(-XM_PIDIV2)));
     scaling = XMMatrixScaling(BOX_EDGE_THICKNESS, 2 * BOX_EDGE_LENGTH + BOX_EDGE_THICKNESS, BOX_EDGE_THICKNESS);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, 0.f, -BOX_EDGE_LENGTH)));
@@ -294,7 +294,7 @@ void DemoMain::DrawScene()
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, 0.f, BOX_EDGE_LENGTH)));
 
     // Horizontal edges along the x-axis.
-    m_renderer->SetTextureTransform(XMMatrixIdentity());
+    m_sceneRenderer->SetTextureTransform(XMMatrixIdentity());
     scaling = XMMatrixScaling(2 * BOX_EDGE_LENGTH, BOX_EDGE_THICKNESS, BOX_EDGE_THICKNESS);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH)));
@@ -302,7 +302,7 @@ void DemoMain::DrawScene()
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(0.f, BOX_EDGE_LENGTH, BOX_EDGE_LENGTH)));
 
     // Horizontal edges along the z-axis.
-    m_renderer->SetTextureTransform(XMMatrixIdentity());
+    m_sceneRenderer->SetTextureTransform(XMMatrixIdentity());
     scaling = XMMatrixScaling(BOX_EDGE_THICKNESS, BOX_EDGE_THICKNESS, 2 * BOX_EDGE_LENGTH);
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH, 0.f)));
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(-BOX_EDGE_LENGTH, BOX_EDGE_LENGTH, 0.f)));
@@ -310,9 +310,9 @@ void DemoMain::DrawScene()
     DrawCube(XMMatrixMultiply(scaling, XMMatrixTranslation(BOX_EDGE_LENGTH, -BOX_EDGE_LENGTH, 0.f)));
 
     // Draw the swarm of boids.
-    m_renderer->SetMaterial("boid");
-    m_renderer->SetTexture("boid");
-    m_renderer->SetTextureTransform(XMMatrixIdentity()); // no texture transform for boids
+    m_sceneRenderer->SetMaterial("boid");
+    m_sceneRenderer->SetTexture("boid");
+    m_sceneRenderer->SetTextureTransform(XMMatrixIdentity()); // no texture transform for boids
 
     std::string meshName;
     switch (m_boidShapeIndex)
@@ -330,24 +330,24 @@ void DemoMain::DrawScene()
 
     m_swarm->Iterate([this, &meshName](XMMATRIX worldMatrix)
         {
-            m_renderer->SetWorldMatrix(worldMatrix);
-            m_renderer->RenderMesh(meshName);
+            m_sceneRenderer->SetWorldMatrix(worldMatrix);
+            m_sceneRenderer->RenderMesh(meshName);
         });
 
     // Draw water.
-    m_renderer->SetMaterial("water");
-    m_renderer->SetTexture("water");
-    m_renderer->SetTextureTransform(XMLoadFloat4x4(&m_waterTextureTransform));
-    m_renderer->SetWorldMatrix(XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH - 0.5f * BOX_EDGE_THICKNESS - 0.2f, 0.f));
-    m_renderer->SetTransparentBlendState();
-    m_renderer->RenderMesh("water");
-    m_renderer->ClearTransparentBlendState();
+    m_sceneRenderer->SetMaterial("water");
+    m_sceneRenderer->SetTexture("water");
+    m_sceneRenderer->SetTextureTransform(XMLoadFloat4x4(&m_waterTextureTransform));
+    m_sceneRenderer->SetWorldMatrix(XMMatrixTranslation(0.f, -BOX_EDGE_LENGTH - 0.5f * BOX_EDGE_THICKNESS - 0.2f, 0.f));
+    m_sceneRenderer->SetTransparentBlendState();
+    m_sceneRenderer->RenderMesh("water");
+    m_sceneRenderer->ClearTransparentBlendState();
 }
 
 void DemoMain::DrawCube(DirectX::FXMMATRIX worldMatrix)
 {
-    m_renderer->SetWorldMatrix(worldMatrix);
-    m_renderer->RenderMesh("cube");
+    m_sceneRenderer->SetWorldMatrix(worldMatrix);
+    m_sceneRenderer->RenderMesh("cube");
 }
 
 void DemoMain::RestartSimulation()

@@ -3,12 +3,12 @@
 #include <DirectXColors.h>
 
 #include "FileReader.h"
-#include "Renderer.h"
+#include "SceneRenderer.h"
 #include "Utilities.h"
 
 using namespace DirectX;
 
-Renderer::Renderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
+SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) :
     m_deviceResources(deviceResources),
     m_initialized(false),
     m_vertexShader(nullptr),
@@ -25,19 +25,19 @@ Renderer::Renderer(std::shared_ptr<DX::DeviceResources> const& deviceResources) 
     m_meshGenerator = std::make_unique<TextureMeshGenerator>(m_deviceResources);
 }
 
-Renderer::~Renderer()
+SceneRenderer::~SceneRenderer()
 {
     ReleaseDeviceDependentResources();
 }
 
 // Create device-dependent resources.
-winrt::Windows::Foundation::IAsyncAction Renderer::CreateDeviceResourcesAsync()
+winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsync()
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
     // Load shader bytecode.
-    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"MaterialVS.cso");
-    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"MaterialPS.cso");
+    auto vertexShaderBytecode = co_await Utilities::ReadDataAsync(L"TextureVS.cso");
+    auto pixelShaderBytecode = co_await Utilities::ReadDataAsync(L"TexturePS.cso");
 
     // Create vertex shader.
     winrt::check_hresult(
@@ -135,13 +135,13 @@ winrt::Windows::Foundation::IAsyncAction Renderer::CreateDeviceResourcesAsync()
 
 // TODO: Remove FinalizeCreateDeviceResources if not needed.
 // Create context-dependent resources.
-void Renderer::FinalizeCreateDeviceResources()
+void SceneRenderer::FinalizeCreateDeviceResources()
 {
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
 }
 
-void Renderer::CreateWindowSizeDependentResources()
+void SceneRenderer::CreateWindowSizeDependentResources()
 {
     if (!m_initialized)
         return;
@@ -172,7 +172,7 @@ void Renderer::CreateWindowSizeDependentResources()
     context->UpdateSubresource(m_cbufferOnResize.get(), 0, nullptr, &cbufferOnResizeData, 0, 0);
 }
 
-void Renderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
+void SceneRenderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
 {
     if (!m_initialized)
         return;
@@ -187,7 +187,7 @@ void Renderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
     context->UpdateSubresource(m_cbufferPerFrame.get(), 0, nullptr, &cbufferPerFrameData, 0, 0);
 }
 
-void Renderer::PrepareRender()
+void SceneRenderer::PrepareRender()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -235,7 +235,7 @@ void Renderer::PrepareRender()
     ZeroMemory(&m_cbufferPerObjectData, sizeof(m_cbufferPerObjectData));
 }
 
-void Renderer::ReleaseDeviceDependentResources()
+void SceneRenderer::ReleaseDeviceDependentResources()
 {
     m_initialized = false;
     m_meshGenerator->Clear();
@@ -252,32 +252,32 @@ void Renderer::ReleaseDeviceDependentResources()
     m_transparentBlendState = nullptr;
 }
 
-void Renderer::CreateSphereMesh(std::string const& name, float radius, uint16_t subdivisionCount)
+void SceneRenderer::CreateSphereMesh(std::string const& name, float radius, uint16_t subdivisionCount)
 {
     m_meshGenerator->CreateGeosphere(name, radius, subdivisionCount);
 }
 
-void Renderer::CreateCylinderMesh(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
+void SceneRenderer::CreateCylinderMesh(std::string const& name, float bottomRadius, float topRadius, float cylinderHeight, uint32_t sliceCount, uint32_t stackCount)
 {
     m_meshGenerator->CreateCylinder(name, bottomRadius, topRadius, cylinderHeight, sliceCount, stackCount);
 }
 
-void Renderer::CreateCubeMesh(std::string const& name)
+void SceneRenderer::CreateCubeMesh(std::string const& name)
 {
     m_meshGenerator->CreateCube(name);
 }
 
-void Renderer::CreateGridMesh(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
+void SceneRenderer::CreateGridMesh(std::string const& name, float gridWidth, float gridDepth, uint32_t quadCountHoriz, uint32_t quadCountDepth)
 {
     m_meshGenerator->CreateGrid(name, gridWidth, gridDepth, quadCountHoriz, quadCountDepth);
 }
 
-void Renderer::FinalizeCreateMeshes()
+void SceneRenderer::FinalizeCreateMeshes()
 {
     m_meshGenerator->CreateBuffers();
 }
 
-void Renderer::RenderMesh(std::string const& name)
+void SceneRenderer::RenderMesh(std::string const& name)
 {
     if (!m_initialized)
         return;
@@ -287,7 +287,7 @@ void Renderer::RenderMesh(std::string const& name)
     m_meshGenerator->DrawMesh(name);
 }
 
-void Renderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
+void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
 {
     // Calculate the world inverse transpose matrix in order to properly transform normals in case there are any non-uniform or shear transformations.
     auto worldInvTranspose = Utilities::CalculateInverseTranspose(worldMatrix);
@@ -295,7 +295,7 @@ void Renderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
     XMStoreFloat4x4(&m_cbufferPerObjectData.WorldInvTranspose, XMMatrixTranspose(worldInvTranspose));
 }
 
-void Renderer::SetLight(DirectionalLightDesc light)
+void SceneRenderer::SetLight(DirectionalLightDesc light)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -307,24 +307,24 @@ void Renderer::SetLight(DirectionalLightDesc light)
     context->UpdateSubresource(m_cbufferNeverChanges.get(), 0, nullptr, &cbufferNeverChangesData, 0, 0);
 }
 
-void Renderer::AddMaterial(std::string const& name, MaterialDesc const& material)
+void SceneRenderer::AddMaterial(std::string const& name, MaterialDesc const& material)
 {
     m_materials[name] = material;
 }
 
-void Renderer::SetMaterial(std::string const& name)
+void SceneRenderer::SetMaterial(std::string const& name)
 {
     m_cbufferPerObjectData.Material = m_materials[name];
 }
 
-winrt::Windows::Foundation::IAsyncAction Renderer::AddTexture(std::string const& name, std::wstring const& path)
+winrt::Windows::Foundation::IAsyncAction SceneRenderer::AddTexture(std::string const& name, std::wstring const& path)
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
     co_await FileReader::LoadTextureAsync(device, path.c_str(), m_textures[name].put());
 }
 
-void Renderer::SetTexture(std::string const& name)
+void SceneRenderer::SetTexture(std::string const& name)
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -332,13 +332,13 @@ void Renderer::SetTexture(std::string const& name)
     context->PSSetShaderResources(0, 1, &pTexture);
 }
 
-void Renderer::SetTextureTransform(DirectX::FXMMATRIX textureTransform)
+void SceneRenderer::SetTextureTransform(DirectX::FXMMATRIX textureTransform)
 {
     XMStoreFloat4x4(&m_cbufferPerObjectData.TextureTransform, XMMatrixTranspose(textureTransform)); 
 }
 
 // Binds the transparent blend state object to the output merger stage.
-void Renderer::SetTransparentBlendState()
+void SceneRenderer::SetTransparentBlendState()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
@@ -351,7 +351,7 @@ void Renderer::SetTransparentBlendState()
         0xffffffff);
 }
 
-void Renderer::ClearTransparentBlendState()
+void SceneRenderer::ClearTransparentBlendState()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
     float blendFactor[4] = { 0.f, 0.f, 0.f, 0.f };

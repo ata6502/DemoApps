@@ -3,7 +3,7 @@
 #include "BoidParameter.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
-#include "Renderer.h"
+#include "SceneRenderer.h"
 #include "StepTimer.h"
 #include "Swarm.h"
 
@@ -71,7 +71,7 @@ private:
     static const float INPUT_STEP;
 
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;
-    std::unique_ptr<Renderer>                   m_renderer;
+    std::unique_ptr<SceneRenderer>              m_sceneRenderer;
     DX::StepTimer                               m_timer;
     Concurrency::critical_section               m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction    m_renderLoopWorker;
