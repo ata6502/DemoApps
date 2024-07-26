@@ -52,8 +52,6 @@ private:
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
-    winrt::com_ptr<ID3D11Buffer>            m_cbufferOnResize;
-    winrt::com_ptr<ID3D11Buffer>            m_cbufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferPerObject;
     std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
     winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;

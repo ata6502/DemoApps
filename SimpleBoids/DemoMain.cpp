@@ -102,7 +102,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
     m_sceneRenderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
-    co_await m_commonRenderer->CreateDeviceResourcesAsync();
+    m_commonRenderer->CreateDeviceResources();
     co_await m_skyRenderer->CreateDeviceResourcesAsync();
 
     // The subsequent methods use DeviceContext. We need to sync the threads.
@@ -117,7 +117,6 @@ winrt::fire_and_forget DemoMain::Initialize()
     light.Direction = XMFLOAT3(0.51451f, -0.51451f, 0.68601f);
     m_commonRenderer->SetLight(light);
 
-    m_commonRenderer->FinalizeCreateDeviceResources();
     m_sceneRenderer->FinalizeCreateDeviceResources();
     m_skyRenderer->FinalizeCreateDeviceResources();
 

@@ -14,8 +14,6 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     m_vertexShader(nullptr),
     m_inputLayout(nullptr),
     m_pixelShader(nullptr),
-    m_cbufferOnResize(nullptr),
-    m_cbufferPerFrame(nullptr),
     m_cbufferPerObject(nullptr),
     m_linearSampler(nullptr),
     m_cbufferPerObjectData(),
@@ -72,16 +70,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsy
             m_pixelShader.put()));
 
     // Create constant buffers.
-    uint32_t byteWidth = (sizeof(CBufferOnResize) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC cbOnResizeDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
-    winrt::check_hresult(device->CreateBuffer(&cbOnResizeDesc, nullptr, m_cbufferOnResize.put()));
-
-    byteWidth = (sizeof(CBufferPerFrame) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC cbPerFrameDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
-    winrt::check_hresult(
-        device->CreateBuffer(&cbPerFrameDesc, nullptr, m_cbufferPerFrame.put()));
-
-    byteWidth = (sizeof(CBufferPerObject) + 15) / 16 * 16;
+    uint32_t byteWidth = (sizeof(CBufferPerObject) + 15) / 16 * 16;
     CD3D11_BUFFER_DESC cbPerObjectDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
     winrt::check_hresult(
         device->CreateBuffer(&cbPerObjectDesc, nullptr, m_cbufferPerObject.put()));
@@ -139,46 +128,12 @@ void SceneRenderer::CreateWindowSizeDependentResources()
 {
     if (!m_initialized)
         return;
-
-    winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
-    float aspectRatio = outputSize.Width / outputSize.Height;
-    float fovAngleY = 0.25f * XM_PI;
-
-    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(
-        fovAngleY,
-        aspectRatio,
-        0.01f,
-        500.0f);
-
-    XMMATRIX orientationMatrix = m_deviceResources->GetOrientationTransform3D();
-
-    projectionMatrix = 
-        XMMatrixTranspose(
-            XMMatrixMultiply(
-                orientationMatrix, 
-                projectionMatrix));
-
-    CBufferOnResize cbufferOnResizeData;
-    ZeroMemory(&cbufferOnResizeData, sizeof(cbufferOnResizeData));
-    XMStoreFloat4x4(&cbufferOnResizeData.Projection, projectionMatrix);
-
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
-    context->UpdateSubresource(m_cbufferOnResize.get(), 0, nullptr, &cbufferOnResizeData, 0, 0);
 }
 
 void SceneRenderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
 {
     if (!m_initialized)
         return;
-
-    CBufferPerFrame cbufferPerFrameData;
-    ZeroMemory(&cbufferPerFrameData, sizeof(cbufferPerFrameData));
-
-    XMStoreFloat4x4(&cbufferPerFrameData.View, XMMatrixTranspose(viewMatrix));
-    XMStoreFloat3(&cbufferPerFrameData.EyePosition, eye);
-
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
-    context->UpdateSubresource(m_cbufferPerFrame.get(), 0, nullptr, &cbufferPerFrameData, 0, 0);
 }
 
 void SceneRenderer::PrepareRender()
@@ -211,12 +166,7 @@ void SceneRenderer::PrepareRender()
     m_meshGenerator->SetBuffers();
 
     // Bind constant buffers.
-    ID3D11Buffer* pCBufferOnResize{ m_cbufferOnResize.get() };
-    ID3D11Buffer* pCBufferPerFrame{ m_cbufferPerFrame.get() };
     ID3D11Buffer* pCBufferPerObject{ m_cbufferPerObject.get() };
-    context->VSSetConstantBuffers(1, 1, &pCBufferOnResize);
-    context->VSSetConstantBuffers(2, 1, &pCBufferPerFrame);
-    context->PSSetConstantBuffers(2, 1, &pCBufferPerFrame);
     context->VSSetConstantBuffers(3, 1, &pCBufferPerObject);
     context->PSSetConstantBuffers(3, 1, &pCBufferPerObject);
 
@@ -236,8 +186,6 @@ void SceneRenderer::ReleaseDeviceDependentResources()
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
-    m_cbufferOnResize = nullptr;
-    m_cbufferPerFrame = nullptr;
     m_cbufferPerObject = nullptr;
     m_linearSampler = nullptr;
     m_transparentBlendState = nullptr;

@@ -9,8 +9,7 @@ public:
     CommonRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResources);
     ~CommonRenderer();
 
-    winrt::Windows::Foundation::IAsyncAction CreateDeviceResourcesAsync();
-    void FinalizeCreateDeviceResources();
+    void CreateDeviceResources();
     void CreateWindowSizeDependentResources();
     void Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix);
     void PrepareRender();
@@ -24,5 +23,7 @@ private:
     bool                                    m_initialized;
 
     winrt::com_ptr<ID3D11Buffer>            m_cbufferNeverChanges;
+    winrt::com_ptr<ID3D11Buffer>            m_cbufferOnResize;
+    winrt::com_ptr<ID3D11Buffer>            m_cbufferPerFrame;
 };
 
