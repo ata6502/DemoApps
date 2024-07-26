@@ -115,7 +115,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     light.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
     light.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
     light.Direction = XMFLOAT3(0.51451f, -0.51451f, 0.68601f);
-    m_sceneRenderer->SetLight(light);
+    m_commonRenderer->SetLight(light);
 
     m_commonRenderer->FinalizeCreateDeviceResources();
     m_sceneRenderer->FinalizeCreateDeviceResources();
@@ -293,6 +293,8 @@ void DemoMain::Update()
 
 void DemoMain::DrawScene()
 {
+    m_commonRenderer->PrepareRender();
+
     m_sceneRenderer->PrepareRender();
 
     // Draw the boundary for boids as a wired box.

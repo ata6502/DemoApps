@@ -14,7 +14,6 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     m_vertexShader(nullptr),
     m_inputLayout(nullptr),
     m_pixelShader(nullptr),
-    m_cbufferNeverChanges(nullptr),
     m_cbufferOnResize(nullptr),
     m_cbufferPerFrame(nullptr),
     m_cbufferPerObject(nullptr),
@@ -73,12 +72,7 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsy
             m_pixelShader.put()));
 
     // Create constant buffers.
-    uint32_t byteWidth = (sizeof(CBufferNeverChanges) + 15) / 16 * 16;
-    CD3D11_BUFFER_DESC cbNeverChangesDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
-    winrt::check_hresult(
-        device->CreateBuffer(&cbNeverChangesDesc, nullptr, m_cbufferNeverChanges.put()));
-
-    byteWidth = (sizeof(CBufferOnResize) + 15) / 16 * 16;
+    uint32_t byteWidth = (sizeof(CBufferOnResize) + 15) / 16 * 16;
     CD3D11_BUFFER_DESC cbOnResizeDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
     winrt::check_hresult(device->CreateBuffer(&cbOnResizeDesc, nullptr, m_cbufferOnResize.put()));
 
@@ -217,11 +211,9 @@ void SceneRenderer::PrepareRender()
     m_meshGenerator->SetBuffers();
 
     // Bind constant buffers.
-    ID3D11Buffer* pCBufferNeverChanges{ m_cbufferNeverChanges.get() };
     ID3D11Buffer* pCBufferOnResize{ m_cbufferOnResize.get() };
     ID3D11Buffer* pCBufferPerFrame{ m_cbufferPerFrame.get() };
     ID3D11Buffer* pCBufferPerObject{ m_cbufferPerObject.get() };
-    context->PSSetConstantBuffers(0, 1, &pCBufferNeverChanges);
     context->VSSetConstantBuffers(1, 1, &pCBufferOnResize);
     context->VSSetConstantBuffers(2, 1, &pCBufferPerFrame);
     context->PSSetConstantBuffers(2, 1, &pCBufferPerFrame);
@@ -244,7 +236,6 @@ void SceneRenderer::ReleaseDeviceDependentResources()
     m_vertexShader = nullptr;
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
-    m_cbufferNeverChanges = nullptr;
     m_cbufferOnResize = nullptr;
     m_cbufferPerFrame = nullptr;
     m_cbufferPerObject = nullptr;
@@ -293,18 +284,6 @@ void SceneRenderer::SetWorldMatrix(DirectX::FXMMATRIX worldMatrix)
     auto worldInvTranspose = Utilities::CalculateInverseTranspose(worldMatrix);
     XMStoreFloat4x4(&m_cbufferPerObjectData.World, XMMatrixTranspose(worldMatrix));
     XMStoreFloat4x4(&m_cbufferPerObjectData.WorldInvTranspose, XMMatrixTranspose(worldInvTranspose));
-}
-
-void SceneRenderer::SetLight(DirectionalLightDesc light)
-{
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
-
-    CBufferNeverChanges cbufferNeverChangesData;
-    ZeroMemory(&cbufferNeverChangesData, sizeof(cbufferNeverChangesData));
-    cbufferNeverChangesData.Light = light;
-
-    // Copy the light to the constant buffer.
-    context->UpdateSubresource(m_cbufferNeverChanges.get(), 0, nullptr, &cbufferNeverChangesData, 0, 0);
 }
 
 void SceneRenderer::AddMaterial(std::string const& name, MaterialDesc const& material)

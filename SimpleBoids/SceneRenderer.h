@@ -30,9 +30,6 @@ public:
     // World matrix methods.
     void SetWorldMatrix(DirectX::FXMMATRIX worldMatrix);
 
-    // Light methods.
-    void SetLight(DirectionalLightDesc light);
-
     // Material methods.
     void AddMaterial(std::string const& name, MaterialDesc const& material);
     void SetMaterial(std::string const& name);
@@ -55,7 +52,6 @@ private:
     winrt::com_ptr<ID3D11VertexShader>      m_vertexShader;
     winrt::com_ptr<ID3D11InputLayout>       m_inputLayout;
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
-    winrt::com_ptr<ID3D11Buffer>            m_cbufferNeverChanges;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferOnResize;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferPerFrame;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferPerObject;
