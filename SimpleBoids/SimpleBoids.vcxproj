@@ -176,6 +176,7 @@
     <ClInclude Include="..\Shared\WICTextureLoader.h" />
     <ClInclude Include="Boid.h" />
     <ClInclude Include="BoidParameter.h" />
+    <ClInclude Include="CommonRenderer.h" />
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="DemoMain.h" />
     <ClInclude Include="pch.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="..\Shared\Utilities.cpp" />
     <ClCompile Include="..\Shared\WICTextureLoader.cpp" />
     <ClCompile Include="Boid.cpp" />
+    <ClCompile Include="CommonRenderer.cpp" />
     <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

@@ -52,6 +52,9 @@
     <ClCompile Include="SkyRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="CommonRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -105,6 +108,9 @@
       <Filter>Renderers</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBuffers.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>

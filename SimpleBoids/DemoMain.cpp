@@ -28,8 +28,10 @@ DemoMain::DemoMain() :
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
+    m_commonRenderer = std::make_unique<CommonRenderer>(m_deviceResources);
     m_sceneRenderer = std::make_unique<SceneRenderer>(m_deviceResources);
     m_skyRenderer = std::make_unique<SkyRenderer>(m_deviceResources);
+    
     XMStoreFloat4x4(&m_waterTextureTransform, XMMatrixIdentity());
 
     // Configure input.
@@ -100,6 +102,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
     m_sceneRenderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
+    co_await m_commonRenderer->CreateDeviceResourcesAsync();
     co_await m_skyRenderer->CreateDeviceResourcesAsync();
 
     // The subsequent methods use DeviceContext. We need to sync the threads.
@@ -114,6 +117,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     light.Direction = XMFLOAT3(0.51451f, -0.51451f, 0.68601f);
     m_sceneRenderer->SetLight(light);
 
+    m_commonRenderer->FinalizeCreateDeviceResources();
     m_sceneRenderer->FinalizeCreateDeviceResources();
     m_skyRenderer->FinalizeCreateDeviceResources();
 
@@ -232,6 +236,7 @@ void DemoMain::SetSwapChainPanel(winrt::Windows::UI::Xaml::Controls::SwapChainPa
 void DemoMain::OnDeviceLost()
 {
     StopRenderLoop();
+    m_commonRenderer->ReleaseDeviceDependentResources();
     m_sceneRenderer->ReleaseDeviceDependentResources();
     m_skyRenderer->ReleaseDeviceDependentResources();
 }
@@ -246,6 +251,7 @@ void DemoMain::OnDeviceRestored()
 
 void DemoMain::CreateWindowSizeDependentResources()
 {
+    m_commonRenderer->CreateWindowSizeDependentResources();
     m_sceneRenderer->CreateWindowSizeDependentResources();
     m_skyRenderer->CreateWindowSizeDependentResources();
 }
@@ -259,6 +265,7 @@ void DemoMain::Update()
 
             XMVECTOR eye = m_input->GetPosition();
             XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
+            m_commonRenderer->Update(eye, viewMatrix);
             m_sceneRenderer->Update(eye, viewMatrix);
             m_skyRenderer->Update(eye, viewMatrix);
 

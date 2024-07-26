@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BoidParameter.h"
+#include "CommonRenderer.h"
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "SceneRenderer.h"
@@ -72,6 +73,7 @@ private:
     static const float INPUT_STEP;
 
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;
+    std::unique_ptr<CommonRenderer>             m_commonRenderer;
     std::unique_ptr<SceneRenderer>              m_sceneRenderer;
     std::unique_ptr<SkyRenderer>                m_skyRenderer;
     DX::StepTimer                               m_timer;
