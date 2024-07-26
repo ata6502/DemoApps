@@ -29,6 +29,7 @@ DemoMain::DemoMain() :
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
     m_sceneRenderer = std::make_unique<SceneRenderer>(m_deviceResources);
+    m_skyRenderer = std::make_unique<SkyRenderer>(m_deviceResources);
     XMStoreFloat4x4(&m_waterTextureTransform, XMMatrixIdentity());
 
     // Configure input.
@@ -99,6 +100,8 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
     m_sceneRenderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
+    co_await m_skyRenderer->CreateDeviceResourcesAsync();
+
     // The subsequent methods use DeviceContext. We need to sync the threads.
     critical_section::scoped_lock lock(m_criticalSection);
 
@@ -112,6 +115,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->SetLight(light);
 
     m_sceneRenderer->FinalizeCreateDeviceResources();
+    m_skyRenderer->FinalizeCreateDeviceResources();
 
     CreateWindowSizeDependentResources();
 }
@@ -136,7 +140,6 @@ void DemoMain::StartRenderLoop()
                 critical_section::scoped_lock lock(m_criticalSection);
 
                 Update();
-                m_sceneRenderer->PrepareRender();
                 DrawScene();
                 m_deviceResources->Present();
 
@@ -230,6 +233,7 @@ void DemoMain::OnDeviceLost()
 {
     StopRenderLoop();
     m_sceneRenderer->ReleaseDeviceDependentResources();
+    m_skyRenderer->ReleaseDeviceDependentResources();
 }
 
 void DemoMain::OnDeviceRestored()
@@ -243,6 +247,7 @@ void DemoMain::OnDeviceRestored()
 void DemoMain::CreateWindowSizeDependentResources()
 {
     m_sceneRenderer->CreateWindowSizeDependentResources();
+    m_skyRenderer->CreateWindowSizeDependentResources();
 }
 
 void DemoMain::Update()
@@ -255,6 +260,7 @@ void DemoMain::Update()
             XMVECTOR eye = m_input->GetPosition();
             XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
             m_sceneRenderer->Update(eye, viewMatrix);
+            m_skyRenderer->Update(eye, viewMatrix);
 
             float timeDelta{ static_cast<float>(m_timer.GetElapsedSeconds()) };
 
@@ -280,6 +286,8 @@ void DemoMain::Update()
 
 void DemoMain::DrawScene()
 {
+    m_sceneRenderer->PrepareRender();
+
     // Draw the boundary for boids as a wired box.
     m_sceneRenderer->SetMaterial("cube");
     m_sceneRenderer->SetTexture("cube");
@@ -333,6 +341,9 @@ void DemoMain::DrawScene()
             m_sceneRenderer->SetWorldMatrix(worldMatrix);
             m_sceneRenderer->RenderMesh(meshName);
         });
+
+    // TODO: Draw sky.
+    m_skyRenderer->PrepareRender();
 
     // Draw water.
     m_sceneRenderer->SetMaterial("water");

@@ -4,6 +4,7 @@
 #include "DeviceResources.h"
 #include "IndependentInput.h"
 #include "SceneRenderer.h"
+#include "SkyRenderer.h"
 #include "StepTimer.h"
 #include "Swarm.h"
 
@@ -72,6 +73,7 @@ private:
 
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;
     std::unique_ptr<SceneRenderer>              m_sceneRenderer;
+    std::unique_ptr<SkyRenderer>                m_skyRenderer;
     DX::StepTimer                               m_timer;
     Concurrency::critical_section               m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction    m_renderLoopWorker;

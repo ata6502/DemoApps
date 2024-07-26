@@ -49,6 +49,9 @@
     <ClCompile Include="..\Shared\RandomNumberHelper.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="SkyRenderer.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="BoidParameter.h">
       <Filter>Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyRenderer.h">
+      <Filter>Renderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

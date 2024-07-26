@@ -185,6 +185,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="SceneRenderer.h" />
+    <ClInclude Include="SkyRenderer.h" />
     <ClInclude Include="Swarm.h" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +235,7 @@
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="SkyRenderer.cpp" />
     <ClCompile Include="Swarm.cpp" />
   </ItemGroup>
   <ItemGroup>
