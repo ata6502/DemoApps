@@ -93,7 +93,7 @@ winrt::fire_and_forget DemoMain::Initialize()
 
     MaterialDesc waterMaterial;
     waterMaterial.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
-    waterMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 0.5f); // 0.5f is a semi-transparent diffuse component
+    waterMaterial.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 0.8f); // 0.8f is a semi-transparent diffuse component
     waterMaterial.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 32.0f); // w = SpecularPower
     m_sceneRenderer->AddMaterial("water", waterMaterial);
 
@@ -351,10 +351,11 @@ void DemoMain::DrawScene()
             m_sceneRenderer->RenderMesh(meshName);
         });
 
-    // TODO: Draw sky.
-    m_skyRenderer->PrepareRender();
+    // Draw sky.
+    m_skyRenderer->Render();
 
     // Draw water.
+    m_sceneRenderer->PrepareRender();
     m_sceneRenderer->SetMaterial("water");
     m_sceneRenderer->SetTexture("water");
     m_sceneRenderer->SetTextureTransform(XMLoadFloat4x4(&m_waterTextureTransform));

@@ -38,3 +38,8 @@ cbuffer CBufferPerObject : register(b3)
     MaterialDesc Material;
     matrix TextureTransform;
 };
+
+cbuffer CBufferSky : register(b3)
+{
+    matrix WorldSky;
+};

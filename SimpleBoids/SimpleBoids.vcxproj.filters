@@ -55,6 +55,9 @@
     <ClCompile Include="CommonRenderer.cpp">
       <Filter>Renderers</Filter>
     </ClCompile>
+    <ClCompile Include="SkySphere.cpp">
+      <Filter>Renderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -113,6 +116,9 @@
     <ClInclude Include="CommonRenderer.h">
       <Filter>Renderers</Filter>
     </ClInclude>
+    <ClInclude Include="SkySphere.h">
+      <Filter>Renderers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -143,6 +149,9 @@
       <Filter>Assets\Textures</Filter>
     </Image>
     <Image Include="Assets\Textures\water.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\snowcube1024.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>
@@ -184,6 +193,12 @@
       <Filter>Renderers</Filter>
     </FxCompile>
     <FxCompile Include="SceneVS.hlsl">
+      <Filter>Renderers</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyPS.hlsl">
+      <Filter>Renderers</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyVS.hlsl">
       <Filter>Renderers</Filter>
     </FxCompile>
   </ItemGroup>

@@ -40,3 +40,8 @@ struct CBufferPerObject
     MaterialDesc Material;
     DirectX::XMFLOAT4X4 TextureTransform;
 };
+
+struct CBufferSky
+{
+    DirectX::XMFLOAT4X4 WorldSky;
+};

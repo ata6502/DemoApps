@@ -118,19 +118,6 @@ void SceneRenderer::PrepareRender()
 {
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    // Reset the viewport to target the whole screen.
-    auto viewport = m_deviceResources->GetScreenViewport();
-    context->RSSetViewports(1, &viewport);
-
-    // Clear the views - the back buffer and the depth stencil view.
-    auto renderTarget = m_deviceResources->GetRenderTargetView();
-    auto depthStencil = m_deviceResources->GetDepthStencilView();
-    context->ClearRenderTargetView(renderTarget, Colors::CornflowerBlue);
-    context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-    // Bind the back buffer and the depth stencil view to the pipeline.
-    context->OMSetRenderTargets(1, &renderTarget, depthStencil);
-
     if (!m_initialized)
         return;
 
