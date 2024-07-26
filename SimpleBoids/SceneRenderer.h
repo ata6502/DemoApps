@@ -54,7 +54,6 @@ private:
     winrt::com_ptr<ID3D11PixelShader>       m_pixelShader;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferPerObject;
     std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>> m_textures;
-    winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
     winrt::com_ptr<ID3D11BlendState>        m_transparentBlendState;
 
     // Data structures.

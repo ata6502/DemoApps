@@ -117,6 +117,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     light.Direction = XMFLOAT3(0.51451f, -0.51451f, 0.68601f);
     m_commonRenderer->SetLight(light);
 
+    m_commonRenderer->FinalizeCreateDeviceResources();
     m_sceneRenderer->FinalizeCreateDeviceResources();
     m_skyRenderer->FinalizeCreateDeviceResources();
 

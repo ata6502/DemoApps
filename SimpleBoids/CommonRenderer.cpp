@@ -13,7 +13,8 @@ CommonRenderer::CommonRenderer(std::shared_ptr<DX::DeviceResources> const& devic
     m_initialized(false),
     m_cbufferNeverChanges(nullptr),
     m_cbufferOnResize(nullptr),
-    m_cbufferPerFrame(nullptr)
+    m_cbufferPerFrame(nullptr),
+    m_linearSampler(nullptr)
 {
 }
 
@@ -41,6 +42,27 @@ void CommonRenderer::CreateDeviceResources()
     CD3D11_BUFFER_DESC cbPerFrameDesc(byteWidth, D3D11_BIND_CONSTANT_BUFFER);
     winrt::check_hresult(
         device->CreateBuffer(&cbPerFrameDesc, nullptr, m_cbufferPerFrame.put()));
+
+    // Create a linear sampler state.
+    D3D11_SAMPLER_DESC samplerDesc;
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0;
+    samplerDesc.MaxAnisotropy = 4; // increase MaxAnisotropy if you use the D3D11_FILTER_ANISOTROPIC filter
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+    samplerDesc.BorderColor[0] = 0.0f; // Red
+    samplerDesc.BorderColor[1] = 1.0f; // Green
+    samplerDesc.BorderColor[2] = 0.0f; // Blue
+    samplerDesc.BorderColor[3] = 1.0f;
+    samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
+    samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
+
+    winrt::check_hresult(
+        device->CreateSamplerState(
+            &samplerDesc,
+            m_linearSampler.put()));
 }
 
 // Create context-dependent resources.
@@ -108,6 +130,10 @@ void CommonRenderer::PrepareRender()
     context->VSSetConstantBuffers(1, 1, &pCBufferOnResize);
     context->VSSetConstantBuffers(2, 1, &pCBufferPerFrame);
     context->PSSetConstantBuffers(2, 1, &pCBufferPerFrame);
+
+    // Set the sampler.
+    ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
+    context->PSSetSamplers(0, 1, &pLinearSampler);
 }
 
 void CommonRenderer::ReleaseDeviceDependentResources()
@@ -117,6 +143,7 @@ void CommonRenderer::ReleaseDeviceDependentResources()
     m_cbufferNeverChanges = nullptr;
     m_cbufferOnResize = nullptr;
     m_cbufferPerFrame = nullptr;
+    m_linearSampler = nullptr;
 }
 
 void CommonRenderer::SetLight(DirectionalLightDesc light)

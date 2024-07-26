@@ -15,7 +15,6 @@ SceneRenderer::SceneRenderer(std::shared_ptr<DX::DeviceResources> const& deviceR
     m_inputLayout(nullptr),
     m_pixelShader(nullptr),
     m_cbufferPerObject(nullptr),
-    m_linearSampler(nullptr),
     m_cbufferPerObjectData(),
     m_transparentBlendState(nullptr)
 {
@@ -75,27 +74,6 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsy
     winrt::check_hresult(
         device->CreateBuffer(&cbPerObjectDesc, nullptr, m_cbufferPerObject.put()));
 
-    // Create a linear sampler state.
-    D3D11_SAMPLER_DESC samplerDesc;
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.MipLODBias = 0;
-    samplerDesc.MaxAnisotropy = 4; // increase MaxAnisotropy if you use the D3D11_FILTER_ANISOTROPIC filter
-    samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerDesc.BorderColor[0] = 0.0f; // Red
-    samplerDesc.BorderColor[1] = 1.0f; // Green
-    samplerDesc.BorderColor[2] = 0.0f; // Blue
-    samplerDesc.BorderColor[3] = 1.0f;
-    samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
-    samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
-
-    winrt::check_hresult(
-        device->CreateSamplerState(
-            &samplerDesc,
-            m_linearSampler.put()));
-
     // Create the transparent blend state.
     D3D11_BLEND_DESC blendDesc;
     ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
@@ -116,20 +94,20 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsy
             m_transparentBlendState.put()));
 }
 
-// TODO: Remove FinalizeCreateDeviceResources if not needed.
-// Create context-dependent resources.
 void SceneRenderer::FinalizeCreateDeviceResources()
 {
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
 }
 
+// TODO: Remove CreateWindowSizeDependentResources if not needed.
 void SceneRenderer::CreateWindowSizeDependentResources()
 {
     if (!m_initialized)
         return;
 }
 
+// TODO: Remove Update if not needed.
 void SceneRenderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
 {
     if (!m_initialized)
@@ -170,10 +148,6 @@ void SceneRenderer::PrepareRender()
     context->VSSetConstantBuffers(3, 1, &pCBufferPerObject);
     context->PSSetConstantBuffers(3, 1, &pCBufferPerObject);
 
-    // Set the sampler.
-    ID3D11SamplerState* pLinearSampler{ m_linearSampler.get() };
-    context->PSSetSamplers(0, 1, &pLinearSampler);
-
     ZeroMemory(&m_cbufferPerObjectData, sizeof(m_cbufferPerObjectData));
 }
 
@@ -187,7 +161,6 @@ void SceneRenderer::ReleaseDeviceDependentResources()
     m_inputLayout = nullptr;
     m_pixelShader = nullptr;
     m_cbufferPerObject = nullptr;
-    m_linearSampler = nullptr;
     m_transparentBlendState = nullptr;
 }
 

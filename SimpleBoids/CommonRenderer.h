@@ -10,6 +10,7 @@ public:
     ~CommonRenderer();
 
     void CreateDeviceResources();
+    void FinalizeCreateDeviceResources();
     void CreateWindowSizeDependentResources();
     void Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix);
     void PrepareRender();
@@ -25,5 +26,6 @@ private:
     winrt::com_ptr<ID3D11Buffer>            m_cbufferNeverChanges;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferOnResize;
     winrt::com_ptr<ID3D11Buffer>            m_cbufferPerFrame;
+    winrt::com_ptr<ID3D11SamplerState>      m_linearSampler;
 };
 
