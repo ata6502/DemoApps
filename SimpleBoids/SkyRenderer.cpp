@@ -18,7 +18,8 @@ SkyRenderer::SkyRenderer(std::shared_ptr<DX::DeviceResources> const& deviceResou
     m_texture(nullptr),
     m_noCullRasterizerState(nullptr),
     m_lessEqualDepthStencilState(nullptr),
-    m_initialized(false)
+    m_initialized(false),
+    m_texturePath(L"")
 {
     m_skySphere = std::make_unique<SkySphere>(m_deviceResources);
 }
@@ -109,14 +110,6 @@ winrt::Windows::Foundation::IAsyncAction SkyRenderer::CreateDeviceResourcesAsync
         device->CreateDepthStencilState(
             &lessEqualDepthFuncDesc, 
             m_lessEqualDepthStencilState.put()));
-
-    // TODO: Move parameters to DemoMain.
-    // Load textures.
-    co_await FileReader::LoadTextureAsync(device, L"Assets\\Textures\\snowcube1024.dds", m_texture.put());
-
-    // TODO: Move parameters to DemoMain.
-    // Create sphere mesh.
-    m_skySphere->CreateSphere(1.0f, 30, 30);
 }
 
 // TODO: Remove FinalizeCreateDeviceResources if not needed.
@@ -210,4 +203,16 @@ void SkyRenderer::ReleaseDeviceDependentResources()
     m_texture = nullptr;
     m_noCullRasterizerState = nullptr;
     m_lessEqualDepthStencilState = nullptr;
+}
+
+void SkyRenderer::CreateSkySphereMesh(float radius, uint32_t sliceCount, uint32_t stackCount)
+{
+    m_skySphere->CreateSphere(radius, sliceCount, stackCount);
+}
+
+winrt::Windows::Foundation::IAsyncAction SkyRenderer::LoadTexture(std::wstring const& path)
+{
+    auto device{ m_deviceResources->GetD3DDevice() };
+
+    co_await FileReader::LoadTextureAsync(device, path.c_str(), m_texture.put());
 }

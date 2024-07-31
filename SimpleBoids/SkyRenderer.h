@@ -16,6 +16,12 @@ public:
     void Render();
     void ReleaseDeviceDependentResources();
 
+    // Mesh methods.
+    void CreateSkySphereMesh(float radius, uint32_t sliceCount, uint32_t stackCount);
+
+    // Texture methods.
+    winrt::Windows::Foundation::IAsyncAction LoadTexture(std::wstring const& path);
+
 private:
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;
 
@@ -28,6 +34,7 @@ private:
     winrt::com_ptr<ID3D11DepthStencilState>     m_lessEqualDepthStencilState;
 
     bool                                        m_initialized;
+    std::wstring                                m_texturePath;
     std::unique_ptr<SkySphere>                  m_skySphere;
 };
 

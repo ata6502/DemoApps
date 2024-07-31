@@ -69,6 +69,8 @@ winrt::fire_and_forget DemoMain::Initialize()
 {
     auto lifetime = get_strong();
 
+    m_commonRenderer->CreateDeviceResources();
+
     co_await m_sceneRenderer->CreateDeviceResourcesAsync();
     m_sceneRenderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
     m_sceneRenderer->CreateCylinderMesh("coneMesh", 2.f, 0.f, 5.f, 12, 4);
@@ -102,8 +104,9 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
     m_sceneRenderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 
-    m_commonRenderer->CreateDeviceResources();
     co_await m_skyRenderer->CreateDeviceResourcesAsync();
+    co_await m_skyRenderer->LoadTexture(L"Assets\\Textures\\snowcube1024.dds");
+    m_skyRenderer->CreateSkySphereMesh(1.0f, 30, 30);
 
     // The subsequent methods use DeviceContext. We need to sync the threads.
     critical_section::scoped_lock lock(m_criticalSection);
