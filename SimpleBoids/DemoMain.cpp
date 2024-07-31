@@ -100,7 +100,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->AddMaterial("water", waterMaterial);
 
     // Create textures.
-    m_sceneRenderer->AddTexture("boid", L"Assets\\Textures\\marble.dds");
+    m_sceneRenderer->AddTexture("boid", L"Assets\\Textures\\daywall.dds");
     m_sceneRenderer->AddTexture("cube", L"Assets\\Textures\\wood.dds");
     m_sceneRenderer->AddTexture("water", L"Assets\\Textures\\water.dds");
 

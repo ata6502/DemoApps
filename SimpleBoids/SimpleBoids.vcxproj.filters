@@ -142,16 +142,16 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\Textures\marble.dds">
-      <Filter>Assets\Textures</Filter>
-    </Image>
     <Image Include="Assets\Textures\wood.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
-    <Image Include="Assets\Textures\water.dds">
+    <Image Include="Assets\Textures\snowcube1024.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
-    <Image Include="Assets\Textures\snowcube1024.dds">
+    <Image Include="Assets\Textures\daywall.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\water.dds">
       <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>
