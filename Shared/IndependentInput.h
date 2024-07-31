@@ -23,6 +23,7 @@ public:
     void SetInputRadius(float radius) { m_radius = radius; } // the distance to the eye
     void SetInputYaw(float yaw) { m_yaw = yaw; }
     void SetInputPitch(float pitch) { m_pitch = pitch; }
+    void SetInputPitchMax(float pitchMax) { m_pitchMax = pitchMax; }
     void SetInputStep(float step) { m_step = step; }
 
 private:
@@ -31,6 +32,7 @@ private:
     static const float DEFAULT_INPUT_RADIUS;
     static const float DEFAULT_INPUT_YAW;
     static const float DEFAULT_INPUT_PITCH;
+    static const float DEFAULT_INPUT_PITCH_MAX;
     static const float DEFAULT_INPUT_STEP;
 
     // Independent input handlers.
@@ -53,6 +55,7 @@ private:
     float                               m_radius;
     float                               m_yaw; // "horizontal" angle
     float                               m_pitch; // "vertical" angle
+    float                               m_pitchMax;
     float                               m_step; // determines how fast zoom works
     bool                                m_mouseInUse;
     bool                                m_leftButtonPressed;

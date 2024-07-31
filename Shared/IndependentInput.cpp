@@ -13,12 +13,14 @@ const float IndependentInput::MAX_INPUT_RADIUS = 400.0f;
 const float IndependentInput::DEFAULT_INPUT_RADIUS = 80.0f;
 const float IndependentInput::DEFAULT_INPUT_YAW = 1.4f * XM_PI;
 const float IndependentInput::DEFAULT_INPUT_PITCH = 0.34f * XM_PI;
+const float IndependentInput::DEFAULT_INPUT_PITCH_MAX = XM_PI;
 const float IndependentInput::DEFAULT_INPUT_STEP = 0.02f;
 
 IndependentInput::IndependentInput() :
     m_radius(DEFAULT_INPUT_RADIUS),
     m_yaw(DEFAULT_INPUT_YAW),
     m_pitch(DEFAULT_INPUT_PITCH),
+    m_pitchMax(DEFAULT_INPUT_PITCH_MAX),
     m_step(DEFAULT_INPUT_STEP),
     m_mouseInUse(false), 
     m_leftButtonPressed(false), 
@@ -100,8 +102,8 @@ void IndependentInput::OnPointerMoved([[maybe_unused]] winrt::Windows::Foundatio
             m_yaw += dx;
             m_pitch += dy;
 
-            // Restrict the pitch to be between 0.01f and Pi-0.01f
-            m_pitch = std::clamp(m_pitch, 0.01f, XM_PI - 0.01f);
+            // Restrict the pitch angle.
+            m_pitch = std::clamp(m_pitch, 0.01f, m_pitchMax - 0.01f);
         }
         else if (m_rightButtonPressed)
         {

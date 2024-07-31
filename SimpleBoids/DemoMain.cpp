@@ -20,6 +20,7 @@ const float DemoMain::BOX_EDGE_THICKNESS = 2.f;
 const float DemoMain::INPUT_RADIUS = 250.f;
 const float DemoMain::INPUT_YAW = -0.5f * DirectX::XM_PI;
 const float DemoMain::INPUT_PITCH = 0.35f * DirectX::XM_PI;
+const float DemoMain::INPUT_PITCH_MAX = XM_PIDIV2;
 const float DemoMain::INPUT_STEP = 0.15f;
 
 DemoMain::DemoMain() :
@@ -39,6 +40,7 @@ DemoMain::DemoMain() :
     m_input->SetInputRadius(INPUT_RADIUS);
     m_input->SetInputYaw(INPUT_YAW);
     m_input->SetInputPitch(INPUT_PITCH);
+    m_input->SetInputPitchMax(INPUT_PITCH_MAX);
     m_input->SetInputStep(INPUT_STEP);
 
     m_swarm = std::make_unique<Swarm>(
