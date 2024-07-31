@@ -110,20 +110,9 @@ winrt::Windows::Foundation::IAsyncAction SkyRenderer::CreateDeviceResourcesAsync
         device->CreateDepthStencilState(
             &lessEqualDepthFuncDesc, 
             m_lessEqualDepthStencilState.put()));
-}
 
-// TODO: Remove FinalizeCreateDeviceResources if not needed.
-// Create context-dependent resources.
-void SkyRenderer::FinalizeCreateDeviceResources()
-{
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
-}
-
-void SkyRenderer::CreateWindowSizeDependentResources()
-{
-    if (!m_initialized)
-        return;
 }
 
 void SkyRenderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)

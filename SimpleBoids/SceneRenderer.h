@@ -11,9 +11,6 @@ public:
     ~SceneRenderer();
 
     winrt::Windows::Foundation::IAsyncAction CreateDeviceResourcesAsync();
-    void FinalizeCreateDeviceResources();
-    void CreateWindowSizeDependentResources();
-    void Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix);
     void PrepareRender();
     void ReleaseDeviceDependentResources();
 

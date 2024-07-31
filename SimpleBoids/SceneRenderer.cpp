@@ -92,26 +92,9 @@ winrt::Windows::Foundation::IAsyncAction SceneRenderer::CreateDeviceResourcesAsy
         device->CreateBlendState(
             &blendDesc,
             m_transparentBlendState.put()));
-}
 
-void SceneRenderer::FinalizeCreateDeviceResources()
-{
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
-}
-
-// TODO: Remove CreateWindowSizeDependentResources if not needed.
-void SceneRenderer::CreateWindowSizeDependentResources()
-{
-    if (!m_initialized)
-        return;
-}
-
-// TODO: Remove Update if not needed.
-void SceneRenderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
-{
-    if (!m_initialized)
-        return;
 }
 
 void SceneRenderer::PrepareRender()

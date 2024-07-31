@@ -121,8 +121,6 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_commonRenderer->SetLight(light);
 
     m_commonRenderer->FinalizeCreateDeviceResources();
-    m_sceneRenderer->FinalizeCreateDeviceResources();
-    m_skyRenderer->FinalizeCreateDeviceResources();
 
     CreateWindowSizeDependentResources();
 }
@@ -255,8 +253,6 @@ void DemoMain::OnDeviceRestored()
 void DemoMain::CreateWindowSizeDependentResources()
 {
     m_commonRenderer->CreateWindowSizeDependentResources();
-    m_sceneRenderer->CreateWindowSizeDependentResources();
-    m_skyRenderer->CreateWindowSizeDependentResources();
 }
 
 void DemoMain::Update()
@@ -269,7 +265,6 @@ void DemoMain::Update()
             XMVECTOR eye = m_input->GetPosition();
             XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
             m_commonRenderer->Update(eye, viewMatrix);
-            m_sceneRenderer->Update(eye, viewMatrix);
             m_skyRenderer->Update(eye, viewMatrix);
 
             float timeDelta{ static_cast<float>(m_timer.GetElapsedSeconds()) };
