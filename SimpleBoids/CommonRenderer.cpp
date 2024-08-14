@@ -43,7 +43,7 @@ void CommonRenderer::CreateDeviceResources()
     winrt::check_hresult(
         device->CreateBuffer(&cbPerFrameDesc, nullptr, m_cbufferPerFrame.put()));
 
-    // Create a linear sampler state.
+    // Create a linear sampler.
     D3D11_SAMPLER_DESC samplerDesc;
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -52,9 +52,9 @@ void CommonRenderer::CreateDeviceResources()
     samplerDesc.MipLODBias = 0;
     samplerDesc.MaxAnisotropy = 4; // increase MaxAnisotropy if you use the D3D11_FILTER_ANISOTROPIC filter
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    samplerDesc.BorderColor[0] = 0.0f; // Red
-    samplerDesc.BorderColor[1] = 1.0f; // Green
-    samplerDesc.BorderColor[2] = 0.0f; // Blue
+    samplerDesc.BorderColor[0] = 0.0f;
+    samplerDesc.BorderColor[1] = 0.0f;
+    samplerDesc.BorderColor[2] = 0.0f;
     samplerDesc.BorderColor[3] = 1.0f;
     samplerDesc.MinLOD = -3.402823466e+38F; // -FLT_MAX
     samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX

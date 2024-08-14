@@ -26,7 +26,7 @@ public:
     void AddBoids(int count);
     void RemoveBoids(int count);
 
-    // Moves all the boids to new positions.
+    // Moves boids to new positions.
     void Update(float timeDelta);
 
     // Moves boids to initial random positions.

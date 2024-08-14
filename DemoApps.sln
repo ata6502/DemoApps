@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{9344D7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{E776F72F-D4A6-4585-9CEC-00DC15E82CE5}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\Notes.txt = Docs\Notes.txt
+		Docs\Links.txt = Docs\Links.txt
 	EndProjectSection
 EndProject
 Global

@@ -39,7 +39,7 @@ DirectX::XMMATRIX Boid::GetWorldMatrix() const
 {
     // Adjust the boid orientation.
 
-    // Compute the angle between the current velocity and the initial boid orientation v0.
+    // Compute the angle between the current velocity and the boid's initial orientation v0.
     XMVECTOR v0 = XMVectorSet(0.f, 0.f, 1.f, 1.f);
     XMVECTOR v1 = XMVector3Normalize(XMLoadFloat3(&m_velocity));
     float angle = acos(XMVectorGetX(XMVector3Dot(v0, v1)));

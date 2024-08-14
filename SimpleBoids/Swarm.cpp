@@ -69,7 +69,7 @@ void Swarm::Update(float timeDelta)
         // Rule 2: Move away from other boids that are too close to avoid colliding.
         v2 = ExecuteRule2(i);
 
-        // Rule 3: Find the average velocity (speed and direction) of the other boids and adjust velocity slightly to match.
+        // Rule 3: Find the average velocity (speed and direction) of the other boids and adjust velocity to match.
         v3 = ExecuteRule3(i);
 
         // Rule 4: Encourage boids to stay within rough boundaries.

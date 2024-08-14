@@ -16,7 +16,6 @@ public:
     void PrepareRender();
     void ReleaseDeviceDependentResources();
 
-    // Light methods.
     void SetLight(DirectionalLightDesc light);
 
 private:

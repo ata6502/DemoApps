@@ -64,6 +64,7 @@ DemoMain::~DemoMain()
 
     // Deregister device notification
     m_deviceResources->RegisterDeviceNotify(nullptr);
+
     m_input->StopProcessEvents();
 }
 
@@ -77,7 +78,7 @@ winrt::fire_and_forget DemoMain::Initialize()
     m_sceneRenderer->CreateSphereMesh("sphereMesh", BOID_RADIUS, BOID_SUBDIVISION_COUNT);
     m_sceneRenderer->CreateCylinderMesh("coneMesh", 2.f, 0.f, 5.f, 12, 4);
     m_sceneRenderer->CreateCubeMesh("cube");
-    m_sceneRenderer->CreateGridMesh("water", 800.0f, 800.0f, 80, 80); // TODO: adjust the water parameters
+    m_sceneRenderer->CreateGridMesh("water", 800.0f, 800.0f, 80, 80);
     m_sceneRenderer->FinalizeCreateMeshes();
 
     // Create materials.
@@ -152,8 +153,7 @@ void DemoMain::StartRenderLoop()
 
                 if (!m_hasFocus)
                 {
-                    // The app is in an inactive state. We can stop rendering. This optimizes 
-                    // power consumption and allows the framework to become more quiescent.
+                    // The app is in an inactive state. Stop rendering.
                     break;
                 }
             }
@@ -202,7 +202,7 @@ void DemoMain::ValidateDevice()
 void DemoMain::SwapChainPanelSizeChanged(winrt::Windows::Foundation::Size const& logicalSize)
 {
     // DeviceResources::SetLogicalSize calls DeviceResources::CreateWindowSizeDependentResources which
-    // uses device context. We need to synchronize threads so only one accessed the device context.
+    // uses device context. We need to synchronize threads so only one accesses the device context.
     critical_section::scoped_lock lock(m_criticalSection);
 
     m_deviceResources->SetLogicalSize(logicalSize);
@@ -222,6 +222,7 @@ void DemoMain::Suspend()
 
     // Stop rendering when the app is suspended.
     StopRenderLoop();
+
     m_deviceResources->Trim();
 }
 
@@ -297,7 +298,7 @@ void DemoMain::DrawScene()
 
     m_sceneRenderer->PrepareRender();
 
-    // Draw the boundary for boids as a wired box.
+    // Draw the boundary for boids as a box.
     m_sceneRenderer->SetMaterial("cube");
     m_sceneRenderer->SetTexture("cube");
 
