@@ -253,6 +253,7 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="ComputeDirectionalLight.hlsli" />
     <None Include="ConstantBuffers.hlsli" />
     <None Include="packages.config" />

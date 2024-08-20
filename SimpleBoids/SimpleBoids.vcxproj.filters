@@ -187,6 +187,7 @@
     <None Include="ComputeDirectionalLight.hlsli">
       <Filter>Renderers</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ScenePS.hlsl">
