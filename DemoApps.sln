@@ -31,6 +31,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{E776F72F-D4A6-4585-9CEC-00DC15E82CE5}"
 	ProjectSection(SolutionItems) = preProject
 		Docs\Links.txt = Docs\Links.txt
+		README.txt = README.txt
 	EndProjectSection
 EndProject
 Global
