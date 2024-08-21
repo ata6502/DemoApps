@@ -2,7 +2,7 @@
 
 This repository contains the 3D DirectX/C++ implementation of the [boids flocking algorithm](https://www.red3d.com/cwr/boids/).
 
-<img src="./Docs/boids.png"/>
+[<img src="./Docs/boids.png"/>](https://www.youtube.com/watch?v=jo8467Q5foE)
 
 The following resources where particularly useful while creating this demo:
 
