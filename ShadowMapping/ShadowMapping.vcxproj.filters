@@ -94,6 +94,18 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Textures\bricks.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\floor.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\marble.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\wood.dds">
+      <Filter>Assets\Textures</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -107,6 +119,9 @@
     </Filter>
     <Filter Include="Renderer">
       <UniqueIdentifier>{d0001463-786d-4e27-9490-607abd879dd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{dda0d27b-ac57-4799-9e26-a938329693a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
