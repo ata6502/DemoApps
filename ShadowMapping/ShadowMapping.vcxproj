@@ -163,6 +163,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Shared\DeviceResources.h" />
+    <ClInclude Include="..\Shared\FileReader.h" />
+    <ClInclude Include="..\Shared\FileReaderStructures.h" />
+    <ClInclude Include="..\Shared\IndependentInput.h" />
+    <ClInclude Include="..\Shared\StepTimer.h" />
+    <ClInclude Include="..\Shared\TextureMeshGenerator.h" />
+    <ClInclude Include="..\Shared\Utilities.h" />
+    <ClInclude Include="..\Shared\VertexStructures.h" />
+    <ClInclude Include="..\Shared\WICTextureLoader.h" />
+    <ClInclude Include="DemoMain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -194,6 +204,13 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\DeviceResources.cpp" />
+    <ClCompile Include="..\Shared\FileReader.cpp" />
+    <ClCompile Include="..\Shared\IndependentInput.cpp" />
+    <ClCompile Include="..\Shared\TextureMeshGenerator.cpp" />
+    <ClCompile Include="..\Shared\Utilities.cpp" />
+    <ClCompile Include="..\Shared\WICTextureLoader.cpp" />
+    <ClCompile Include="DemoMain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
