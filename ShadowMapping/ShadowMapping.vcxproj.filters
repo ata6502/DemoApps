@@ -34,6 +34,9 @@
     <ClCompile Include="..\Shared\WICTextureLoader.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\MainRenderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -64,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="..\Shared\WICTextureLoader.h">
       <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\MainRenderer.h">
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +104,9 @@
     </Filter>
     <Filter Include="Shared">
       <UniqueIdentifier>{8de45091-c898-4ab0-8e51-ded356f26193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer">
+      <UniqueIdentifier>{d0001463-786d-4e27-9490-607abd879dd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -14,7 +14,7 @@ DemoMain::DemoMain() :
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
 
-    // m_renderer = std::make_unique<MainRenderer>(m_deviceResources); // TODO: create renderer
+    m_renderer = std::make_unique<MainRenderer>(m_deviceResources);
 
     m_input = std::make_unique<IndependentInput>();
     m_input->SetInputRadius(30.f);
@@ -35,12 +35,10 @@ winrt::fire_and_forget DemoMain::Initialize()
 {
     auto lifetime = get_strong();
 
-    //co_await m_renderer->CreateDeviceDependentResourcesAsync(); // TODO: call renderer
-    using namespace std::literals::chrono_literals;
-    co_await winrt::resume_after(1s);
+    co_await m_renderer->CreateDeviceDependentResourcesAsync();
 
     critical_section::scoped_lock lock(m_criticalSection);
-    // m_renderer->FinalizeCreateDeviceResources(); // TODO: call Renderer
+    m_renderer->FinalizeCreateDeviceResources();
     CreateWindowSizeDependentResources();
 }
 
@@ -61,13 +59,13 @@ void DemoMain::StartRenderLoop()
                 // Ensure smooth transition between renderers by not proceeding 
                 // to Preset if the renderer is not initialized. This is only useful
                 // if we switch between multiple renderers.
-                //if (!m_renderer->IsInitialized()) // TODO: create renderer
-                //    continue;
+                if (!m_renderer->IsInitialized())
+                    continue;
 
                 critical_section::scoped_lock lock(m_criticalSection);
 
                 Update();
-                //m_renderer->Render(); // TODO: call renderer
+                m_renderer->Render();
                 m_deviceResources->Present();
 
                 if (!m_hasFocus)
@@ -157,7 +155,7 @@ void DemoMain::SetSwapChainPanel(winrt::Windows::UI::Xaml::Controls::SwapChainPa
 void DemoMain::OnDeviceLost()
 {
     StopRenderLoop();
-    //m_renderer->ReleaseDeviceDependentResources(); // TODO: call Renderer
+    m_renderer->ReleaseDeviceDependentResources();
 }
 
 void DemoMain::OnDeviceRestored()
@@ -170,58 +168,54 @@ void DemoMain::OnDeviceRestored()
 
 void DemoMain::CreateWindowSizeDependentResources()
 {
-    // TODO: call Renderer
-    
-    //if (!m_renderer->IsInitialized())
-    //    return;
+    if (!m_renderer->IsInitialized())
+        return;
 
-    //winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
-    //float aspectRatio = outputSize.Width / outputSize.Height;
-    //float fovAngleY = 0.25f * XM_PI;
+    winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
+    float aspectRatio = outputSize.Width / outputSize.Height;
+    float fovAngleY = 0.25f * XM_PI;
 
-    //XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(
-    //    fovAngleY,
-    //    aspectRatio,
-    //    0.01f,
-    //    1000.0f);
+    XMMATRIX projectionMatrix = XMMatrixPerspectiveFovLH(
+        fovAngleY,
+        aspectRatio,
+        0.01f,
+        1000.0f);
 
-    //XMMATRIX orientationMatrix = m_deviceResources->GetOrientationTransform3D();
+    XMMATRIX orientationMatrix = m_deviceResources->GetOrientationTransform3D();
 
-    //m_renderer->CreateWindowSizeDependentResources(
-    //    XMMatrixMultiply(
-    //        orientationMatrix,
-    //        projectionMatrix
-    //    )
-    //);
+    m_renderer->CreateWindowSizeDependentResources(
+        XMMatrixMultiply(
+            orientationMatrix,
+            projectionMatrix
+        )
+    );
 }
 
 void DemoMain::Update()
 {
-    // TODO: call Renderer
-    // 
-    //if (!m_renderer->IsInitialized())
-    //    return;
+    if (!m_renderer->IsInitialized())
+        return;
 
-    //m_timer.Tick([&]()
-    //    {
-    //        float elapsedSeconds{ static_cast<float>(m_timer.GetElapsedSeconds()) };
+    m_timer.Tick([&]()
+    {
+        float elapsedSeconds{ static_cast<float>(m_timer.GetElapsedSeconds()) };
 
-    //        if (m_rotationEnabled)
-    //        {
-    //            // The value 0.6 controls the rotation speed.
-    //            m_rotation = m_rotation + 0.6f * elapsedSeconds;
-    //            if (m_rotation > XM_2PI)
-    //                m_rotation = fmod(m_rotation, XM_2PI);
-    //            m_renderer->ExecuteCommand(SimpleCommand("SetRotation", m_rotation));
-    //        }
+        if (m_rotationEnabled)
+        {
+            // The value 0.6 controls the rotation speed.
+            m_rotation = m_rotation + 0.6f * elapsedSeconds;
+            if (m_rotation > XM_2PI)
+                m_rotation = fmod(m_rotation, XM_2PI);
+            // m_renderer->ExecuteCommand(SimpleCommand("SetRotation", m_rotation)); // TODO: set rotation in renderers
+        }
 
-    //        m_renderer->ExecuteCommand(SimpleCommand("ElapsedSeconds", elapsedSeconds));
+        //m_renderer->ExecuteCommand(SimpleCommand("ElapsedSeconds", elapsedSeconds)); // TODO: set elapsed time in renderers
 
-    //        static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
-    //        static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
-    //        XMVECTOR eye = m_input->GetPosition();
-    //        XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
+        static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
+        static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
+        XMVECTOR eye = m_input->GetPosition();
+        XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
 
-    //        m_renderer->Update(viewMatrix, eye);
-    //    });
+        m_renderer->Update(viewMatrix, eye);
+    });
 }

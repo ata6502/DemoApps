@@ -2,6 +2,7 @@
 
 #include "DeviceResources.h"
 #include "IndependentInput.h"
+#include "MainRenderer.h"
 #include "StepTimer.h"
 
 class DemoMain : public winrt::implements<DemoMain, winrt::Windows::Foundation::IInspectable>, public DX::IDeviceNotify
@@ -30,7 +31,7 @@ public:
 private:
     std::shared_ptr<DX::DeviceResources>        m_deviceResources;
 
-    //std::unique_ptr<MainRenderer>               m_renderer; // TODO: create renderer
+    std::unique_ptr<MainRenderer>               m_renderer;
     DX::StepTimer                               m_timer;
     Concurrency::critical_section               m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction    m_renderLoopWorker;
