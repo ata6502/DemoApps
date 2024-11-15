@@ -36,10 +36,7 @@ private:
     Concurrency::critical_section               m_criticalSection;
     winrt::Windows::Foundation::IAsyncAction    m_renderLoopWorker;
     std::unique_ptr<IndependentInput>           m_input;
-
     bool                                        m_hasFocus;
-    float                                       m_rotation; // the current rotation in radians
-    bool                                        m_rotationEnabled;
 
     // Private helper methods.
     void StartRenderLoop();

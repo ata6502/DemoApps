@@ -12,9 +12,8 @@ MainRenderer::MainRenderer(std::shared_ptr<DX::DeviceResources> const& deviceRes
 {
     m_meshGenerator = std::make_shared<TextureMeshGenerator>(m_deviceResources);
 
-    // TODO: create renderers
-    //m_sceneRenderer = std::make_unique<SceneRenderer>(m_deviceResources, m_meshGenerator);
-    //m_shadowRenderer = std::make_unique<ShadowRenderer>(m_deviceResources, m_meshGenerator);
+    m_sceneRenderer = std::make_unique<SceneRenderer>(m_deviceResources, m_meshGenerator);
+    m_shadowRenderer = std::make_unique<ShadowRenderer>(m_deviceResources, m_meshGenerator);
 }
 
 MainRenderer::~MainRenderer()
@@ -27,11 +26,8 @@ winrt::Windows::Foundation::IAsyncAction MainRenderer::CreateDeviceDependentReso
 {
     auto device{ m_deviceResources->GetD3DDevice() };
 
-    // TODO: create renderers
-    //co_await m_sceneRenderer->CreateDeviceDependentResourcesAsync();
-    //co_await m_shadowRenderer->CreateDeviceDependentResourcesAsync();
-    using namespace std::literals::chrono_literals;
-    co_await winrt::resume_after(1s);
+    co_await m_sceneRenderer->CreateDeviceDependentResourcesAsync();
+    co_await m_shadowRenderer->CreateDeviceDependentResourcesAsync();
 
     // Create meshes.
     m_meshGenerator->CreateGrid("grid", 20.0f, 25.0f, 60, 40);
@@ -44,9 +40,8 @@ winrt::Windows::Foundation::IAsyncAction MainRenderer::CreateDeviceDependentReso
 // Create context-dependent resources.
 void MainRenderer::FinalizeCreateDeviceResources()
 {
-    // TODO: create renderers
-    //m_sceneRenderer->FinalizeCreateDeviceResources();
-    //m_shadowRenderer->FinalizeCreateDeviceResources();
+    m_sceneRenderer->FinalizeCreateDeviceResources();
+    m_shadowRenderer->FinalizeCreateDeviceResources();
 
     // Inform other parts of the application that the initialization has completed.
     m_initialized = true;
@@ -54,37 +49,35 @@ void MainRenderer::FinalizeCreateDeviceResources()
 
 void MainRenderer::CreateWindowSizeDependentResources(DirectX::FXMMATRIX projectionMatrix)
 {
-    // TODO: create renderers
-    //m_sceneRenderer->CreateWindowSizeDependentResources(projectionMatrix);
-    //m_shadowRenderer->CreateWindowSizeDependentResources(projectionMatrix);
+    m_sceneRenderer->SetProjectionMatrix(projectionMatrix);
 }
 
-void MainRenderer::Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition)
+void MainRenderer::Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyePosition, float rotation, float elapsedSeconds)
 {
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
-
-    // TODO: create renderers
-    // 
-    //XMVECTOR lightDirection = m_sceneRenderer->UpdateLightDirection();
-    //XMFLOAT4X4 shadowTransform = m_shadowRenderer->BuildShadowTransform(lightDirection);
-
-    //m_sceneRenderer->Update(viewMatrix, eyePosition, shadowTransform);
-    //m_shadowRenderer->Update();
-}
-
-void MainRenderer::Render()
-{
-    if (!IsInitialized())
+    if (!m_initialized)
         return;
 
     auto context{ m_deviceResources->GetD3DDeviceContext() };
 
-    // Bind the vertex and index buffers containing mesh data.
-    m_meshGenerator->SetBuffers();
+    XMVECTOR lightDirection = m_sceneRenderer->UpdateLightDirection();
+    XMFLOAT4X4 shadowTransform = m_shadowRenderer->BuildShadowTransform(lightDirection);
 
-    // TODO: create renderers
-    //if (m_shadowRenderer->IsInitialized())
-    //    m_shadowRenderer->Render();
+    m_sceneRenderer->Update(viewMatrix, eyePosition, shadowTransform, rotation, elapsedSeconds);
+    m_shadowRenderer->Update(rotation);
+}
+
+void MainRenderer::Render()
+{
+    auto context{ m_deviceResources->GetD3DDeviceContext() };
+
+    if (m_initialized)
+    {
+        // Bind the vertex and index buffers containing mesh data.
+        m_meshGenerator->SetBuffers();
+
+        if (m_shadowRenderer->IsInitialized())
+            m_shadowRenderer->Render();
+    }
 
     // Reset the viewport to target the whole screen.
     auto viewport = m_deviceResources->GetScreenViewport();
@@ -99,19 +92,17 @@ void MainRenderer::Render()
     // Bind the back buffer and the depth stencil view to the pipeline.
     context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-    // TODO: create renderers
-    //if (m_sceneRenderer->IsInitialized() && m_shadowRenderer->IsInitialized())
-    //{
-    //    m_sceneRenderer->Render(m_shadowRenderer->GetShadowMapTexture());
-    //}
+    if (m_initialized && m_sceneRenderer->IsInitialized() && m_shadowRenderer->IsInitialized())
+    {
+        m_sceneRenderer->Render(m_shadowRenderer->GetShadowMapTexture());
+    }
 }
 
 void MainRenderer::ReleaseDeviceDependentResources()
 {
     m_initialized = false;
-    // TODO: create renderers
-    //m_sceneRenderer->ReleaseDeviceDependentResources();
-    //m_shadowRenderer->ReleaseDeviceDependentResources();
+    m_sceneRenderer->ReleaseDeviceDependentResources();
+    m_shadowRenderer->ReleaseDeviceDependentResources();
     m_meshGenerator->Clear();
 }
 

@@ -37,6 +37,15 @@
     <ClCompile Include="Renderer\MainRenderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\SceneRenderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\ShadowMap.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\ShadowRenderer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -69,6 +78,21 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\MainRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\SceneConstantBuffers.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\SceneRenderer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ShadowConstantBuffers.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ShadowMap.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ShadowRenderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
@@ -127,5 +151,28 @@
   <ItemGroup>
     <None Include="PropertySheet.props" />
     <None Include="packages.config" />
+    <None Include="Renderer\ComputeDirectionalLight.hlsli">
+      <Filter>Renderer</Filter>
+    </None>
+    <None Include="Renderer\ComputeShadowFactor.hlsli">
+      <Filter>Renderer</Filter>
+    </None>
+    <None Include="Renderer\SceneConstantBuffers.hlsli">
+      <Filter>Renderer</Filter>
+    </None>
+    <None Include="Renderer\ShadowConstantBuffers.hlsli">
+      <Filter>Renderer</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Renderer\ScenePS.hlsl">
+      <Filter>Renderer</Filter>
+    </FxCompile>
+    <FxCompile Include="Renderer\SceneVS.hlsl">
+      <Filter>Renderer</Filter>
+    </FxCompile>
+    <FxCompile Include="Renderer\ShadowVS.hlsl">
+      <Filter>Renderer</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

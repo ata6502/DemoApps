@@ -7,9 +7,7 @@ using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::System::Threading;
 
 DemoMain::DemoMain() :
-    m_hasFocus(false),
-    m_rotation(0.f),
-    m_rotationEnabled(true)
+    m_hasFocus(false)
 {
     m_deviceResources = std::make_shared<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -56,12 +54,6 @@ void DemoMain::StartRenderLoop()
             // Calculate the updated frame and render once per vertical blanking interval.
             while (action.Status() == AsyncStatus::Started)
             {
-                // Ensure smooth transition between renderers by not proceeding 
-                // to Preset if the renderer is not initialized. This is only useful
-                // if we switch between multiple renderers.
-                if (!m_renderer->IsInitialized())
-                    continue;
-
                 critical_section::scoped_lock lock(m_criticalSection);
 
                 Update();
@@ -70,8 +62,7 @@ void DemoMain::StartRenderLoop()
 
                 if (!m_hasFocus)
                 {
-                    // The app is in an inactive state. We can stop rendering. This optimizes 
-                    // power consumption and allows the framework to become more quiescent.
+                    // The app is in an inactive state. We can stop rendering.
                     break;
                 }
             }
@@ -168,9 +159,6 @@ void DemoMain::OnDeviceRestored()
 
 void DemoMain::CreateWindowSizeDependentResources()
 {
-    if (!m_renderer->IsInitialized())
-        return;
-
     winrt::Windows::Foundation::Size outputSize = m_deviceResources->GetOutputSize();
     float aspectRatio = outputSize.Width / outputSize.Height;
     float fovAngleY = 0.25f * XM_PI;
@@ -193,29 +181,21 @@ void DemoMain::CreateWindowSizeDependentResources()
 
 void DemoMain::Update()
 {
-    if (!m_renderer->IsInitialized())
-        return;
-
     m_timer.Tick([&]()
     {
+        static float rotation = 0.0f; // the current rotation in radians
         float elapsedSeconds{ static_cast<float>(m_timer.GetElapsedSeconds()) };
 
-        if (m_rotationEnabled)
-        {
-            // The value 0.6 controls the rotation speed.
-            m_rotation = m_rotation + 0.6f * elapsedSeconds;
-            if (m_rotation > XM_2PI)
-                m_rotation = fmod(m_rotation, XM_2PI);
-            // m_renderer->ExecuteCommand(SimpleCommand("SetRotation", m_rotation)); // TODO: set rotation in renderers
-        }
-
-        //m_renderer->ExecuteCommand(SimpleCommand("ElapsedSeconds", elapsedSeconds)); // TODO: set elapsed time in renderers
+        // The value 0.6 controls the rotation speed.
+        rotation += 0.6f * elapsedSeconds;
+        if (rotation > XM_2PI)
+            rotation = fmod(rotation, XM_2PI);
 
         static const XMVECTORF32 at = { 0.0f, -0.1f, 0.0f, 0.0f };
         static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0f };
         XMVECTOR eye = m_input->GetPosition();
         XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
 
-        m_renderer->Update(viewMatrix, eye);
+        m_renderer->Update(viewMatrix, eye, rotation, elapsedSeconds);
     });
 }
