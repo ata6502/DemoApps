@@ -1,6 +1,13 @@
 # DemoApps
 
-This repository contains the 3D DirectX/C++ implementation of the [boids flocking algorithm](https://www.red3d.com/cwr/boids/).
+## ShadowMapping
+
+The [ShadowMapping](https://github.com/ata6502/DemoApps/tree/main/ShadowMapping) implements a simple scene that employs
+the shadow mapping algorithm as decribed in the Frank Luna's [book](https://www.amazon.ca/Introduction-3D-Game-Programming-DirectX/dp/1936420228).
+
+## SimpleBoids
+
+The [SimpleBoids](https://github.com/ata6502/DemoApps/tree/main/SimpleBoids) implements the [boids flocking algorithm](https://www.red3d.com/cwr/boids/).
 
 [<img src="./Docs/boids.png"/>](https://www.youtube.com/watch?v=jo8467Q5foE)
 
