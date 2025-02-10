@@ -268,7 +268,7 @@ void DemoMain::Update()
             XMVECTOR eye = m_input->GetPosition();
             XMMATRIX viewMatrix = XMMatrixLookAtLH(eye, at, up);
             m_commonRenderer->Update(eye, viewMatrix);
-            m_skyRenderer->Update(eye, viewMatrix);
+            m_skyRenderer->Update(eye);
 
             float timeDelta{ static_cast<float>(m_timer.GetElapsedSeconds()) };
 

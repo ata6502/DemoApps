@@ -10,7 +10,7 @@ public:
     ~SkyRenderer();
 
     winrt::Windows::Foundation::IAsyncAction CreateDeviceResourcesAsync();
-    void Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix);
+    void Update(DirectX::FXMVECTOR eye);
     void Render();
     void ReleaseDeviceDependentResources();
 

@@ -24,8 +24,6 @@ MainRenderer::~MainRenderer()
 // Create device-dependent resources.
 winrt::Windows::Foundation::IAsyncAction MainRenderer::CreateDeviceDependentResourcesAsync()
 {
-    auto device{ m_deviceResources->GetD3DDevice() };
-
     co_await m_sceneRenderer->CreateDeviceDependentResourcesAsync();
     co_await m_shadowRenderer->CreateDeviceDependentResourcesAsync();
 
@@ -56,8 +54,6 @@ void MainRenderer::Update(DirectX::FXMMATRIX viewMatrix, DirectX::FXMVECTOR eyeP
 {
     if (!m_initialized)
         return;
-
-    auto context{ m_deviceResources->GetD3DDeviceContext() };
 
     XMVECTOR lightDirection = m_sceneRenderer->UpdateLightDirection();
     XMFLOAT4X4 shadowTransform = m_shadowRenderer->BuildShadowTransform(lightDirection);

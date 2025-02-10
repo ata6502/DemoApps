@@ -115,7 +115,7 @@ winrt::Windows::Foundation::IAsyncAction SkyRenderer::CreateDeviceResourcesAsync
     m_initialized = true;
 }
 
-void SkyRenderer::Update(DirectX::FXMVECTOR eye, DirectX::FXMMATRIX viewMatrix)
+void SkyRenderer::Update(DirectX::FXMVECTOR eye)
 {
     if (!m_initialized)
         return;
