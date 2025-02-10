@@ -5,6 +5,8 @@
 The [ShadowMapping](https://github.com/ata6502/DemoApps/tree/main/ShadowMapping) demo implements the shadow mapping algorithm as 
 described in the Frank Luna's [book](https://www.amazon.ca/Introduction-3D-Game-Programming-DirectX/dp/1936420228).
 
+[<img src="./Docs/shadows.png"/>]
+
 ## Boids
 
 The [SimpleBoids](https://github.com/ata6502/DemoApps/tree/main/SimpleBoids) demo implements the [boids flocking algorithm](https://www.red3d.com/cwr/boids/).
